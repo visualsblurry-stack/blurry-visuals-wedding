@@ -1,5 +1,5 @@
 /* ============================================================
-   PHERAA — site behaviour
+   Blurry Visuals Weddings — site behaviour
    Header, drawer, hero slideshow, portfolio filters, films
    lightbox, story cards + story page renderer, testimonials,
    inquiry form → WhatsApp. No dependencies.
@@ -155,7 +155,7 @@
         return el && el.value ? el.value.trim() : "";
       };
       var lines = [
-        "Hello Pheraa! Wedding inquiry —",
+        "Hello Blurry Visuals Weddings! Wedding inquiry —",
         "Couple: " + v("names"),
         "Event: " + v("etype"),
         "Date: " + (v("edate") || "not fixed yet"),
@@ -169,9 +169,9 @@
 
   /* ---------- story page renderer (story.html?s=slug) ---------- */
   var storyRoot = document.getElementById("story-root");
-  if (storyRoot && window.PHERAA_STORIES) {
+  if (storyRoot && window.BLURRY_WEDDING_STORIES) {
     var slug = new URLSearchParams(location.search).get("s");
-    var list = window.PHERAA_STORIES;
+    var list = window.BLURRY_WEDDING_STORIES;
     var idx = list.findIndex(function (s) { return s.slug === slug; });
     if (idx === -1) { location.replace("index.html#stories"); return; }
     var st = list[idx];
@@ -180,7 +180,7 @@
         return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
       });
     };
-    document.title = st.couple[0] + " & " + st.couple[1] + " — Pheraa";
+    document.title = st.couple[0] + " & " + st.couple[1] + " | Blurry Visuals Weddings";
 
     var galleryHtml = st.gallery.map(function (g) {
       if (g.img) {
@@ -222,8 +222,8 @@
 
   /* ---------- index: build story cards from data ---------- */
   var storiesGrid = document.getElementById("stories-grid");
-  if (storiesGrid && window.PHERAA_STORIES) {
-    storiesGrid.innerHTML = window.PHERAA_STORIES.map(function (st) {
+  if (storiesGrid && window.BLURRY_WEDDING_STORIES) {
+    storiesGrid.innerHTML = window.BLURRY_WEDDING_STORIES.map(function (st) {
       var fig = st.cover
         ? '<figure class="ph ph-img" role="img" aria-label="' + st.couple[0] + " and " + st.couple[1] +
           '" style="background-image:url(\'' + st.cover + "')\"></figure>"

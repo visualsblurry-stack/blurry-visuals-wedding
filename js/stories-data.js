@@ -1,5 +1,5 @@
 /* ============================================================
-   PHERAA — real wedding stories data
+   Blurry Visuals Weddings — real wedding stories data
    Stock photos (Unsplash CDN) for now — replace `cover` and
    gallery `img` URLs with img/stories/<slug>/NN.jpg when real
    photos arrive (see img/README.md). Order = prev/next order.
@@ -10,7 +10,7 @@
     return "https://images.unsplash.com/photo-" + id + "?auto=format&fit=crop&w=" + (w || 1200) + "&q=70";
   };
 
-  window.PHERAA_STORIES = [
+  window.BLURRY_WEDDING_STORIES = [
     {
       slug: "anaya-rohan",
       couple: ["Anaya", "Rohan"],
