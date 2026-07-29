@@ -1,4 +1,4 @@
-# Pheraa — photo swap guide
+# Blurry Visuals Weddings photo swap guide
 
 Site currently uses stock photos from the Unsplash CDN (temporary, for client demo)
 plus four sample YouTube wedding films. To go live with the studio's real work, add
@@ -40,6 +40,6 @@ Every image is a `background-image:url('…')` on a `.ph.ph-img` element or a UR
 
 ## Also update when real handles exist
 
-- Email `hello@pheraa.in` and Instagram `@pheraa.weddings` — placeholders in
+- Email `visualsblurry@gmail.com` and Instagram `@theblurryvisuals` are listed in
   `index.html` (contact section + JSON-LD).
 - WhatsApp number lives in `js/main.js` (`WHATSAPP` constant) and the contact link.
