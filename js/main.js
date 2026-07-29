@@ -12,8 +12,9 @@
 
   /* ---------- header solid-on-scroll ---------- */
   var hdr = document.querySelector(".hdr");
+  var headerInitiallySolid = hdr ? hdr.classList.contains("solid") : false;
   function onScroll() {
-    if (hdr) hdr.classList.toggle("solid", window.scrollY > 40);
+    if (hdr) hdr.classList.toggle("solid", headerInitiallySolid || window.scrollY > 40);
   }
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();

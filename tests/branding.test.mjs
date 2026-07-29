@@ -185,6 +185,24 @@ test("story scripts use the Blurry Visuals namespace and titles", async () => {
       "Blurry Visuals Weddings",
     ]);
   }
+
+  const mainScript = files.find(([path]) => path === "js/main.js")[1];
+  const initialSolidCapture = mainScript.match(
+    /\bvar\s+([\w$]*(?:initial|start)[\w$]*solid[\w$]*)\s*=\s*hdr\s*\?\s*hdr\.classList\.contains\(\s*["']solid["']\s*\)\s*:\s*false\s*;/i,
+  );
+  assert.ok(
+    initialSolidCapture,
+    "js/main.js must capture whether the header initially has the solid class",
+  );
+
+  const initialSolidName = initialSolidCapture[1];
+  assert.match(
+    mainScript,
+    new RegExp(
+      `hdr\\.classList\\.toggle\\(\\s*["']solid["']\\s*,\\s*${initialSolidName}\\s*\\|\\|\\s*window\\.scrollY\\s*>\\s*40\\s*\\)`,
+    ),
+    "js/main.js must preserve the initial solid state in the header toggle condition",
+  );
 });
 
 test("logo lockup has stable styles", async () => {
