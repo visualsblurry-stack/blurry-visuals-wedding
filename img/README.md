@@ -38,6 +38,12 @@ Every image is a `background-image:url('…')` on a `.ph.ph-img` element or a UR
    handles both real images and placeholder fallback (no `img` field = styled frame).
 5. **About** (`index.html`): photographer portrait frame — same URL swap.
 
+## Homepage hero gallery
+
+Production hero derivatives live in `img/hero/` as optimized WebP files. The
+high-resolution source JPGs are preserved separately and must not be served
+directly because each source is several megabytes.
+
 ## Also update when real handles exist
 
 - Email `visualsblurry@gmail.com` and Instagram `@theblurryvisuals` are listed in
