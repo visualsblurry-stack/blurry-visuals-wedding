@@ -37,15 +37,119 @@
     });
   }
 
-  /* ---------- hero slideshow ---------- */
-  var slides = document.querySelectorAll(".hero-slide");
-  if (slides.length > 1 && !REDUCED) {
-    var si = 0;
-    setInterval(function () {
-      slides[si].classList.remove("act");
-      si = (si + 1) % slides.length;
-      slides[si].classList.add("act");
+  /* ---------- hero gallery ---------- */
+  var hero = document.querySelector(".hero");
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".hero-slide"));
+  var heroDots = Array.prototype.slice.call(document.querySelectorAll(".hero-dot"));
+  var slideIndex = 0;
+  var autoplayId = 0;
+  var autoplayPaused = false;
+  var pendingSlides = Object.create(null);
+
+  function loadHeroSlide(index) {
+    var slide = slides[index];
+    if (!slide || !slide.dataset.bg || slide.dataset.loaded === "true") {
+      return Promise.resolve(true);
+    }
+    var source = slide.dataset.bg;
+    if (pendingSlides[source]) return pendingSlides[source];
+    pendingSlides[source] = new Promise(function (resolve) {
+      var image = new Image();
+      image.onload = function () {
+        slide.style.backgroundImage = 'url("' + source.replace(/"/g, "%22") + '")';
+        slide.dataset.loaded = "true";
+        resolve(true);
+      };
+      image.onerror = function () { resolve(false); };
+      image.src = source;
+    });
+    return pendingSlides[source];
+  }
+
+  function updateHeroDots() {
+    heroDots.forEach(function (dot, index) {
+      var active = index === slideIndex;
+      dot.classList.toggle("act", active);
+      if (active) dot.setAttribute("aria-current", "true");
+      else dot.removeAttribute("aria-current");
+    });
+  }
+
+  function showHeroSlide(index) {
+    var nextIndex = (index + slides.length) % slides.length;
+    return loadHeroSlide(nextIndex).then(function (loaded) {
+      if (!loaded) return false;
+      slides[slideIndex].classList.remove("act");
+      slideIndex = nextIndex;
+      slides[slideIndex].classList.add("act");
+      updateHeroDots();
+      loadHeroSlide((slideIndex + 1) % slides.length);
+      return true;
+    });
+  }
+
+  function stopHeroAutoplay() {
+    window.clearTimeout(autoplayId);
+    autoplayId = 0;
+  }
+
+  function scheduleHeroAutoplay() {
+    stopHeroAutoplay();
+    if (REDUCED || autoplayPaused || slides.length < 2) return;
+    autoplayId = window.setTimeout(function () {
+      showHeroSlide(slideIndex + 1).then(scheduleHeroAutoplay);
     }, 5200);
+  }
+
+  heroDots.forEach(function (dot) {
+    dot.addEventListener("click", function () {
+      showHeroSlide(Number(dot.dataset.slide)).then(scheduleHeroAutoplay);
+    });
+  });
+
+  if (hero) {
+    hero.addEventListener("mouseenter", function () {
+      autoplayPaused = true;
+      stopHeroAutoplay();
+    });
+    hero.addEventListener("mouseleave", function () {
+      autoplayPaused = false;
+      scheduleHeroAutoplay();
+    });
+    hero.addEventListener("focusin", function () {
+      autoplayPaused = true;
+      stopHeroAutoplay();
+    });
+    hero.addEventListener("focusout", function () {
+      window.setTimeout(function () {
+        if (!hero.contains(document.activeElement)) {
+          autoplayPaused = false;
+          scheduleHeroAutoplay();
+        }
+      }, 0);
+    });
+
+    var swipeX = 0;
+    var swipeY = 0;
+    hero.addEventListener("pointerdown", function (event) {
+      if (event.pointerType !== "touch" && event.pointerType !== "pen") return;
+      swipeX = event.clientX;
+      swipeY = event.clientY;
+    });
+    hero.addEventListener("pointerup", function (event) {
+      if (event.pointerType !== "touch" && event.pointerType !== "pen") return;
+      var deltaX = event.clientX - swipeX;
+      var deltaY = event.clientY - swipeY;
+      if (Math.abs(deltaX) >= 48 && Math.abs(deltaX) > Math.abs(deltaY)) {
+        showHeroSlide(slideIndex + (deltaX < 0 ? 1 : -1)).then(scheduleHeroAutoplay);
+      }
+    });
+  }
+
+  if (slides.length) {
+    loadHeroSlide(1 % slides.length);
+    updateHeroDots();
+    scheduleHeroAutoplay();
   }
 
   /* ---------- reveal on scroll ---------- */
