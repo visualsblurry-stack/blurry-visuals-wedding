@@ -7,6 +7,7 @@ const projectRoot = new URL("../", import.meta.url);
 const officialLogoSha256 =
   "d6b30fd1b111acc1a6b63ef5718685c7fa283f60fcb77962337f79aaebc16912";
 const pngSignature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+const optimizedLogoPath = "img/blurry-visuals-logo-web.png";
 
 const readProjectFile = (path) =>
   readFile(new URL(path, projectRoot), "utf8");
@@ -29,6 +30,16 @@ const assertBrandLogo = (path, html) => {
   assert.ok(
     classTokens.includes("brand-logo"),
     `${path} logo image is missing the brand-logo class`,
+  );
+  assert.equal(
+    logoTag.match(/\ssrcset\s*=\s*(["'])(.*?)\1/i)?.[2],
+    `${optimizedLogoPath} 126w`,
+    `${path} logo image is missing the optimized 126w srcset`,
+  );
+  assert.equal(
+    logoTag.match(/\ssizes\s*=\s*(["'])(.*?)\1/i)?.[2],
+    "42px",
+    `${path} logo image must declare sizes="42px"`,
   );
 };
 
@@ -64,6 +75,37 @@ test("official Blurry Visuals logo is used on both pages", async () => {
   );
   assertBrandLogo("index.html", indexHtml);
   assertBrandLogo("story.html", storyHtml);
+
+  const optimizedLogoUrl = new URL(optimizedLogoPath, projectRoot);
+  const [optimizedLogoStats, optimizedLogo] = await Promise.all([
+    stat(optimizedLogoUrl),
+    readFile(optimizedLogoUrl),
+  ]);
+
+  assert.ok(
+    optimizedLogoStats.size < 60 * 1024,
+    `${optimizedLogoPath} must be smaller than 60 KB`,
+  );
+  assert.deepEqual(
+    optimizedLogo.subarray(0, pngSignature.length),
+    pngSignature,
+    `${optimizedLogoPath} must have a valid PNG signature`,
+  );
+  assert.equal(
+    optimizedLogo.subarray(12, 16).toString("ascii"),
+    "IHDR",
+    `${optimizedLogoPath} must start with a PNG IHDR chunk`,
+  );
+  assert.equal(
+    optimizedLogo.readUInt32BE(16),
+    126,
+    `${optimizedLogoPath} must be 126 pixels wide`,
+  );
+  assert.equal(
+    optimizedLogo.readUInt32BE(20),
+    126,
+    `${optimizedLogoPath} must be 126 pixels high`,
+  );
 });
 
 test("public pages use only the Blurry Visuals Weddings identity", async () => {
