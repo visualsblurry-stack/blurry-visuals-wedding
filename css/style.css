@@ -1,5 +1,5 @@
 /* ============================================================
-   PHERAA — wedding photography & films
+   Blurry Visuals Weddings — wedding photography & films
    Cinematic editorial · espresso ink / champagne / sindoor
    ============================================================ */
 
@@ -86,9 +86,11 @@ h2 em,h1 em{font-style:italic;font-weight:340;color:var(--champagne);}
 }
 .hdr.solid{background:rgba(255,255,255,0.92);backdrop-filter:blur(10px);border-color:var(--line);}
 .hdr-in{display:flex;align-items:center;justify-content:space-between;height:76px;}
-.brand{font-family:var(--ff-display);font-size:26px;letter-spacing:0.02em;color:var(--ivory);}
-.brand i{font-style:italic;color:var(--champagne);}
-.brand small{display:block;font-family:var(--ff-body);font-size:9px;font-weight:700;letter-spacing:0.42em;text-transform:uppercase;color:var(--ash);margin-top:1px;}
+.brand{display:inline-flex;align-items:center;gap:10px;color:var(--ivory);}
+.brand-logo{display:block;width:42px;height:42px;object-fit:contain;flex:0 0 42px;}
+.brand-copy{display:grid;gap:1px;min-width:0;}
+.brand-name{font-family:var(--ff-display);font-size:21px;font-weight:500;line-height:1;letter-spacing:0;color:inherit;white-space:nowrap;}
+.brand small{display:block;font-family:var(--ff-body);font-size:8px;font-weight:700;letter-spacing:0.32em;text-transform:uppercase;color:var(--ash);}
 .nav{display:flex;gap:34px;align-items:center;}
 .nav a{font-size:12px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ash);transition:color .2s;}
 .nav a:hover{color:var(--champagne);}
@@ -97,8 +99,7 @@ h2 em,h1 em{font-style:italic;font-weight:340;color:var(--champagne);}
   transition:filter .2s,transform .2s;
 }
 .nav a.cta:hover{filter:brightness(0.95);transform:translateY(-1px);color:var(--white);}
-.hdr:not(.solid) .brand,
-.hdr:not(.solid) .brand i{color:var(--white);}
+.hdr:not(.solid) .brand{color:var(--white);}
 .hdr:not(.solid) .brand small,
 .hdr:not(.solid) .nav a{color:rgba(255,255,255,0.78);}
 .hdr:not(.solid) .nav a:hover{color:var(--white);}
