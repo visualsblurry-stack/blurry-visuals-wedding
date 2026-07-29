@@ -33,7 +33,7 @@ Only the initial slide is assigned immediately. Other slides store their URL in 
 Autoplay continues at the existing approximately five-second rhythm. The active slide and active dot always move together.
 
 - Nine dot controls appear as one compact group near the lower edge of the content area.
-- Each visible dot is small, but its button has a minimum 44 by 44 pixel hit area.
+- Each visible dot is small, but its button has a 44 by 44 pixel hit area. At narrow mobile widths, buttons may reduce to 40 by 44 pixels so all nine controls remain on one line without overflow.
 - Each button has an accessible label such as `Show hero image 4` and the active button uses `aria-current="true"`.
 - Selecting a dot activates that image and restarts the autoplay interval.
 - Autoplay pauses while the hero is hovered or while a control has keyboard focus.
