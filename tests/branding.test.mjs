@@ -18,13 +18,13 @@ const readProjectFiles = (paths) =>
 
 const assertBrandLogo = (path, html) => {
   const logoTag = (html.match(/<img\b[^>]*>/gi) ?? []).find((tag) => {
-    const src = tag.match(/\bsrc\s*=\s*(["'])(.*?)\1/i)?.[2];
+    const src = tag.match(/\ssrc\s*=\s*(["'])(.*?)\1/i)?.[2];
     return src === "img/blurry-visuals-logo.png";
   });
 
   assert.ok(logoTag, `${path} is missing the official logo image`);
 
-  const classAttribute = logoTag.match(/\bclass\s*=\s*(["'])(.*?)\1/i)?.[2];
+  const classAttribute = logoTag.match(/\sclass\s*=\s*(["'])(.*?)\1/i)?.[2];
   const classTokens = classAttribute?.trim().split(/\s+/) ?? [];
   assert.ok(
     classTokens.includes("brand-logo"),
@@ -33,11 +33,7 @@ const assertBrandLogo = (path, html) => {
 };
 
 const assertIdentity = (path, content, expectedValues) => {
-  assert.doesNotMatch(
-    content,
-    /pheraa/i,
-    `${path} contains the old Pheraa identity`,
-  );
+  assert.ok(!/pheraa/i.test(content), `${path} contains the old Pheraa identity`);
   for (const value of expectedValues) {
     assert.ok(content.includes(value), `${path} is missing ${value}`);
   }
@@ -52,11 +48,19 @@ test("official Blurry Visuals logo is used on both pages", async () => {
     readFile(logoUrl),
   ]);
 
-  assert.ok(logoStats.size > 10000);
-  assert.deepEqual(logo.subarray(0, pngSignature.length), pngSignature);
+  assert.ok(
+    logoStats.size > 10000,
+    "img/blurry-visuals-logo.png must be larger than 10000 bytes",
+  );
+  assert.deepEqual(
+    logo.subarray(0, pngSignature.length),
+    pngSignature,
+    "img/blurry-visuals-logo.png must have a valid PNG signature",
+  );
   assert.equal(
     createHash("sha256").update(logo).digest("hex"),
     officialLogoSha256,
+    "img/blurry-visuals-logo.png must match the official logo digest",
   );
   assertBrandLogo("index.html", indexHtml);
   assertBrandLogo("story.html", storyHtml);
@@ -70,16 +74,23 @@ test("public pages use only the Blurry Visuals Weddings identity", async () => {
     "img/README.md",
     "css/style.css",
   ]);
-  const contactIdentity = [
+  const indexIdentity = [
     "Blurry Visuals Weddings",
     "visualsblurry@gmail.com",
     "https://www.instagram.com/theblurryvisuals/",
   ];
   const expectedByPath = new Map([
-    ["index.html", contactIdentity],
-    ["story.html", contactIdentity],
-    ["README.md", contactIdentity],
-    ["img/README.md", ["Blurry Visuals Weddings"]],
+    ["index.html", indexIdentity],
+    ["story.html", ["Blurry Visuals Weddings"]],
+    ["README.md", ["Blurry Visuals Weddings"]],
+    [
+      "img/README.md",
+      [
+        "Blurry Visuals Weddings",
+        "visualsblurry@gmail.com",
+        "@theblurryvisuals",
+      ],
+    ],
     ["css/style.css", ["Blurry Visuals Weddings"]],
   ]);
 
@@ -107,6 +118,18 @@ test("logo lockup has stable styles", async () => {
 
   assert.ok(logoBlock, ".brand-logo block is missing");
   assert.ok(nameBlock, ".brand-name block is missing");
-  assert.match(logoBlock, /(?:^|[;{])\s*width\s*:\s*42px\s*(?:;|})/i);
-  assert.match(logoBlock, /(?:^|[;{])\s*height\s*:\s*42px\s*(?:;|})/i);
+  const logoDeclarations = logoBlock.replace(
+    /"(?:\\[\s\S]|[^"\\])*"|'(?:\\[\s\S]|[^'\\])*'/g,
+    "",
+  );
+  assert.match(
+    logoDeclarations,
+    /(?:^|[;{])\s*width\s*:\s*42px\s*(?:;|})/i,
+    ".brand-logo must declare width: 42px",
+  );
+  assert.match(
+    logoDeclarations,
+    /(?:^|[;{])\s*height\s*:\s*42px\s*(?:;|})/i,
+    ".brand-logo must declare height: 42px",
+  );
 });
