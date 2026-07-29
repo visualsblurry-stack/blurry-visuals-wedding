@@ -144,6 +144,15 @@ test("public pages use only the Blurry Visuals Weddings identity", async () => {
   for (const [path, content] of files) {
     assertIdentity(path, content, expectedByPath.get(path));
   }
+
+  const indexHtml = files.find(([path]) => path === "index.html")[1];
+  const jsonLd = indexHtml.match(
+    /<script type="application\/ld\+json">\s*([\s\S]*?)\s*<\/script>/i,
+  );
+  assert.ok(jsonLd, "index.html is missing JSON-LD");
+  const schema = JSON.parse(jsonLd[1]);
+  assert.equal(schema["@type"], "Organization");
+  assert.notEqual(schema["@type"], "ProfessionalService");
 });
 
 test("story scripts use the Blurry Visuals namespace and titles", async () => {
