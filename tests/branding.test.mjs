@@ -37,7 +37,7 @@ test("public pages use only the Blurry Visuals Weddings identity", async () => {
   assert.doesNotMatch(content, /pheraa/i);
   assert.match(content, /Blurry Visuals Weddings/);
   assert.match(content, /visualsblurry@gmail\.com/);
-  assert.match(content, /instagram\.com\/theblurryvisuals/);
+  assert.match(content, /https:\/\/www\.instagram\.com\/theblurryvisuals\//);
 });
 
 test("story scripts use the Blurry Visuals namespace and titles", async () => {
@@ -45,7 +45,7 @@ test("story scripts use the Blurry Visuals namespace and titles", async () => {
     await Promise.all(["js/main.js", "js/stories-data.js"].map(readProjectFile))
   ).join("\n");
 
-  assert.doesNotMatch(content, /PHERAA|Pheraa/);
+  assert.doesNotMatch(content, /pheraa/i);
   assert.match(content, /BLURRY_WEDDING_STORIES/);
   assert.match(content, /Blurry Visuals Weddings/);
 });
