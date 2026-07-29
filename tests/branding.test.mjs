@@ -43,6 +43,25 @@ const assertBrandLogo = (path, html) => {
   );
 };
 
+const assertBrandFavicon = (path, html) => {
+  const faviconTag = (html.match(/<link\b[^>]*>/gi) ?? []).find((tag) => {
+    const rel = tag.match(/\srel\s*=\s*(["'])(.*?)\1/i)?.[2];
+    return rel?.trim().split(/\s+/).includes("icon");
+  });
+
+  assert.ok(faviconTag, `${path} is missing a favicon link`);
+  assert.equal(
+    faviconTag.match(/\stype\s*=\s*(["'])(.*?)\1/i)?.[2],
+    "image/png",
+    `${path} favicon must declare type="image/png"`,
+  );
+  assert.equal(
+    faviconTag.match(/\shref\s*=\s*(["'])(.*?)\1/i)?.[2],
+    optimizedLogoPath,
+    `${path} favicon must reference ${optimizedLogoPath}`,
+  );
+};
+
 const assertIdentity = (path, content, expectedValues) => {
   assert.ok(!/pheraa/i.test(content), `${path} contains the old Pheraa identity`);
   for (const value of expectedValues) {
@@ -75,6 +94,8 @@ test("official Blurry Visuals logo is used on both pages", async () => {
   );
   assertBrandLogo("index.html", indexHtml);
   assertBrandLogo("story.html", storyHtml);
+  assertBrandFavicon("index.html", indexHtml);
+  assertBrandFavicon("story.html", storyHtml);
 
   const optimizedLogoUrl = new URL(optimizedLogoPath, projectRoot);
   const [optimizedLogoStats, optimizedLogo] = await Promise.all([
