@@ -106,6 +106,11 @@ test("official Blurry Visuals logo is used on both pages", async () => {
     126,
     `${optimizedLogoPath} must be 126 pixels high`,
   );
+  assert.equal(
+    optimizedLogo[25],
+    6,
+    `${optimizedLogoPath} must use PNG color type 6 (RGBA)`,
+  );
 });
 
 test("public pages use only the Blurry Visuals Weddings identity", async () => {
