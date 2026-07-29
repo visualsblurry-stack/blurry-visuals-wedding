@@ -228,3 +228,43 @@ test("logo lockup has stable styles", async () => {
     ".brand-logo must declare height: 42px",
   );
 });
+
+test("text buttons use teal backgrounds with white labels", async () => {
+  const styles = (await readProjectFile("css/style.css")).replace(
+    /\/\*[\s\S]*?\*\//g,
+    "",
+  );
+  const declarationsFor = (selector) => {
+    const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const block = styles.match(new RegExp(`${escaped}\\s*\\{([^}]*)\\}`, "s"));
+    assert.ok(block, `${selector} style block is missing`);
+    return block[1];
+  };
+
+  assert.match(styles, /--teal\s*:\s*#789c9f\s*;/i);
+  for (const selector of [
+    ".nav a.cta",
+    ".hdr:not(.solid) .nav a.cta",
+    ".btn-gold,.btn-line",
+    ".filters button",
+    ".lightbox-close",
+  ]) {
+    const declarations = declarationsFor(selector);
+    assert.match(
+      declarations,
+      /background\s*:\s*var\(--teal\)\s*;/i,
+      `${selector} must use the teal button background`,
+    );
+    assert.match(
+      declarations,
+      /color\s*:\s*var\(--white\)\s*;/i,
+      `${selector} must use white button text`,
+    );
+  }
+
+  assert.doesNotMatch(
+    styles,
+    /\.hero\s+\.btn-(?:gold|line)\s*\{[^}]*background\s*:\s*var\(--white\)/is,
+    "hero button overrides must not restore a white background",
+  );
+});

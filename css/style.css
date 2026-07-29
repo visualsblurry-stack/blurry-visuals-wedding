@@ -95,13 +95,14 @@ h2 em,h1 em{font-style:italic;font-weight:340;color:var(--champagne);}
 .nav a{font-size:12px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--ash);transition:color .2s;}
 .nav a:hover{color:var(--champagne);}
 .nav a.cta{
-  color:var(--white);background:var(--champagne);padding:11px 22px;border-radius:2px;
+  color:var(--white);background:var(--teal);padding:11px 22px;border-radius:2px;font-weight:700;
   transition:filter .2s,transform .2s;
 }
 .nav a.cta:hover{filter:brightness(0.95);transform:translateY(-1px);color:var(--white);}
 .hdr:not(.solid) .brand{color:var(--white);}
 .hdr:not(.solid) .brand small,
 .hdr:not(.solid) .nav a{color:rgba(255,255,255,0.78);}
+.hdr:not(.solid) .nav a.cta{background:var(--teal);color:var(--white);}
 .hdr:not(.solid) .nav a:hover{color:var(--white);}
 .hdr:not(.solid) .burger span{background:var(--white);}
 
@@ -150,13 +151,10 @@ body.menu-open{overflow:hidden;}
   padding:15px 30px;border-radius:2px;font-size:12px;font-weight:700;
   letter-spacing:0.18em;text-transform:uppercase;transition:filter .2s,transform .2s,background .2s;
 }
-.btn-gold{background:var(--champagne);color:var(--white);}
-.btn-gold:hover{filter:brightness(0.95);transform:translateY(-2px);}
-.btn-line{border:1px solid var(--line);color:var(--champagne);}
-.btn-line:hover{border-color:var(--champagne);color:var(--champagne);background:rgba(120,156,159,0.08);}
-.hero .btn-gold{background:var(--white);color:var(--teal);}
-.hero .btn-line{border-color:rgba(255,255,255,0.58);color:var(--white);}
-.hero .btn-line:hover{border-color:var(--white);color:var(--white);background:rgba(255,255,255,0.13);}
+.btn-gold,.btn-line{background:var(--teal);border:1px solid var(--teal);color:var(--white);}
+.btn-gold:hover,.btn-line:hover{
+  background:var(--soot-2);border-color:var(--soot-2);color:var(--white);transform:translateY(-2px);
+}
 
 .hero-dots{
   position:absolute;right:max(4vw,24px);bottom:20px;z-index:4;
@@ -203,12 +201,12 @@ body.menu-open{overflow:hidden;}
 /* ======================= portfolio ======================= */
 .filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:42px;}
 .filters button{
-  padding:10px 20px;border:1px solid var(--line);border-radius:999px;
-  font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--ash);
+  padding:10px 20px;border:1px solid var(--teal);border-radius:999px;background:var(--teal);
+  font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--white);
   transition:color .2s,border-color .2s,background .2s;
 }
-.filters button:hover{color:var(--champagne);border-color:var(--champagne);}
-.filters button.act{background:var(--champagne);border-color:var(--champagne);color:var(--white);}
+.filters button:hover{background:var(--soot-2);border-color:var(--soot-2);color:var(--white);}
+.filters button.act{background:var(--teal);border-color:var(--teal);color:var(--white);box-shadow:inset 0 0 0 2px rgba(255,255,255,0.58);}
 
 .masonry{columns:3;column-gap:22px;}
 .masonry .tile{break-inside:avoid;margin-bottom:22px;display:block;}
@@ -253,8 +251,12 @@ body.menu-open{overflow:hidden;}
 .lightbox.open{display:grid;}
 .lightbox-frame{width:min(1080px,100%);aspect-ratio:16/9;background:#000;}
 .lightbox-frame iframe{width:100%;height:100%;border:0;}
-.lightbox-close{position:absolute;top:22px;right:26px;font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:var(--ash);}
-.lightbox-close:hover{color:var(--champagne);}
+.lightbox-close{
+  position:absolute;top:22px;right:26px;padding:10px 16px;border-radius:2px;
+  background:var(--teal);color:var(--white);font-size:13px;font-weight:700;
+  letter-spacing:0.2em;text-transform:uppercase;transition:background .2s,transform .2s;
+}
+.lightbox-close:hover{background:var(--soot-2);color:var(--white);transform:translateY(-1px);}
 
 /* ======================== stories ======================== */
 .stories{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;}
