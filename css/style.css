@@ -26,7 +26,7 @@
   --champagne-deep:#5d8386;
   --sindoor:var(--teal);
   --line:rgba(120,156,159,0.28);
-  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
   --ff-display:'TAN Angelton','Fraunces',Georgia,serif;
   --ff-body:'Manrope',-apple-system,'Segoe UI',sans-serif;
 }
@@ -132,20 +132,27 @@ body.menu-open{overflow:hidden;}
   background-size:cover;background-position:var(--hero-position,center);
 }
 .hero-slide.act{opacity:1;}
-.hero::before{ /* readability veil */
+.hero::before{
+  /* Readability veil, kept tight to the copy: the old version washed the
+     whole frame, including the top and right where nothing sits. */
   content:"";position:absolute;inset:0;z-index:1;
   background:
-    linear-gradient(90deg,rgba(12,35,38,0.58) 0%,rgba(12,35,38,0.28) 36%,rgba(12,35,38,0.04) 70%),
-    linear-gradient(180deg,rgba(12,35,38,0.16) 0%,rgba(120,156,159,0.06) 48%,rgba(120,156,159,0.34) 100%);
+    linear-gradient(90deg,rgba(12,35,38,0.50) 0%,rgba(12,35,38,0.18) 38%,rgba(12,35,38,0) 64%),
+    linear-gradient(0deg,rgba(12,35,38,0.58) 0%,rgba(12,35,38,0.30) 28%,rgba(12,35,38,0) 58%);
 }
-.hero-in{position:relative;z-index:3;padding:0 0 112px;width:min(1180px,92vw);margin:0 auto;text-shadow:0 2px 22px rgba(8,28,31,0.28);}
+/* With the veil pulled back, the copy carries its own contrast so the
+   photograph stays clear behind it. */
+.hero-in{
+  position:relative;z-index:3;padding:0 0 112px;width:min(1180px,92vw);margin:0 auto;
+  text-shadow:0 1px 3px rgba(8,28,31,0.55),0 3px 20px rgba(8,28,31,0.6);
+}
 .hero-eyebrow{
   font-size:11px;font-weight:700;letter-spacing:0.38em;text-transform:uppercase;
   color:var(--white);margin-bottom:22px;
 }
 .hero h1{font-size:clamp(48px,7vw,96px);max-width:12ch;}
 .hero h1,.hero h1 em{color:var(--white);}
-.hero-sub{margin:22px 0 0;max-width:48ch;color:rgba(255,255,255,0.9);font-size:17px;}
+.hero-sub{margin:22px 0 0;max-width:48ch;color:var(--white);font-size:17px;}
 .hero-cta{display:flex;gap:16px;margin-top:32px;flex-wrap:wrap;}
 .btn{
   display:inline-flex;align-items:center;gap:10px;
