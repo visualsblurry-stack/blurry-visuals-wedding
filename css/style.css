@@ -343,6 +343,54 @@ body.menu-open{overflow:hidden;}
 .contact-submit .lucide-icon{width:17px;height:17px;}
 .form-hint{font-size:11px;line-height:1.5;color:rgba(255,255,255,.76);}
 
+/* ================== investment modal ================== */
+body.investment-open{overflow:hidden;}
+.investment-modal[hidden]{display:none;}
+.investment-modal{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:24px;background:rgba(23,55,57,.68);backdrop-filter:blur(7px);}
+.investment-dialog{width:min(1240px,100%);height:100%;overflow-y:auto;overscroll-behavior:contain;background:var(--white);box-shadow:0 28px 90px rgba(8,28,31,.42);}
+.investment-bar{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;min-height:72px;padding:0 clamp(22px,4vw,58px);border-bottom:1px solid var(--line);background:rgba(255,255,255,.96);backdrop-filter:blur(10px);}
+.investment-brand{font-family:var(--ff-display);font-size:20px;color:var(--ivory);}
+.investment-close{display:grid;place-items:center;width:44px;height:44px;background:var(--teal);color:var(--white);}
+.investment-close:hover{background:var(--soot-2);}
+.investment-content{width:min(1080px,calc(100% - 64px));margin:0 auto;padding:58px 0 72px;}
+.investment-intro,.faq-heading{display:grid;grid-template-columns:.85fr 1.15fr;gap:58px;align-items:end;margin-bottom:38px;}
+.investment-kicker{margin:0 0 12px;font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--teal);}
+.investment-intro h1{font-size:clamp(42px,6vw,72px);letter-spacing:0;}
+.investment-intro h1 em,.faq-heading h2 em{color:var(--teal);font-style:italic;}
+.investment-intro>p,.faq-heading>p{margin:0;color:var(--ash);max-width:58ch;}
+.investment-packages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:stretch;}
+.investment-package{display:flex;min-width:0;min-height:520px;flex-direction:column;padding:32px;border:1px solid var(--line);background:var(--white);}
+.investment-package.featured{border-color:var(--teal);background:var(--teal);color:var(--white);}
+.package-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid var(--line);}
+.featured .package-top{border-color:rgba(255,255,255,.36);}
+.investment-package h2{font-size:34px;}
+.package-price{margin:0;text-align:right;line-height:1.25;}
+.package-price strong{display:block;font-size:22px;}
+.package-price span{font-size:12px;}
+.package-note{margin:0 0 10px;color:var(--ash);}
+.featured .package-note{color:rgba(255,255,255,.82);}
+.investment-package h3{margin:18px 0 6px;font-family:var(--ff-body);font-size:10px;font-weight:700;letter-spacing:.17em;text-transform:uppercase;}
+.investment-package>p:not(.package-note){margin:0;}
+.investment-package ul{margin:0;padding-left:20px;}
+.investment-package li{margin:6px 0;}
+.package-link{display:inline-flex;align-items:center;justify-content:space-between;gap:14px;margin-top:auto;padding-top:24px;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--teal);}
+.featured .package-link{color:var(--white);}
+.package-link:hover span{transform:translateX(3px);}
+.package-link span{transition:transform .2s;}
+.investment-travel{margin:20px 0 60px;padding:20px 24px;border-left:4px solid var(--teal);background:rgba(120,156,159,.1);color:var(--ash);}
+.faq-heading h2{font-size:clamp(34px,4vw,52px);}
+.faq-list{display:grid;gap:8px;}
+.faq-question{display:flex;align-items:center;justify-content:space-between;gap:20px;width:100%;min-height:64px;padding:16px 20px;background:var(--teal);color:var(--white);text-align:left;font-size:16px;font-weight:600;}
+.faq-question:hover{background:var(--soot-2);}
+.faq-plus{flex:0 0 auto;font-size:25px;font-weight:400;transition:transform .2s;}
+.faq-question[aria-expanded="true"] .faq-plus{transform:rotate(45deg);}
+.faq-answer{padding:20px 22px 22px;border:1px solid var(--line);border-top:0;background:var(--white);color:var(--ash);}
+.investment-final{display:flex;align-items:center;justify-content:space-between;gap:28px;margin-top:52px;padding:32px;background:var(--teal);color:var(--white);}
+.investment-final .investment-kicker{color:rgba(255,255,255,.76);}
+.investment-final h2{font-size:30px;color:var(--white);}
+.investment-cta{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 26px;border:1px solid var(--white);background:var(--white);color:var(--teal);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;}
+.investment-cta:hover{filter:brightness(.96);}
+
 /* ========================= footer ========================= */
 .ftr{border-top:1px solid var(--line);padding:44px 0;}
 .ftr .wrap{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;}
@@ -391,6 +439,7 @@ body.menu-open{overflow:hidden;}
   .films{grid-template-columns:1fr;}
   .about-grid{grid-template-columns:1fr;gap:42px;}
   .contact-grid{grid-template-columns:1fr;}
+  .investment-intro,.faq-heading{grid-template-columns:1fr;gap:18px;}
   .nav{display:none;}
   .burger{display:flex;}
 }
@@ -403,6 +452,19 @@ body.menu-open{overflow:hidden;}
   .contact-rows{grid-template-columns:1fr;}
   .form-actions{grid-template-columns:1fr;}
   .contact-submit{width:100%;}
+  .investment-modal{padding:0;}
+  .investment-dialog{width:100%;height:100%;}
+  .investment-bar{min-height:64px;padding:0 16px;}
+  .investment-brand{font-size:17px;}
+  .investment-content{width:calc(100% - 32px);padding:40px 0 52px;}
+  .investment-packages{grid-template-columns:1fr;}
+  .investment-package{min-height:0;padding:24px 20px;}
+  .package-top{display:block;}
+  .package-price{margin-top:10px;text-align:left;}
+  .faq-question{font-size:14px;padding:14px 16px;}
+  .investment-final{display:block;padding:24px 20px;}
+  .investment-cta{width:100%;margin-top:22px;white-space:normal;text-align:center;}
+  .ftr nav{width:100%;flex-wrap:wrap;gap:10px 18px;}
   .story-gallery{grid-template-columns:1fr;}
   .hero-in{padding-bottom:118px;}
   .hero h1{font-size:clamp(46px,14vw,68px);}

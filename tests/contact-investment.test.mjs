@@ -47,7 +47,10 @@ test("investment and FAQ content is an accessible shareable modal", async () => 
   assert.match(indexHtml, /₹2,55,000/);
   assert.equal((indexHtml.match(/class="faq-question"/g) ?? []).length, 7);
   assert.equal((indexHtml.match(/class="faq-answer"/g) ?? []).length, 7);
-  assert.equal((indexHtml.match(/aria-expanded="false"/g) ?? []).length, 7);
+  assert.equal(
+    (indexHtml.match(/<button class="faq-question"[^>]*aria-expanded="false"/g) ?? []).length,
+    7,
+  );
   assert.match(styles, /\.investment-modal/);
   assert.match(styles, /body\.investment-open\s*\{[^}]*overflow\s*:\s*hidden/s);
   assert.match(script, /location\.hash\s*===\s*["']#investment["']/);

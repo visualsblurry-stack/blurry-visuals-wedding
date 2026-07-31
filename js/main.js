@@ -272,6 +272,122 @@
     });
   }
 
+  /* ---------- Investment & FAQs modal ---------- */
+  var investmentModal = document.getElementById("investment-modal");
+  var investmentDialog = investmentModal ? investmentModal.querySelector(".investment-dialog") : null;
+  var investmentClose = investmentModal ? investmentModal.querySelector("[data-close-investment]") : null;
+  var investmentLastFocus = null;
+
+  function investmentFocusable() {
+    if (!investmentDialog) return [];
+    return Array.prototype.slice.call(investmentDialog.querySelectorAll(
+      'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
+    )).filter(function (el) { return !el.hidden && el.offsetParent !== null; });
+  }
+
+  function openInvestmentModal(updateHash) {
+    if (!investmentModal || !investmentDialog || !investmentModal.hidden) return;
+    investmentLastFocus = document.activeElement;
+    investmentModal.hidden = false;
+    investmentModal.setAttribute("aria-hidden", "false");
+    investmentDialog.scrollTop = 0;
+    document.body.classList.add("investment-open");
+    if (updateHash && location.hash !== "#investment") {
+      history.pushState(null, "", location.pathname + location.search + "#investment");
+    }
+    window.requestAnimationFrame(function () {
+      if (investmentClose) investmentClose.focus();
+      else investmentDialog.focus();
+    });
+  }
+
+  function closeInvestmentModal(updateHash) {
+    if (!investmentModal || investmentModal.hidden) return;
+    investmentModal.hidden = true;
+    investmentModal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("investment-open");
+    if (updateHash && location.hash === "#investment") {
+      history.replaceState(null, "", location.pathname + location.search);
+    }
+    if (investmentLastFocus && document.contains(investmentLastFocus)) investmentLastFocus.focus();
+  }
+
+  if (investmentModal) {
+    document.querySelectorAll("[data-open-investment]").forEach(function (link) {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        openInvestmentModal(true);
+      });
+    });
+
+    if (investmentClose) {
+      investmentClose.addEventListener("click", function () { closeInvestmentModal(true); });
+    }
+
+    investmentModal.addEventListener("click", function (e) {
+      if (e.target === investmentModal) closeInvestmentModal(true);
+    });
+
+    investmentModal.querySelectorAll(".faq-question").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var wasOpen = button.getAttribute("aria-expanded") === "true";
+        investmentModal.querySelectorAll(".faq-question").forEach(function (other) {
+          other.setAttribute("aria-expanded", "false");
+          var otherAnswer = document.getElementById(other.getAttribute("aria-controls"));
+          if (otherAnswer) otherAnswer.hidden = true;
+        });
+        if (!wasOpen) {
+          button.setAttribute("aria-expanded", "true");
+          var answer = document.getElementById(button.getAttribute("aria-controls"));
+          if (answer) answer.hidden = false;
+        }
+      });
+    });
+
+    investmentModal.querySelectorAll("[data-investment-contact]").forEach(function (link) {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        closeInvestmentModal(false);
+        history.replaceState(null, "", location.pathname + location.search + "#contact");
+        var contact = document.getElementById("contact");
+        if (contact) contact.scrollIntoView({ behavior: REDUCED ? "auto" : "smooth" });
+      });
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (investmentModal.hidden) return;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeInvestmentModal(true);
+        return;
+      }
+      if (e.key === "Tab") {
+        var focusable = investmentFocusable();
+        if (!focusable.length) {
+          e.preventDefault();
+          investmentDialog.focus();
+          return;
+        }
+        var first = focusable[0];
+        var last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+
+    window.addEventListener("hashchange", function () {
+      if (location.hash === "#investment") openInvestmentModal(false);
+      else closeInvestmentModal(false);
+    });
+
+    if (location.hash === "#investment") openInvestmentModal(false);
+  }
+
   /* ---------- story page renderer (story.html?s=slug) ---------- */
   var storyRoot = document.getElementById("story-root");
   if (storyRoot && window.BLURRY_WEDDING_STORIES) {

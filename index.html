@@ -35,6 +35,7 @@
       <a href="#work">Work</a>
       <a href="#films">Films</a>
       <a href="#stories">Weddings</a>
+      <a href="#investment" data-open-investment>Investment</a>
       <a href="#about">About</a>
       <a class="cta" href="#contact">Inquire</a>
     </nav>
@@ -48,6 +49,7 @@
   <a href="#work">Work</a>
   <a href="#films">Films</a>
   <a href="#stories">Real Weddings</a>
+  <a href="#investment" data-open-investment>Investment &amp; FAQs</a>
   <a href="#about">About</a>
   <a href="#contact">Inquire</a>
 </div>
@@ -318,6 +320,7 @@
       <a href="#work">Work</a>
       <a href="#films">Films</a>
       <a href="#stories">Weddings</a>
+      <a href="#investment" data-open-investment>Investment &amp; FAQs</a>
       <a href="#contact">Inquire</a>
     </nav>
   </div>
@@ -327,6 +330,66 @@
 <div class="lightbox" id="lightbox" aria-hidden="true">
   <button class="lightbox-close">Close ✕</button>
   <div class="lightbox-frame"></div>
+</div>
+
+<!-- Investment & FAQs modal -->
+<div class="investment-modal" id="investment-modal" aria-hidden="true" hidden>
+  <section class="investment-dialog" role="dialog" aria-modal="true" aria-labelledby="investment-title" tabindex="-1">
+    <header class="investment-bar">
+      <span class="investment-brand">Blurry Visuals Weddings</span>
+      <button class="investment-close" type="button" data-close-investment aria-label="Close Investment and FAQs">
+        <svg class="lucide-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </header>
+    <div class="investment-content">
+      <div class="investment-intro">
+        <div><p class="investment-kicker">Investment &amp; FAQs</p><h1 id="investment-title">Stories worth<br><em>keeping.</em></h1></div>
+        <p>Thoughtful photography and cinematic films, shaped around the scale and rhythm of your celebration. Begin with one of our signature collections, then tailor the coverage to your wedding.</p>
+      </div>
+
+      <div class="investment-packages">
+        <article class="investment-package">
+          <div class="package-top"><h2>Basic</h2><p class="package-price"><strong>₹1,75,000</strong><span>Single day</span></p></div>
+          <p class="package-note">For an intimate or small wedding gathering.</p>
+          <h3>Photography</h3><p>1 traditional + 1 candid photographer</p>
+          <h3>Cinematography</h3><p>1 traditional + 1 lead cinematographer</p>
+          <h3>Deliverables</h3>
+          <ul><li>800-1,000 edited images</li><li>4-5 minute storytelling highlight</li><li>2 vertical reels</li><li>Cinematic documentary and event raw cuts</li></ul>
+          <a class="package-link" href="#contact" data-investment-contact>Ask about Basic <span aria-hidden="true">→</span></a>
+        </article>
+        <article class="investment-package featured">
+          <div class="package-top"><h2>Signature</h2><p class="package-price"><strong>₹2,55,000</strong><span>Single day</span></p></div>
+          <p class="package-note">For a destination or large wedding gathering.</p>
+          <h3>Photography</h3><p>1 traditional + 2 candid photographers</p>
+          <h3>Cinematography</h3><p>1 traditional + 2 lead cinematographers</p>
+          <h3>Deliverables</h3>
+          <ul><li>1,200-1,500 edited images</li><li>1 minute teaser</li><li>4-5 minute storytelling highlight</li><li>20 minute film and wedding raw cut</li></ul>
+          <a class="package-link" href="#contact" data-investment-contact>Ask about Signature <span aria-hidden="true">→</span></a>
+        </article>
+      </div>
+
+      <p class="investment-travel"><strong>Planning an outstation celebration?</strong> Travel and accommodation are additional. Final coverage, timing, and deliverables are confirmed in your proposal.</p>
+
+      <div class="faq-heading">
+        <div><p class="investment-kicker">Frequently asked</p><h2>A little clarity,<br><em>before we begin.</em></h2></div>
+        <p>Open a question for details about services, packages, crew, travel, image delivery, and our approach to wedding films.</p>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-1"><span>What services do you offer?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-1" hidden>We photograph weddings in candid, documentary, traditional, portrait, and detail-led styles. Film coverage includes traditional event documentation and story-led cinematic wedding films. Pre-weddings, engagements, haldi, mehndi, sangeet, and receptions can be included in a tailored proposal.</div></div>
+        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-2"><span>What are your packages?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-2" hidden>Basic is ₹1,75,000 for one day and is designed for intimate celebrations. Signature is ₹2,55,000 for one day and adds a larger photography and cinematography crew for destination or larger weddings. Coverage can be tailored to your event schedule.</div></div>
+        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-3"><span>How is the crew selected for a wedding?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-3" hidden>We recommend the crew after understanding the number of events, guest count, venue layout, travel, and the moments that matter most to you. Your proposal clearly confirms the photographers, cinematographers, and coverage assigned to each event.</div></div>
+        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-4"><span>Where are you based, and do you travel?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-4" hidden>Blurry Visuals Weddings is based in Mumbai and travels for celebrations across India and beyond. Travel and accommodation for outstation weddings are quoted separately according to the final crew and schedule.</div></div>
+        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-5"><span>How many pictures will we receive, and when?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-5" hidden>The Basic collection includes approximately 800-1,000 edited images, while Signature includes approximately 1,200-1,500. Preview delivery and final gallery timelines are confirmed in your wedding proposal because coverage varies by event count and scope.</div></div>
+        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-6"><span>How do you photograph weddings?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-6" hidden>Our approach combines quiet documentary observation with gently directed portraits. We preserve rituals, relationships, atmosphere, and spontaneous moments while making space for refined photographs that still feel natural to you.</div></div>
+        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-7"><span>What is the difference between cinematography and traditional videography?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-7" hidden>Traditional videography records the event in a complete, chronological way. Cinematography shapes selected moments, sound, movement, and emotion into a concise story-led film. A collection may include both documentary coverage and a cinematic edit.</div></div>
+      </div>
+
+      <div class="investment-final">
+        <div><p class="investment-kicker">Begin your story</p><h2>Ready to check your date?</h2></div>
+        <a class="investment-cta" href="#contact" data-investment-contact>Check availability</a>
+      </div>
+    </div>
+  </section>
 </div>
 
 <script src="js/stories-data.js"></script>
