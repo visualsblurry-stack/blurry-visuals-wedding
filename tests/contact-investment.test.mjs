@@ -27,7 +27,12 @@ test("contact redesign preserves the enquiry contract", async () => {
   assert.match(styles, /\.contact-grid\s*\{[^}]*grid-template-columns\s*:\s*minmax\(0,0\.86fr\)\s+minmax\(0,1\.14fr\)/s);
   assert.match(styles, /\.contact-grid\s*\{[^}]*width\s*:\s*100%/s);
   assert.doesNotMatch(styles, /\.contact-grid\s*\{[^}]*box-shadow/s);
-  assert.match(styles, /\.form-panel\s*\{[^}]*background\s*:\s*var\(--teal\)/s);
+  // Deeper teal: white text on the original --teal measured only 2.98:1.
+  assert.match(styles, /\.form-panel\s*\{[^}]*background\s*:\s*var\(--teal-deep\)/s);
+  assert.match(styles, /--teal-deep\s*:\s*#547c7f/);
+  // Native select options must not inherit the teal panel background.
+  assert.match(styles, /\.field select option\s*\{[^}]*background\s*:\s*var\(--white\)/s);
+  assert.match(html, /id="f-edate"[^>]*type="date"/);
   assert.match(script, /var WHATSAPP = "917032390419"/);
   assert.match(script, /https:\/\/wa\.me\//);
 });

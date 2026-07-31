@@ -259,11 +259,20 @@
         var el = form.elements[name];
         return el && el.value ? el.value.trim() : "";
       };
+      // The date field submits ISO (2026-12-12); send it as "12 Dec 2026".
+      var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      var readableDate = function (iso) {
+        var parts = String(iso).split("-");
+        if (parts.length !== 3) return iso;
+        var month = MONTHS[parseInt(parts[1], 10) - 1];
+        if (!month) return iso;
+        return parseInt(parts[2], 10) + " " + month + " " + parts[0];
+      };
       var lines = [
         "Hello Blurry Visuals Weddings! Wedding inquiry —",
         "Couple: " + v("names"),
         "Event: " + v("etype"),
-        "Date: " + (v("edate") || "not fixed yet"),
+        "Date: " + (readableDate(v("edate")) || "not fixed yet"),
         "City / venue: " + [v("city"), v("venue")].filter(Boolean).join(", "),
         v("message") ? "Details: " + v("message") : ""
       ].filter(Boolean);
