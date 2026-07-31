@@ -8,3 +8,7 @@ img/*.jpeg
 img/*.png
 !img/blurry-visuals-logo.png
 !img/blurry-visuals-logo-web.png
+
+# Wedding films are large binaries; keep them out of git history.
+video/stories/*
+!video/stories/.gitkeep

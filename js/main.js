@@ -452,8 +452,38 @@
     var prev = list[(idx - 1 + list.length) % list.length];
     var next = list[(idx + 1) % list.length];
 
+    /* The cinematic highlight. A local file under video/stories/ is preferred;
+       until one is supplied we fall back to a click-to-play facade for the
+       film link, so nothing is embedded until the visitor asks for it. */
+    var youtubeId = function (url) {
+      var m = String(url).match(/[?&]v=([\w-]{6,})/) || String(url).match(/youtu\.be\/([\w-]{6,})/);
+      return m ? m[1] : "";
+    };
+    var filmHtml = "";
+    if (st.filmFile) {
+      filmHtml =
+        '<video class="story-film-media" controls preload="none"' +
+        (st.filmPoster ? ' poster="' + esc(st.filmPoster) + '"' : "") +
+        '><source src="' + esc(st.filmFile) + '" type="video/mp4">' +
+        "Your browser cannot play this film.</video>";
+    } else if (st.film && youtubeId(st.film)) {
+      var vid = youtubeId(st.film);
+      filmHtml =
+        '<button class="story-film-facade" type="button" data-film-id="' + esc(vid) + '"' +
+        ' style="background-image:url(\'https://img.youtube.com/vi/' + esc(vid) + '/maxresdefault.jpg\')"' +
+        ' aria-label="Play the wedding film for ' + esc(st.couple[0]) + " and " + esc(st.couple[1]) + '">' +
+        '<span class="story-film-play" aria-hidden="true">▸</span></button>';
+    }
+    var filmSection = filmHtml
+      ? '<section class="story-film"><div class="wrap">' +
+          '<div class="phera"><b>The film</b> — Cinematic highlights</div>' +
+          '<div class="story-film-frame">' + filmHtml + "</div>" +
+        "</div></section>"
+      : "";
+
     storyRoot.innerHTML =
       '<section class="story-hero"><div class="wrap">' +
+        '<a class="story-back" href="index.html#stories"><span aria-hidden="true">←</span> All weddings</a>' +
         '<div class="phera"><b>Real wedding ' + ("0" + (idx + 1)).slice(-2) + "</b> — " + esc(st.city) + "</div>" +
         "<h1>" + esc(st.couple[0]) + " <em>&amp;</em> " + esc(st.couple[1]) + "</h1>" +
         (st.film ? '<div class="hero-cta" style="margin-top:30px;"><a class="btn btn-line" href="' +
@@ -469,6 +499,7 @@
         '<p class="lede">' + esc(st.lede) + "</p>" +
         '<p class="txt">' + esc(st.story) + "</p>" +
       "</div></section>" +
+      filmSection +
       '<div class="wrap"><div class="story-gallery">' + galleryHtml + "</div></div>" +
       '<section class="story-nav"><div class="wrap" style="display:flex;justify-content:space-between;gap:20px;width:min(1180px,92vw);">' +
         '<a class="prev" href="story.html?s=' + esc(prev.slug) + '"><small>← Previous wedding</small><b>' +
@@ -476,6 +507,20 @@
         '<a class="next" href="story.html?s=' + esc(next.slug) + '"><small>Next wedding →</small><b>' +
           esc(next.couple[0]) + " &amp; " + esc(next.couple[1]) + "</b></a>" +
       "</div></section>";
+
+    var facade = storyRoot.querySelector(".story-film-facade");
+    if (facade) {
+      facade.addEventListener("click", function () {
+        var frame = document.createElement("iframe");
+        frame.className = "story-film-media";
+        frame.src = "https://www.youtube-nocookie.com/embed/" + facade.dataset.filmId + "?autoplay=1&rel=0";
+        frame.title = "Wedding film";
+        frame.allow = "accelerometer; autoplay; encrypted-media; picture-in-picture";
+        frame.allowFullscreen = true;
+        frame.setAttribute("frameborder", "0");
+        facade.replaceWith(frame);
+      });
+    }
   }
 
   /* ---------- index: build story cards from data ---------- */
