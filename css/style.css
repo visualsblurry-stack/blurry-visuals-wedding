@@ -149,10 +149,6 @@ body.menu-open{overflow:hidden;}
   padding:0 clamp(18px,2.4vw,44px) 92px;
   text-shadow:0 1px 3px rgba(8,28,31,0.55),0 3px 20px rgba(8,28,31,0.6);
 }
-.hero-eyebrow{
-  font-size:11px;font-weight:700;letter-spacing:0.38em;text-transform:uppercase;
-  color:var(--white);margin-bottom:22px;
-}
 .hero h1{font-size:clamp(36px,4.6vw,62px);max-width:11ch;}
 .hero h1,.hero h1 em{color:var(--white);}
 /* Per-slide tagline, typed out one character at a time. min-height holds

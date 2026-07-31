@@ -34,10 +34,11 @@ test("hero is an eight-image gallery of the studio's own photographs", async () 
     html,
     /<h1>Love,<br><em>beautifully<\/em> remembered\.<\/h1>/,
   );
-  // The hero carries an eyebrow, a headline, and two actions. The old
-  // subheading only restated the eyebrow and covered the photograph.
+  // The hero carries a headline, the typed per-slide tagline, and two
+  // actions. Nothing else competes with the photograph.
   assert.doesNotMatch(html, /class="hero-sub"/);
-  assert.match(html, /<p class="hero-eyebrow">Wedding photography &amp; films · Mumbai<\/p>/);
+  assert.doesNotMatch(html, /class="hero-eyebrow"/);
+  assert.match(html, /class="hero-typed"/);
   assert.match(html, />Check availability<\/a>/);
   assert.match(html, />View stories<\/a>/);
   assert.doesNotMatch(html, /class="ring"|class="hero-marker"/);
