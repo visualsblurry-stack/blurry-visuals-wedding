@@ -1,4 +1,4 @@
-# Contact Form Redesign
+# Contact Form And Investment Modal Redesign
 
 ## Objective
 
@@ -64,3 +64,14 @@ Redesign the wedding-site contact section as an editorial "Get in touch" experie
 - Confirm equal desktop panel heights, one-column mobile layout, 48px touch targets, no overlap, and no horizontal overflow.
 - Submit representative values and confirm the generated WhatsApp URL still includes every field.
 - Check for local request failures, console errors, and page errors.
+
+## Investment & FAQs Modal
+
+- Add an `Investment` entry to the homepage and story-page header, mobile drawer, and footer navigation.
+- Open the content as a full-screen editorial modal over the current page, never as a separate website page.
+- Use `#investment` as a shareable URL state. Loading that hash opens the modal; closing it removes the hash without reloading the page.
+- Present Basic (`Rs 1,75,000`, single day) and Signature (`Rs 2,55,000`, single day) collections with their approved crew and deliverables, followed by the outstation travel note.
+- Include seven working FAQ accordions covering services, packages, crew selection, location and travel, image counts and timing, photographic approach, and cinematography versus traditional videography.
+- Provide close-button, backdrop, and Escape dismissal; lock page scrolling while open; trap keyboard focus inside the dialog; restore focus on close; and keep `aria-expanded`, `aria-controls`, `hidden`, `role="dialog"`, and `aria-modal` states accurate.
+- Make package and final availability actions close the modal and move the client to the existing enquiry form.
+- Keep the modal fully responsive, with two package columns on desktop and one column on mobile, no horizontal overflow, and 44px minimum interactive targets.
