@@ -66,6 +66,32 @@
     return pendingSlides[source];
   }
 
+  /* Each slide carries its own tagline, typed out character by character.
+     The animated span is hidden from assistive tech; the sr-only label
+     beside it gets the whole line at once so it is never read letter by
+     letter. */
+  var taglineTyped = document.querySelector(".hero-typed");
+  var taglineLabel = document.querySelector("[data-tagline-label]");
+  var taglineTimer = 0;
+
+  function typeHeroTagline(index) {
+    if (!taglineTyped) return;
+    var slide = slides[index];
+    var text = (slide && slide.dataset.tagline) || "";
+    window.clearTimeout(taglineTimer);
+    if (taglineLabel) taglineLabel.textContent = text;
+    if (REDUCED) {
+      taglineTyped.textContent = text;
+      return;
+    }
+    var cursor = 0;
+    (function step() {
+      taglineTyped.textContent = text.slice(0, cursor);
+      if (cursor++ >= text.length) return;
+      taglineTimer = window.setTimeout(step, 42);
+    })();
+  }
+
   function updateHeroDots() {
     heroDots.forEach(function (dot, index) {
       var active = index === slideIndex;
@@ -83,6 +109,7 @@
       slideIndex = nextIndex;
       slides[slideIndex].classList.add("act");
       updateHeroDots();
+      typeHeroTagline(slideIndex);
       loadHeroSlide((slideIndex + 1) % slides.length);
       return true;
     });
@@ -149,6 +176,7 @@
   if (slides.length) {
     loadHeroSlide(1 % slides.length);
     updateHeroDots();
+    typeHeroTagline(slideIndex);
     scheduleHeroAutoplay();
   }
 
