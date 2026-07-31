@@ -14,7 +14,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="img/blurry-visuals-logo-web.png">
-<link rel="stylesheet" href="css/style.css?v=20260731b">
+<link rel="preload" as="image" href="img/hero/hero-wedding-portrait-couple.webp">
+<link rel="stylesheet" href="css/style.css?v=20260731c">
 <script type="application/ld+json">
 { "@context":"https://schema.org","@type":"Organization","name":"Blurry Visuals Weddings","description":"Wedding photography and films studio based in Mumbai.","telephone":["+917032390419","+919892964884"],"email":"visualsblurry@gmail.com","address":{"@type":"PostalAddress","addressLocality":"Mumbai","addressRegion":"Maharashtra","addressCountry":"IN"},"areaServed":["Mumbai","India"],"sameAs":["https://www.instagram.com/theblurryvisuals/"] }
 </script>
@@ -59,12 +60,11 @@
 <!-- ================= PHERA I · hero ================= -->
 <section class="hero">
   <div class="hero-slides" aria-hidden="true">
-    <div class="hero-slide act" style="--hero-position:50% 50%;background-image:url('https://images.unsplash.com/photo-1722952934708-749c22eb2e58?auto=format&amp;fit=crop&amp;w=1920&amp;q=75')"></div>
-    <div class="hero-slide" data-bg="img/hero/hero-wedding-portrait-couple.webp" style="--hero-position:58% 58%"></div>
-    <div class="hero-slide" data-bg="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&amp;fit=crop&amp;w=1920&amp;q=75" style="--hero-position:50% 50%"></div>
+    <!-- Blurry Visuals' own photographs only. The first slide loads eagerly
+         because it is the largest paint on the page. -->
+    <div class="hero-slide act" style="--hero-position:58% 58%;background-image:url('img/hero/hero-wedding-portrait-couple.webp')"></div>
     <div class="hero-slide" data-bg="img/hero/hero-sachi-vedant-embrace.webp" style="--hero-position:52% 45%"></div>
     <div class="hero-slide" data-bg="img/hero/hero-abhi-isha.webp" style="--hero-position:50% 66%"></div>
-    <div class="hero-slide" data-bg="https://images.unsplash.com/photo-1587271636175-90d58cdad458?auto=format&amp;fit=crop&amp;w=1920&amp;q=75" style="--hero-position:50% 50%"></div>
     <div class="hero-slide" data-bg="img/hero/hero-sachi-vedant-ceremony.webp" style="--hero-position:50% 54%"></div>
     <div class="hero-slide" data-bg="img/hero/hero-wedding-portrait-walk.webp" style="--hero-position:50% 58%"></div>
     <div class="hero-slide" data-bg="img/hero/hero-wedding-portrait-hands.webp" style="--hero-position:50% 50%"></div>
@@ -87,9 +87,6 @@
     <button class="hero-dot" type="button" data-slide="3" aria-label="Show hero image 4"></button>
     <button class="hero-dot" type="button" data-slide="4" aria-label="Show hero image 5"></button>
     <button class="hero-dot" type="button" data-slide="5" aria-label="Show hero image 6"></button>
-    <button class="hero-dot" type="button" data-slide="6" aria-label="Show hero image 7"></button>
-    <button class="hero-dot" type="button" data-slide="7" aria-label="Show hero image 8"></button>
-    <button class="hero-dot" type="button" data-slide="8" aria-label="Show hero image 9"></button>
   </div>
 </section>
 
@@ -393,7 +390,7 @@
   </section>
 </div>
 
-<script src="js/stories-data.js?v=20260731b"></script>
-<script src="js/main.js?v=20260731b"></script>
+<script src="js/stories-data.js?v=20260731c"></script>
+<script src="js/main.js?v=20260731c"></script>
 </body>
 </html>

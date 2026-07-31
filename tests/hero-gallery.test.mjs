@@ -15,10 +15,16 @@ const heroAssets = [
   "img/hero/hero-wedding-portrait-hands.webp",
 ];
 
-test("hero is a concise nine-image gallery", async () => {
+test("hero is a six-image gallery of the studio's own photographs", async () => {
   const html = await read("index.html");
-  assert.equal((html.match(/class="hero-slide(?: act)?"/g) ?? []).length, 9);
-  assert.equal((html.match(/class="hero-dot(?: act)?"/g) ?? []).length, 9);
+  assert.equal((html.match(/class="hero-slide(?: act)?"/g) ?? []).length, 6);
+  assert.equal((html.match(/class="hero-dot(?: act)?"/g) ?? []).length, 6);
+
+  // No stock imagery in the hero: every slide must be a local studio asset.
+  const heroBlock = html.match(/<div class="hero-slides"[\s\S]*?<\/div>\s*<\/div>/)[0];
+  assert.doesNotMatch(heroBlock, /unsplash\.com/);
+  assert.equal((heroBlock.match(/img\/hero\/[a-z0-9-]+\.webp/g) ?? []).length, 6);
+  for (const path of heroAssets) assert.ok(heroBlock.includes(path), `${path} missing from hero`);
   assert.match(
     html,
     /<h1>Love,<br><em>beautifully<\/em> remembered\.<\/h1>/,
