@@ -29,10 +29,10 @@ test("hero is a six-image gallery of the studio's own photographs", async () => 
     html,
     /<h1>Love,<br><em>beautifully<\/em> remembered\.<\/h1>/,
   );
-  assert.match(
-    html,
-    /Honest photographs and cinematic films, wherever your story takes us\./,
-  );
+  // The hero carries an eyebrow, a headline, and two actions. The old
+  // subheading only restated the eyebrow and covered the photograph.
+  assert.doesNotMatch(html, /class="hero-sub"/);
+  assert.match(html, /<p class="hero-eyebrow">Wedding photography &amp; films · Mumbai<\/p>/);
   assert.match(html, />Check availability<\/a>/);
   assert.match(html, />View stories<\/a>/);
   assert.doesNotMatch(html, /class="ring"|class="hero-marker"/);
