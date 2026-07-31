@@ -23,7 +23,10 @@ test("contact redesign preserves the enquiry contract", async () => {
   assert.ok((html.match(/class="lucide-icon"/g) ?? []).length >= 11);
   assert.match(html, /<button[^>]*type="submit"[^>]*>[\s\S]*?Send[\s\S]*?<\/button>/);
   assert.doesNotMatch(html, />\s*Send via WhatsApp\s*</);
-  assert.match(styles, /\.contact-grid\s*\{[^}]*grid-template-columns\s*:\s*repeat\(2,minmax\(0,1fr\)\)/s);
+  // Full-bleed asymmetric split: the old equal 50/50 columns read as an open book.
+  assert.match(styles, /\.contact-grid\s*\{[^}]*grid-template-columns\s*:\s*minmax\(0,0\.86fr\)\s+minmax\(0,1\.14fr\)/s);
+  assert.match(styles, /\.contact-grid\s*\{[^}]*width\s*:\s*100%/s);
+  assert.doesNotMatch(styles, /\.contact-grid\s*\{[^}]*box-shadow/s);
   assert.match(styles, /\.form-panel\s*\{[^}]*background\s*:\s*var\(--teal\)/s);
   assert.match(script, /var WHATSAPP = "917032390419"/);
   assert.match(script, /https:\/\/wa\.me\//);
