@@ -51,13 +51,17 @@ test("investment and FAQ content is an accessible shareable modal", async () => 
   assert.match(indexHtml, /role="dialog"/);
   assert.match(indexHtml, /aria-modal="true"/);
   assert.match(indexHtml, /aria-labelledby="investment-title"/);
-  assert.match(indexHtml, /₹1,75,000/);
-  assert.match(indexHtml, /₹2,55,000/);
-  assert.equal((indexHtml.match(/class="faq-question"/g) ?? []).length, 7);
-  assert.equal((indexHtml.match(/class="faq-answer"/g) ?? []).length, 7);
+  // Collections renamed per the 26-27 brochure.
+  assert.match(indexHtml, /<h2>Intimate<\/h2>/);
+  assert.match(indexHtml, /<h2>Signature<\/h2>/);
+  assert.doesNotMatch(indexHtml, /<h2>Basic<\/h2>/);
+  assert.match(indexHtml, /₹1,25,000/);
+  assert.match(indexHtml, /₹2,25,000/);
+  assert.equal((indexHtml.match(/class="faq-question"/g) ?? []).length, 9);
+  assert.equal((indexHtml.match(/class="faq-answer"/g) ?? []).length, 9);
   assert.equal(
     (indexHtml.match(/<button class="faq-question"[^>]*aria-expanded="false"/g) ?? []).length,
-    7,
+    9,
   );
   assert.match(styles, /\.investment-modal/);
   assert.match(styles, /body\.investment-open\s*\{[^}]*overflow\s*:\s*hidden/s);

@@ -15,7 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="img/blurry-visuals-logo-web.png">
 <link rel="preload" as="image" href="img/hero/hero-wedding-portrait-couple.webp">
-<link rel="stylesheet" href="css/style.css?v=20260731h">
+<link rel="stylesheet" href="css/style.css?v=20260731j">
 <script type="application/ld+json">
 { "@context":"https://schema.org","@type":"Organization","name":"Blurry Visuals Weddings","description":"Wedding photography and films studio based in Mumbai.","telephone":["+917032390419","+919892964884"],"email":"visualsblurry@gmail.com","address":{"@type":"PostalAddress","addressLocality":"Mumbai","addressRegion":"Maharashtra","addressCountry":"IN"},"areaServed":["Mumbai","India"],"sameAs":["https://www.instagram.com/theblurryvisuals/"] }
 </script>
@@ -33,9 +33,8 @@
       </span>
     </a>
     <nav class="nav" aria-label="Primary">
-      <a href="#work">Work</a>
-      <a href="#films">Films</a>
       <a href="#stories">Weddings</a>
+      <a href="#films">Films</a>
       <a href="#investment" data-open-investment>Investment</a>
       <a href="#about">About</a>
       <a class="cta" href="#contact">Inquire</a>
@@ -47,9 +46,8 @@
 </header>
 
 <div class="drawer" id="drawer">
-  <a href="#work">Work</a>
-  <a href="#films">Films</a>
   <a href="#stories">Real Weddings</a>
+  <a href="#films">Films</a>
   <a href="#investment" data-open-investment>Investment &amp; FAQs</a>
   <a href="#about">About</a>
   <a href="#contact">Inquire</a>
@@ -96,7 +94,12 @@
   </div>
 </section>
 
-<!-- ================= PHERA II · portfolio ================= -->
+<!-- ================= portfolio · COMMENTED OUT =================
+     Temporarily hidden at the owner's request; may return later.
+     Tiles are still stock imagery and need real work before reuse.
+     Re-enable by deleting this wrapper and restoring the nav links
+     marked "work" in the header, drawer, and footer. -->
+<!--
 <section class="sec" id="work">
   <div class="wrap">
     <div class="phera rv"><b>Phera II</b> — The work</div>
@@ -116,7 +119,6 @@
     </div>
 
     <div class="masonry">
-      <!-- Stock photos for now — swap each background-image URL with img/work/*.jpg later -->
       <figure class="tile rv" data-cat="weddings">
         <div class="ph ph-img r-34" role="img" aria-label="Pheras under the canopy" style="background-image:url('https://images.unsplash.com/photo-1587271636175-90d58cdad458?auto=format&fit=crop&w=900&q=70')"></div>
         <figcaption><b>The seven rounds</b><span>Wedding</span></figcaption>
@@ -168,6 +170,19 @@
     </div>
   </div>
 </section>
+-->
+
+<!-- ================= PHERA II · real weddings ================= -->
+<section class="sec" id="stories">
+  <div class="wrap">
+    <div class="phera rv"><b>Phera II</b> — Real weddings</div>
+    <div class="sec-head rv">
+      <h2>Couples, <em>covered</em></h2>
+      <p>Six recent weddings, each with its own story page — the venue, the day, and the frames that made it.</p>
+    </div>
+    <div class="stories" id="stories-grid"><!-- built from stories-data.js --></div>
+  </div>
+</section>
 
 <!-- ================= PHERA III · films ================= -->
 <section class="sec" id="films">
@@ -205,43 +220,40 @@
   </div>
 </section>
 
-<!-- ================= PHERA IV · real weddings ================= -->
-<section class="sec" id="stories">
-  <div class="wrap">
-    <div class="phera rv"><b>Phera IV</b> — Real weddings</div>
-    <div class="sec-head rv">
-      <h2>Couples, <em>covered</em></h2>
-      <p>Six recent weddings, each with its own story page — the venue, the day, and the frames that made it.</p>
-    </div>
-    <div class="stories" id="stories-grid"><!-- built from stories-data.js --></div>
-  </div>
-</section>
-
-<!-- ================= PHERA V · about ================= -->
+<!-- ================= PHERA IV · about ================= -->
 <section class="sec" id="about">
   <div class="wrap">
-    <div class="phera rv"><b>Phera V</b> — The photographer</div>
+    <div class="phera rv"><b>Phera IV</b> — About us</div>
     <div class="about-grid">
-      <figure class="ph ph-img rv" role="img" aria-label="Photographer at work" style="background-image:url('https://images.unsplash.com/photo-1554080353-a576cf803bda?auto=format&fit=crop&w=900&q=70')"></figure>
+      <figure class="ph ph-img rv" role="img" aria-label="A Blurry Visuals wedding photograph" style="background-image:url('img/hero/hero-sushmita-harsh-151.webp')"></figure>
       <div class="about-copy rv">
-        <h2>Behind <em>the frame</em></h2>
-        <p style="margin-top:26px;">Weddings are the only shoot where nothing repeats. One vidaai, one first look, one grandmother laughing at exactly the right moment — you either caught it or you didn't.</p>
-        <p>Blurry Visuals Weddings is a Mumbai studio built for that pressure. We photograph and film weddings with small, calm crews that know the rituals — when to step close for the mangalsutra and when to disappear entirely. Coverage is planned around light and ceremony order, so families get to be families, not subjects.</p>
-        <p>Photography and cinema travel together here: stills that look like film frames, films that feel like memory.</p>
+        <h2>Honest stories,<br><em>timelessly told</em></h2>
+        <p style="margin-top:26px;">At Blurry Visuals we believe your wedding is more than a timeline of events — it is an emotional journey. We are here to help you remember how it felt, not just how it looked.</p>
+        <p>The studio was born in 2024 out of Aakash and Gautam's years behind the lens, capturing love stories in their many forms. What began as a passion gradually became something deeper: a commitment to telling stories that feel real, honest and deeply personal.</p>
+        <div class="about-people">
+          <div>
+            <b>Aakash</b>
+            <p>Approaches every celebration with fresh eyes and an open heart, allowing each narrative to unfold naturally while artfully weaving together the emotions, details and fleeting moments that make every wedding unique.</p>
+          </div>
+          <div>
+            <b>Gautam</b>
+            <p>Gravitates toward the quiet, in-between moments — the glance shared when no one is looking, the nervous laughter before the vows, and the subtle magic that often goes unnoticed.</p>
+          </div>
+        </div>
         <div class="about-facts">
-          <div><b>60+</b><span>Weddings covered</span></div>
-          <div><b>12</b><span>Cities travelled</span></div>
-          <div><b>2</b><span>Days to first preview</span></div>
+          <div><b>2024</b><span>Studio founded</span></div>
+          <div><b>4–6</b><span>Crew per wedding</span></div>
+          <div><b>8 wks</b><span>Typical delivery</span></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= PHERA VI · kind words ================= -->
+<!-- ================= PHERA V · kind words ================= -->
 <section class="sec" id="words">
   <div class="wrap">
-    <div class="phera rv" style="justify-content:center;"><b>Phera VI</b> — Kind words</div>
+    <div class="phera rv" style="justify-content:center;"><b>Phera V</b> — Kind words</div>
     <div class="quote-stage rv">
       <figure class="quote act">
         <blockquote>"We forgot the photographers were there — and somehow they were everywhere. The vidaai film wrecked the whole family, in the best way."</blockquote>
@@ -269,10 +281,10 @@
   </div>
 </section>
 
-<!-- ================= PHERA VII · contact ================= -->
+<!-- ================= PHERA VI · contact ================= -->
 <section class="sec contact-section" id="contact">
   <div class="contact-lede">
-    <div class="phera rv"><b>Phera VII</b> — Begin yours</div>
+    <div class="phera rv"><b>Phera VI</b> — Begin yours</div>
   </div>
   <div class="contact-grid">
       <div class="contact-panel contact-info rv">
@@ -321,9 +333,8 @@
   <div class="wrap">
     <p>© <span id="yr"></span> Blurry Visuals Weddings · Photography &amp; Films, Mumbai.</p>
     <nav aria-label="Footer">
-      <a href="#work">Work</a>
-      <a href="#films">Films</a>
       <a href="#stories">Weddings</a>
+      <a href="#films">Films</a>
       <a href="#investment" data-open-investment>Investment &amp; FAQs</a>
       <a href="#contact">Inquire</a>
     </nav>
@@ -353,39 +364,78 @@
 
       <div class="investment-packages">
         <article class="investment-package">
-          <div class="package-top"><h2>Basic</h2><p class="package-price"><strong>₹1,75,000</strong><span>Single day</span></p></div>
-          <p class="package-note">For an intimate or small wedding gathering.</p>
-          <h3>Photography</h3><p>1 traditional + 1 candid photographer</p>
-          <h3>Cinematography</h3><p>1 traditional + 1 lead cinematographer</p>
+          <div class="package-top"><h2>Intimate</h2><p class="package-price"><strong>₹1,25,000</strong><span>Smaller celebrations</span></p></div>
+          <p class="package-note">A creative team of four, shaped around a close, unhurried wedding.</p>
+          <h3>The crew</h3>
+          <ul class="package-specs">
+            <li><span>Photographers</span><b>2</b></li>
+            <li><span>Cinematographers</span><b>2</b></li>
+            <li><span>Creative team</span><b>Team of 4</b></li>
+          </ul>
           <h3>Deliverables</h3>
-          <ul><li>800-1,000 edited images</li><li>4-5 minute storytelling highlight</li><li>2 vertical reels</li><li>Cinematic documentary and event raw cuts</li></ul>
-          <a class="package-link" href="#contact" data-investment-contact>Ask about Basic <span aria-hidden="true">→</span></a>
+          <ul class="package-specs">
+            <li><span>Edited images</span><b>1,000–1,200</b></li>
+            <li><span>Wedding trailer</span><b>3–5 min film</b></li>
+            <li><span>Wedding movie</span><b>10–12 min film</b></li>
+            <li><span>Delivery</span><b>Standard timeline</b></li>
+          </ul>
+          <a class="package-link" href="#contact" data-investment-contact>Ask about Intimate <span aria-hidden="true">→</span></a>
         </article>
         <article class="investment-package featured">
-          <div class="package-top"><h2>Signature</h2><p class="package-price"><strong>₹2,55,000</strong><span>Single day</span></p></div>
-          <p class="package-note">For a destination or large wedding gathering.</p>
-          <h3>Photography</h3><p>1 traditional + 2 candid photographers</p>
-          <h3>Cinematography</h3><p>1 traditional + 2 lead cinematographers</p>
+          <p class="package-flag">Most chosen</p>
+          <div class="package-top"><h2>Signature</h2><p class="package-price"><strong>₹2,25,000</strong><span>Grand celebrations</span></p></div>
+          <p class="package-note">A team of six, an added lead on each craft, and an express edit.</p>
+          <h3>The crew</h3>
+          <ul class="package-specs">
+            <li><span>Photographers</span><b>2 + 1</b></li>
+            <li><span>Cinematographers</span><b>2 + 1</b></li>
+            <li><span>Creative team</span><b>Team of 6</b></li>
+          </ul>
           <h3>Deliverables</h3>
-          <ul><li>1,200-1,500 edited images</li><li>1 minute teaser</li><li>4-5 minute storytelling highlight</li><li>20 minute film and wedding raw cut</li></ul>
+          <ul class="package-specs">
+            <li><span>Edited images</span><b>1,500–2,000</b></li>
+            <li><span>Wedding trailer</span><b>3–5 min film</b></li>
+            <li><span>Wedding movie</span><b>15–20 min film</b></li>
+            <li><span>Sangeet film</span><b>Included</b></li>
+            <li><span>Social edits</span><b>2 reels</b></li>
+            <li><span>Delivery</span><b>Express · 45 days</b></li>
+          </ul>
           <a class="package-link" href="#contact" data-investment-contact>Ask about Signature <span aria-hidden="true">→</span></a>
         </article>
       </div>
 
-      <p class="investment-travel"><strong>Planning an outstation celebration?</strong> Travel and accommodation are additional. Final coverage, timing, and deliverables are confirmed in your proposal.</p>
+      <div class="addons">
+        <div class="addons-head">
+          <p class="investment-kicker">Add-ons</p>
+          <h2>Build on <em>your collection.</em></h2>
+        </div>
+        <ul class="addons-list">
+          <li><span>Pre-wedding shoot</span><b>₹60,000 <small>per day</small></b></li>
+          <li><span>Drone coverage</span><b>₹10,000 <small>per day</small></b></li>
+          <li><span>Coffee table book</span><b>₹20,000</b></li>
+          <li><span>Raw data</span><b>₹20,000</b></li>
+          <li><span>Full event video</span><b>₹15,000</b></li>
+          <li><span>Instagram reel</span><b>₹7,500</b></li>
+        </ul>
+        <p class="addons-note">Live streaming, behind-the-scenes social coverage, and Instagram handling are available on request.</p>
+      </div>
+
+      <p class="investment-travel"><strong>Planning an outstation celebration?</strong> Travel and accommodation are covered by the client. Final coverage, timing, and deliverables are confirmed in your proposal.</p>
 
       <div class="faq-heading">
         <div><p class="investment-kicker">Frequently asked</p><h2>A little clarity,<br><em>before we begin.</em></h2></div>
-        <p>Open a question for details about services, packages, crew, travel, image delivery, and our approach to wedding films.</p>
+        <p>Bookings, payment, delivery timelines, revisions, working hours, travel, and everything else worth knowing before you decide.</p>
       </div>
       <div class="faq-list">
         <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-1"><span>What services do you offer?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-1" hidden>We photograph weddings in candid, documentary, traditional, portrait, and detail-led styles. Film coverage includes traditional event documentation and story-led cinematic wedding films. Pre-weddings, engagements, haldi, mehndi, sangeet, and receptions can be included in a tailored proposal.</div></div>
-        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-2"><span>What are your packages?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-2" hidden>Basic is ₹1,75,000 for one day and is designed for intimate celebrations. Signature is ₹2,55,000 for one day and adds a larger photography and cinematography crew for destination or larger weddings. Coverage can be tailored to your event schedule.</div></div>
-        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-3"><span>How is the crew selected for a wedding?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-3" hidden>We recommend the crew after understanding the number of events, guest count, venue layout, travel, and the moments that matter most to you. Your proposal clearly confirms the photographers, cinematographers, and coverage assigned to each event.</div></div>
-        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-4"><span>Where are you based, and do you travel?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-4" hidden>Blurry Visuals Weddings is based in Mumbai and travels for celebrations across India and beyond. Travel and accommodation for outstation weddings are quoted separately according to the final crew and schedule.</div></div>
-        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-5"><span>How many pictures will we receive, and when?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-5" hidden>The Basic collection includes approximately 800-1,000 edited images, while Signature includes approximately 1,200-1,500. Preview delivery and final gallery timelines are confirmed in your wedding proposal because coverage varies by event count and scope.</div></div>
-        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-6"><span>How do you photograph weddings?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-6" hidden>Our approach combines quiet documentary observation with gently directed portraits. We preserve rituals, relationships, atmosphere, and spontaneous moments while making space for refined photographs that still feel natural to you.</div></div>
-        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-7"><span>What is the difference between cinematography and traditional videography?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-7" hidden>Traditional videography records the event in a complete, chronological way. Cinematography shapes selected moments, sound, movement, and emotion into a concise story-led film. A collection may include both documentary coverage and a cinematic edit.</div></div>
+        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-2"><span>What are your collections?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-2" hidden>Intimate is ₹1,25,000 and is built for smaller celebrations, with a creative team of four, 1,000–1,200 edited images, a 3–5 minute trailer, and a 10–12 minute wedding movie. Signature is ₹2,25,000 for grand celebrations, with a team of six, 1,500–2,000 edited images, a 15–20 minute movie, a sangeet film, two social reels, and express delivery.</div></div>
+        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-3"><span>How does booking and payment work?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-3" hidden>Bookings are confirmed with 50% in advance. A further 40% is due on the first day of the wedding events, and the remaining 10% on delivery of the edited photographs and films.</div></div>
+        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-4"><span>When will we receive everything?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-4" hidden>Editing and delivery begin once 90% of the payment is received. Photographs take approximately eight weeks, as do the cinematic trailer and movie, with some variation during peak season. Traditional video is delivered within three months. Edited content is shared over Google Drive and stays accessible for a year; raw data is delivered on a hard drive you provide and is never uploaded to Drive.</div></div>
+        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-5"><span>Can we ask for edits or revisions?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-5" hidden>Yes. For photographs, post-production covers colour correction and enhancement to our studio standard; we do not offer extensive manipulation or liquifying. For the wedding movie, two rounds of edits are included in your collection, and further changes are charged at ₹15,000 per revision.</div></div>
+        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-6"><span>How long does the team work on the day?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-6" hidden>Our team works an acceptable shift of roughly ten hours. Where there is an early event the next morning, we can cover after-parties for up to two hours. Our cut-off on any day is 1:00 AM, beyond which additional coverage is charged at ₹25,000 per hour. The crew and equipment need six to eight hours to recharge and back up between days.</div></div>
+        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-7"><span>What about travel and meals for the crew?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-7" hidden>Travel and accommodation for outstation shoots are covered by the client. As the team is on duty throughout, they are treated as guests with access to banqueting and non-alcoholic refreshments. If you would prefer us to arrange meals, let us know before the event; a per-person plate is charged at ₹1,500, ordered a la carte at the hotel or resort.</div></div>
+        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-8"><span>What can we add to a collection?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-8" hidden>A pre-wedding shoot is ₹60,000 per day, drone coverage ₹10,000 per day, a coffee table book ₹20,000, raw data ₹20,000, a full event video ₹15,000, and an Instagram reel ₹7,500. Live streaming, behind-the-scenes social coverage, and Instagram handling are available on request.</div></div>
+        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-9"><span>What is the difference between cinematography and traditional videography?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-9" hidden>Traditional videography records the event in a complete, chronological way. Cinematography shapes selected moments, sound, movement, and emotion into a concise story-led film. A collection may include both documentary coverage and a cinematic edit.</div></div>
       </div>
 
       <div class="investment-final">
@@ -396,7 +446,7 @@
   </section>
 </div>
 
-<script src="js/stories-data.js?v=20260731h"></script>
-<script src="js/main.js?v=20260731h"></script>
+<script src="js/stories-data.js?v=20260731j"></script>
+<script src="js/main.js?v=20260731j"></script>
 </body>
 </html>
