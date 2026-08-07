@@ -110,7 +110,6 @@
   var heroDots = Array.prototype.slice.call(document.querySelectorAll(".hero-dot"));
   var slideIndex = 0;
   var autoplayId = 0;
-  var autoplayPaused = false;
   var pendingSlides = Object.create(null);
 
   function loadHeroSlide(index) {
@@ -210,7 +209,7 @@
     heroThumbStrip.addEventListener("click", function (e) {
       var thumb = e.target.closest && e.target.closest(".hero-thumb");
       if (!thumb) return;
-      showHeroSlide(Number(thumb.dataset.slide)).then(scheduleHeroAutoplay);
+      chooseHeroSlide(Number(thumb.dataset.slide));
     });
     updateHeroThumbs();
     heroThumbStrip.classList.add("in");
@@ -236,37 +235,74 @@
     autoplayId = 0;
   }
 
+  /* Two independent reasons to hold the slideshow, tracked separately. A
+     single shared flag meant whichever reason cleared first restarted it,
+     and — worse — a reason that could never clear stopped it for good. */
+  var hoverPaused = false;
+  var keyboardPaused = false;
+  /* Choosing a slide by hand is a statement of intent, so it overrides the
+     hover hold until the pointer actually leaves and re-enters. Without this
+     the hero, which fills the viewport, sits frozen under a resting cursor
+     even though the visitor just asked to move. */
+  var hoverOverridden = false;
+  /* Only devices that genuinely hover may set the hover hold. A touch screen
+     fires an emulated mouseenter on tap and then no mouseleave ever, which
+     left the slideshow stopped for the rest of the visit. */
+  var CAN_HOVER = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  function heroAutoplayHeld() {
+    if (REDUCED || slides.length < 2) return true;
+    if (keyboardPaused) return true;
+    return hoverPaused && !hoverOverridden;
+  }
+
   function scheduleHeroAutoplay() {
     stopHeroAutoplay();
-    if (REDUCED || autoplayPaused || slides.length < 2) return;
+    if (heroAutoplayHeld()) return;
     autoplayId = window.setTimeout(function () {
       showHeroSlide(slideIndex + 1).then(scheduleHeroAutoplay);
     }, 5200);
   }
 
+  // Every deliberate move through the slideshow goes through here.
+  function chooseHeroSlide(index) {
+    hoverOverridden = true;
+    return showHeroSlide(index).then(scheduleHeroAutoplay);
+  }
+
   heroDots.forEach(function (dot) {
     dot.addEventListener("click", function () {
-      showHeroSlide(Number(dot.dataset.slide)).then(scheduleHeroAutoplay);
+      chooseHeroSlide(Number(dot.dataset.slide));
     });
   });
 
   if (hero) {
-    hero.addEventListener("mouseenter", function () {
-      autoplayPaused = true;
-      stopHeroAutoplay();
-    });
-    hero.addEventListener("mouseleave", function () {
-      autoplayPaused = false;
-      scheduleHeroAutoplay();
-    });
-    hero.addEventListener("focusin", function () {
-      autoplayPaused = true;
+    if (CAN_HOVER) {
+      hero.addEventListener("mouseenter", function () {
+        hoverPaused = true;
+        hoverOverridden = false;
+        stopHeroAutoplay();
+      });
+      hero.addEventListener("mouseleave", function () {
+        hoverPaused = false;
+        hoverOverridden = false;
+        scheduleHeroAutoplay();
+      });
+    }
+
+    /* Keyboard focus only. A pointer click also focuses the control it hits,
+       and holding the slideshow for that is what made clicking a dot look
+       like it had switched autoplay off. */
+    hero.addEventListener("focusin", function (event) {
+      var target = event.target;
+      if (!target || !target.matches || !target.matches(":focus-visible")) return;
+      keyboardPaused = true;
       stopHeroAutoplay();
     });
     hero.addEventListener("focusout", function () {
       window.setTimeout(function () {
         if (!hero.contains(document.activeElement)) {
-          autoplayPaused = false;
+          keyboardPaused = false;
           scheduleHeroAutoplay();
         }
       }, 0);
@@ -284,7 +320,7 @@
       var deltaX = event.clientX - swipeX;
       var deltaY = event.clientY - swipeY;
       if (Math.abs(deltaX) >= 48 && Math.abs(deltaX) > Math.abs(deltaY)) {
-        showHeroSlide(slideIndex + (deltaX < 0 ? 1 : -1)).then(scheduleHeroAutoplay);
+        chooseHeroSlide(slideIndex + (deltaX < 0 ? 1 : -1));
       }
     });
   }

@@ -111,6 +111,72 @@ test("the preview strip is a shortcut, never the only way through", async () => 
   );
 });
 
+test("autoplay can always resume, whatever paused it", async () => {
+  const mainScript = await readProjectFile("js/main.js");
+
+  // Regression: one shared flag meant a hold that could never clear stopped
+  // the slideshow for the rest of the visit. Each reason is tracked apart.
+  assert.ok(
+    !/\bautoplayPaused\b/.test(mainScript),
+    "the single shared pause flag must be gone",
+  );
+  for (const flag of ["hoverPaused", "keyboardPaused"]) {
+    assert.ok(
+      new RegExp(`var ${flag} = false;`).test(mainScript),
+      `${flag} must be tracked on its own`,
+    );
+  }
+
+  // A touch screen fires mouseenter on tap and then never mouseleave, so it
+  // must not be able to set the hover hold at all.
+  assert.match(
+    mainScript,
+    /var CAN_HOVER = window\.matchMedia\("\(hover: hover\) and \(pointer: fine\)"\)\.matches;/,
+    "hover pausing must be gated on a device that really hovers",
+  );
+  assert.match(
+    mainScript,
+    /if \(CAN_HOVER\) \{[\s\S]{0,400}?mouseenter[\s\S]{0,400}?mouseleave/,
+    "both hover listeners must sit behind that gate",
+  );
+
+  // Clicking a control is a request to move, not a request to stop.
+  assert.match(
+    mainScript,
+    /function chooseHeroSlide\(index\) \{\s*hoverOverridden = true;/,
+    "an explicit choice must override the hover hold",
+  );
+  // Dots, previews and swipe must all route through it. Only the autoplay
+  // tick and chooseHeroSlide itself may drive the slideshow directly.
+  for (const [handler, pattern] of [
+    ["a dot", /dot\.addEventListener\("click", function \(\) \{\s*chooseHeroSlide\(/],
+    ["a preview", /chooseHeroSlide\(Number\(thumb\.dataset\.slide\)\)/],
+    ["a swipe", /chooseHeroSlide\(slideIndex \+ \(deltaX < 0 \? 1 : -1\)\)/],
+  ]) {
+    assert.match(mainScript, pattern, `${handler} must go through chooseHeroSlide`);
+  }
+  const direct = [...mainScript.matchAll(/showHeroSlide\([^)]*\)\.then\(/g)];
+  assert.equal(
+    direct.length,
+    2,
+    `only the autoplay tick and chooseHeroSlide may call showHeroSlide directly, found ${direct.length}`,
+  );
+  // ...and the override must not outlive the pointer leaving.
+  assert.match(
+    mainScript,
+    /mouseleave[\s\S]{0,200}?hoverOverridden = false;/,
+    "leaving the hero must re-arm the hover hold",
+  );
+
+  // A pointer click also focuses its target; holding for that is what made
+  // clicking a dot look like it had switched autoplay off.
+  assert.match(
+    mainScript,
+    /matches\(":focus-visible"\)/,
+    "only keyboard focus may hold the slideshow",
+  );
+});
+
 test("the proof bar is flagged as unverified and clears the copy", async () => {
   const [indexHtml, styles, mainScript] = await Promise.all([
     readProjectFile("index.html"),
