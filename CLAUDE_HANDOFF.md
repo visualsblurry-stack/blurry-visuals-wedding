@@ -14,87 +14,111 @@ That second folder is a different corporate website that is already hosted.
 
 ## Current State
 
-- Branch: `main`
+- Branch: `agent/claude-wedding-enhancements`
 - Remote: `https://github.com/visualsblurry-stack/blurry-visuals-wedding.git`
 - Architecture: static HTML, CSS, and vanilla JavaScript; there is no build step.
 - Local URL: `http://127.0.0.1:8011/`
 - Investment modal URL: `http://127.0.0.1:8011/#investment`
+- Story page URL: `http://127.0.0.1:8011/story.html?s=anaya-rohan`
 - Contact email: `visualsblurry@gmail.com`
-- WhatsApp: `+91 70323 90419`
-- Brand color: `#789c9f`
+- WhatsApp: Aakash `+91 70323 90419`, Gautam `+91 98929 64884`
+- Brand colour: `#789c9f` (`--teal`); `#547c7f` (`--teal-deep`) wherever white text sits on it
 - Font stack begins with locally installed `TAN Angelton`, then falls back to Fraunces and Georgia.
 
-The working tree was clean when this handoff was written. Local `main` was 27 commits ahead of `origin/main` before this handoff commit. Do not push until the owner explicitly requests it.
+Working tree clean. Local branch is 42 commits ahead of `origin/main`.
+**Do not push until the owner explicitly requests it.**
 
 ## Run Locally
-
-The current server command is:
 
 ```powershell
 "C:\Python314\python.exe" -m http.server 8011 --bind 127.0.0.1 --directory D:\BlurryVisuals-Wedding-publish
 ```
 
-If port 8011 is already serving the correct directory, reuse it. Verify with:
+Verify:
 
 ```powershell
 (Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8011/).StatusCode
 ```
 
-Expected result: `200`.
+Expected: `200`. The server has died mid-session before; restart it if pages stop loading.
+
+## Cache Busting - Read This First
+
+`python -m http.server` sends no `Cache-Control` header, so browsers cache `style.css`
+and `main.js` heuristically. A fresh `index.html` paired with a stale stylesheet has
+twice looked like broken code.
+
+CSS and JS URLs therefore carry a version query: `css/style.css?v=20260731m`.
+
+**The stamp is fixed, not content-derived. Bump it by hand in both `index.html` and
+`story.html` after every CSS or JS change**, or you will be debugging a phantom:
+
+```bash
+sed -i 's/?v=20260731m/?v=20260731n/g' index.html story.html
+```
+
+The HTML files themselves are not stamped, so a hard refresh (`Ctrl+Shift+R`) is still
+needed after markup changes.
+
+## Page Structure
+
+Hero -> Real weddings -> Films -> About -> Kind words -> Contact.
+Phera markers run I to VI. The portfolio section is commented out in `index.html`
+and its nav links removed; its tiles were stock imagery. To restore it, delete the
+comment wrapper and add the `#work` links back to header, drawer, and footer.
+
+Note: the wrapper cannot contain HTML comments. Nested comments terminate it early
+and leak live markup onto the page.
 
 ## Implemented Features
 
 ### Hero
 
-- Nine-image hero gallery.
-- Dot navigation and automatic rotation.
-- Touch swipe support on mobile.
-- Local optimized WebP wedding photographs mixed with existing remote images.
+- Eight slides, all studio-owned WebP in `img/hero/`. No stock.
+- First slide loads eagerly and is preloaded; the rest lazy-load via `data-bg`.
+- Per-slide tagline in `data-tagline`, typed out one character at a time with a caret.
+  The animated span is `aria-hidden`; a visually hidden sibling carries the full line.
+- Copy pinned left, capped at 620px, so the photograph keeps the right half of the frame.
+- Dots, autoplay, and touch swipe.
+
+### Story pages (`story.html?s=<slug>`)
+
+- The couple's cinematic highlight plays muted and looping behind their name.
+  Self-hosted; no YouTube embed anywhere.
+- Breadcrumb offers Home and All weddings; header, drawer, and footer also carry Home.
+- Prev/next wedding navigation at the foot.
 
 ### Contact
 
-- Equal-width and equal-height desktop panels.
-- White information panel and `#789c9f` enquiry panel.
-- Locally embedded inline Lucide-style SVG icons.
-- Responsive stacked mobile layout with no horizontal overflow.
-- Existing fields and field names are contractual and must remain unchanged:
-  - `names`
-  - `etype`
-  - `edate`
-  - `city`
-  - `venue`
-  - `message`
-- Submit button is labelled `Send`.
-- Submission opens WhatsApp with all enquiry values pre-filled. No data is stored by the site.
+- Full-bleed, asymmetric `0.86fr / 1.14fr`. Not a centred card.
+- Enquiry panel is `--teal-deep`; every label, hint, and heading on it measures 4.6:1.
+- Two named WhatsApp rows, each linking to its own `wa.me` thread.
+- Event date is a native picker; the invisible indicator is stretched across the control
+  so a click anywhere opens the calendar. Submits ISO, sent to WhatsApp as `12 Dec 2026`.
+- Field names are contractual and must not change: `names`, `etype`, `edate`, `city`,
+  `venue`, `message`. Submit is labelled `Send` and opens WhatsApp prefilled. Nothing is stored.
 
 ### Investment & FAQs
 
-- This is a full-screen modal within `index.html`, not a separate page.
-- Header, mobile drawer, and footer include an Investment link.
-- `#investment` is shareable and opens the modal on page load.
-- Basic package: `₹1,75,000`, single day.
-- Signature package: `₹2,55,000`, single day.
-- Seven FAQ accordions are included and functional.
-- Supports close button, backdrop click, Escape, body scroll lock, focus trap, and focus restoration.
-- Package and availability actions close the modal and route to `#contact`.
-- Story-page Investment links route to `index.html#investment`.
+- Full-screen modal inside `index.html`; `#investment` is shareable and opens on load.
+- Header carries the full logo lockup.
+- Collections: **Intimate ₹1,25,000**, **Signature ₹2,25,000**, built from the 26-27
+  brochure's crew and deliverables, laid out as spec rows.
+- Add-ons price list and nine FAQs covering booking split, delivery, revisions,
+  working hours, travel, and the food policy.
+- Close button, backdrop click, Escape, scroll lock, focus trap, focus restoration.
 
 ## Important Files
 
-- `index.html`: homepage, contact form, packages, FAQs, and modal markup.
-- `story.html`: shared story-page navigation.
-- `css/style.css`: all visual styles and responsive rules.
-- `js/main.js`: hero, drawer, lightbox, WhatsApp form, modal, and FAQ behavior.
-- `js/stories-data.js`: real-wedding story data.
-- `tests/contact-investment.test.mjs`: contact/modal regression contract.
-- `tests/branding.test.mjs`: branding and button-color checks.
-- `tests/hero-gallery.test.mjs`: hero gallery and asset checks.
-- `docs/superpowers/specs/2026-07-30-contact-form-redesign-design.md`: approved contact/modal design.
-- `docs/superpowers/plans/2026-07-31-contact-investment-modal.md`: implementation plan.
+- `index.html` - homepage, contact form, investment modal
+- `story.html` - shared story-page shell
+- `css/style.css` - all styles
+- `js/main.js` - hero, drawer, lightbox, WhatsApp form, modal, FAQ, story renderer
+- `js/stories-data.js` - real-wedding story data
+- `video/README.md` - where films go and how to encode them
+- `tests/` - `contact-investment`, `branding`, `hero-gallery`
 
-## Verification Checkpoint
-
-Run:
+## Verification
 
 ```powershell
 node --test tests
@@ -102,41 +126,44 @@ git diff --check
 git status --short
 ```
 
-At the last implementation checkpoint:
+10 tests passing. Verification in recent sessions has been DOM measurement and computed
+styles, not visual inspection - the browser pane could not capture screenshots. If you
+can see the page, look at it.
 
-- 10 tests passed, 0 failed.
-- Local server returned HTTP 200.
-- Desktop contact panels measured exactly equal at 590px wide and 844.140625px high.
-- The form panel computed to `rgb(120, 156, 159)`.
-- Form controls measured at least 50px high.
-- Desktop and mobile horizontal overflow measured 0px after the footer fix.
-- WhatsApp payload included representative values from every field.
-- Two packages and seven FAQs were present.
-- FAQ answers expanded correctly on desktop and mobile.
-- Direct `#investment` opening, Escape closing, focus trapping/restoration, and the availability handoff to `#contact` passed.
-- No browser console or page errors were observed.
+Two traps when measuring in a headless tab:
 
-## Recent Commits
+- The tab is often `document.hidden`, which throttles `setTimeout` to roughly 2/sec.
+  Animations will look broken when they are fine.
+- Slide changes resolve through an image-load promise. Wait for the `.act` class before
+  asserting, or you will read the previous slide's state.
+- The pane's viewport sometimes collapses to 0 or 360px. Check `clientWidth` before
+  trusting any geometry.
 
-```text
-ca96029 feat: add investment and FAQ modal
-4eb5e14 feat: redesign wedding enquiry form
-bb84fa6 test: define contact and investment modal contract
-c292e8c docs: plan contact and investment modal
-9bc5504 Document contact form redesign
-11090eb Standardize wedding site button colors
-```
+## Open Questions For The Owner
+
+1. **Prices.** The brochure says Intimate 2,75,000 and Signature 3,75,000. The site uses
+   the owner's stated 1,25,000 and 2,25,000. If the brochure is current, the site
+   underquotes by about 1.5 lakh per booking.
+2. **Aakash or Akash.** The brochure spells it *Akash*; the site uses *Aakash*.
+3. **Film thumbnails** on the homepage are still YouTube stills from other studios' weddings.
+4. **Story data** in `js/stories-data.js` is invented - couples, galleries, and covers are
+   Unsplash. The brochure names real ones: Swapnesh + Nikhita, Shachi + Vedant.
+5. **Hero taglines** were written by Claude, not the studio.
 
 ## Safety And Editing Rules
 
 - Create a dated backup on `D:\` before substantial visual changes.
-- Preserve existing user work and do not revert unrelated changes.
-- Use `apply_patch` for manual edits.
-- Keep the site dependency-free unless the owner explicitly approves an architecture change.
-- Preserve the form field names and WhatsApp behavior.
-- Keep buttons `#789c9f` with clean white text, except the approved white call-to-action on a teal panel.
-- Verify desktop and mobile layouts in a real browser before declaring completion.
-- Do not create more standalone preview pages; change the real site and verify it at port 8011.
+- Preserve existing user work; do not revert unrelated changes.
+- Keep the site dependency-free unless the owner approves an architecture change.
+- Preserve the form field names and the WhatsApp behaviour.
+- Buttons stay `#789c9f` with white text, except the approved white CTA on a teal panel.
+  Use `--teal-deep` wherever white text must meet 4.5:1.
+- Never `git add -A` without checking what it picks up. A previous commit swept 25MB of
+  raw JPEGs into history that way. `img/*.jpg|jpeg|png` and `video/stories/` are now
+  gitignored; the old blobs remain in commit `a8fd4d5` and could still be purged before
+  any push.
+- Verify desktop and mobile before declaring completion.
+- Do not create standalone preview pages; change the real site and verify at port 8011.
 - Do not push to GitHub without explicit approval.
 
 ## Suggested Claude Opening Prompt
@@ -145,9 +172,9 @@ c292e8c docs: plan contact and investment modal
 Continue work on the Blurry Visuals Weddings website using the checkpoint in
 D:\BlurryVisuals-Wedding-publish\CLAUDE_HANDOFF.md.
 
-Work only in D:\BlurryVisuals-Wedding-publish. Do not touch
-D:\BlurryVisuals-publish because it is a different hosted corporate site.
-Inspect git status and run node --test tests before editing. Make changes directly
-in the real website, preserve the working WhatsApp form and #investment modal,
-run desktop/mobile browser verification, and do not push without my approval.
+Work only in D:\BlurryVisuals-Wedding-publish. Do not touch D:\BlurryVisuals-publish,
+it is a different hosted corporate site. Read the handoff, run node --test tests, and
+check git status before editing. Bump the ?v= asset stamp after any CSS or JS change.
+Make changes in the real site, preserve the WhatsApp form and #investment modal, verify
+desktop and mobile, and do not push without my approval.
 ```
