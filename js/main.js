@@ -19,6 +19,73 @@
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 
+  /* ---------- custom cursor ---------- */
+  /* A ring trails the pointer while a dot tracks it exactly; over anything
+     carrying data-cursor the ring swells into a filled disc and names the
+     action. Pointer devices only, and never under reduced motion — the class
+     that hides the native cursor goes on only once the replacement exists,
+     so nobody is left without a pointer if this block does not run.
+
+     Hover is delegated from the document rather than bound per element: the
+     story cards and every story page are rendered from data further down this
+     file, long after any one-shot querySelectorAll would have run. */
+  if (!REDUCED && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    var ring = document.createElement("div");
+    ring.className = "cursor-ring";
+    ring.setAttribute("aria-hidden", "true");
+    var cursorLabel = document.createElement("span");
+    cursorLabel.className = "cursor-label";
+    ring.appendChild(cursorLabel);
+
+    var dot = document.createElement("div");
+    dot.className = "cursor-dot";
+    dot.setAttribute("aria-hidden", "true");
+
+    document.body.appendChild(ring);
+    document.body.appendChild(dot);
+    document.body.classList.add("cursor-custom");
+
+    var mx = window.innerWidth / 2, my = window.innerHeight / 2;
+    var rx = mx, ry = my;
+
+    window.addEventListener("mousemove", function (e) {
+      mx = e.clientX;
+      my = e.clientY;
+      ring.classList.add("on");
+      dot.classList.add("on");
+    }, { passive: true });
+
+    var hideCursor = function () {
+      ring.classList.remove("on");
+      dot.classList.remove("on");
+      ring.classList.remove("grown");
+    };
+    document.documentElement.addEventListener("mouseleave", hideCursor);
+    window.addEventListener("blur", hideCursor);
+
+    (function cursorFrame() {
+      rx += (mx - rx) * 0.16;
+      ry += (my - ry) * 0.16;
+      ring.style.transform = "translate3d(" + rx.toFixed(2) + "px," + ry.toFixed(2) + "px,0)";
+      dot.style.transform = "translate3d(" + mx.toFixed(2) + "px," + my.toFixed(2) + "px,0)";
+      requestAnimationFrame(cursorFrame);
+    })();
+
+    document.addEventListener("mouseover", function (e) {
+      var target = e.target.closest && e.target.closest("[data-cursor]");
+      if (!target) return;
+      cursorLabel.textContent = target.getAttribute("data-cursor") || "View";
+      ring.classList.add("grown");
+    });
+    document.addEventListener("mouseout", function (e) {
+      var target = e.target.closest && e.target.closest("[data-cursor]");
+      if (!target) return;
+      // Moving between a target's own children must not collapse the ring.
+      if (e.relatedTarget && target.contains(e.relatedTarget)) return;
+      ring.classList.remove("grown");
+    });
+  }
+
   /* ---------- mobile drawer ---------- */
   var burger = document.querySelector(".burger");
   var drawer = document.getElementById("drawer");
@@ -468,8 +535,8 @@
     storyRoot.innerHTML =
       '<section class="story-hero">' + heroMedia + '<div class="wrap">' +
         '<nav class="story-crumbs" aria-label="Breadcrumb">' +
-          '<a class="story-back" href="index.html"><span aria-hidden="true">←</span> Home</a>' +
-          '<a class="story-back" href="index.html#stories">All weddings</a>' +
+          '<a class="story-back" href="index.html" data-cursor="Home"><span aria-hidden="true">←</span> Home</a>' +
+          '<a class="story-back" href="index.html#stories" data-cursor="Weddings">All weddings</a>' +
         "</nav>" +
         '<div class="phera"><b>Real wedding ' + ("0" + (idx + 1)).slice(-2) + "</b> — " + esc(st.city) + "</div>" +
         "<h1>" + esc(st.couple[0]) + " <em>&amp;</em> " + esc(st.couple[1]) + "</h1>" +
@@ -486,9 +553,9 @@
       "</div></section>" +
       '<div class="wrap"><div class="story-gallery">' + galleryHtml + "</div></div>" +
       '<section class="story-nav"><div class="wrap" style="display:flex;justify-content:space-between;gap:20px;width:min(1180px,92vw);">' +
-        '<a class="prev" href="story.html?s=' + esc(prev.slug) + '"><small>← Previous wedding</small><b>' +
+        '<a class="prev" href="story.html?s=' + esc(prev.slug) + '" data-cursor="Previous"><small>← Previous wedding</small><b>' +
           esc(prev.couple[0]) + " &amp; " + esc(prev.couple[1]) + "</b></a>" +
-        '<a class="next" href="story.html?s=' + esc(next.slug) + '"><small>Next wedding →</small><b>' +
+        '<a class="next" href="story.html?s=' + esc(next.slug) + '" data-cursor="Next"><small>Next wedding →</small><b>' +
           esc(next.couple[0]) + " &amp; " + esc(next.couple[1]) + "</b></a>" +
       "</div></section>";
 
@@ -528,7 +595,7 @@
           '" style="background-image:url(\'' + st.cover + "')\"></figure>"
         : '<figure class="ph ph-' + (st.tone || "smoke") + '"><div class="ph-label"><em>' +
           st.couple[0] + " &amp; " + st.couple[1] + "</em>Cover photograph</div></figure>";
-      return '<a class="story-card rv" href="story.html?s=' + st.slug + '">' + fig +
+      return '<a class="story-card rv" href="story.html?s=' + st.slug + '" data-cursor="View story">' + fig +
         "<h3>" + st.couple[0] + " <em>&amp;</em> " + st.couple[1] + "</h3>" +
         "<p>" + st.venue + " · " + st.city + "</p>" +
         '<span class="more">Read their story →</span></a>';

@@ -551,6 +551,59 @@ body.menu-open .story-return{opacity:0;visibility:hidden;transform:translateY(10
 .story-nav a:hover b{color:var(--champagne);}
 .story-nav a.next{text-align:right;margin-left:auto;}
 
+/* ===================== custom cursor ======================
+   Ported from the Claude design's motion engine: a teal ring that trails the
+   pointer and a dot that tracks it exactly, the ring swelling into a filled,
+   labelled disc over anything carrying data-cursor.
+
+   The native cursor is hidden by a class the script adds only once it has
+   actually built the replacement. The source design hid it in plain CSS, which
+   left reduced-motion visitors — who never get the ring — with no pointer at
+   all. */
+.cursor-ring,.cursor-dot{
+  position:fixed;left:0;top:0;border-radius:50%;
+  pointer-events:none;opacity:0;
+}
+.cursor-ring{
+  z-index:300;width:46px;height:46px;margin:-23px 0 0 -23px;
+  border:1px solid rgba(120,156,159,0.85);
+  display:flex;align-items:center;justify-content:center;
+  transition:
+    opacity .35s ease,
+    width .45s cubic-bezier(.16,1,.3,1),
+    height .45s cubic-bezier(.16,1,.3,1),
+    margin .45s cubic-bezier(.16,1,.3,1),
+    background .45s ease;
+}
+.cursor-dot{
+  z-index:301;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;
+  background:var(--teal);transition:opacity .35s ease;
+}
+.cursor-ring.on,.cursor-dot.on{opacity:1;}
+/* --teal-deep, not brand teal: the label is 9px, and white on --teal is
+   2.98:1. The design filled the disc with brand teal at 0.92 alpha, which
+   fails the same way. */
+.cursor-ring.grown{
+  width:92px;height:92px;margin:-46px 0 0 -46px;background:var(--teal-deep);
+  border-color:var(--teal-deep);
+}
+.cursor-label{
+  font-family:var(--ff-body);font-size:9px;font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--white);white-space:nowrap;
+  opacity:0;transition:opacity .3s ease;
+}
+.cursor-ring.grown .cursor-label{opacity:1;}
+body.cursor-custom,
+body.cursor-custom a,
+body.cursor-custom button,
+body.cursor-custom select,
+body.cursor-custom summary,
+body.cursor-custom label{cursor:none;}
+/* Text fields keep their caret — losing the insertion point costs a visitor
+   more than the effect gains, and the enquiry form is the conversion path. */
+body.cursor-custom input,
+body.cursor-custom textarea{cursor:auto;}
+
 /* ==================== reveal on scroll ==================== */
 .rv{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s cubic-bezier(.16,.84,.3,1);}
 .rv.in{opacity:1;transform:none;}
