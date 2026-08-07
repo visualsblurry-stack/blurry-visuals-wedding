@@ -603,7 +603,14 @@ body.menu-open .story-return{opacity:0;visibility:hidden;transform:translateY(10
 /* ---- a chapter of the day ---- */
 /* Clears the fixed header plus the parked rail, so a jump lands on the
    chapter's own eyebrow rather than under both of them. */
-.chapter{padding:clamp(46px,7vh,88px) 0 clamp(54px,9vh,106px);scroll-margin-top:134px;}
+.chapter{
+  padding:clamp(46px,7vh,88px) 0 clamp(54px,9vh,106px);scroll-margin-top:134px;
+  /* A full story now carries around thirty photographs. Skipping layout and
+     paint for chapters that are still off screen holds their background
+     images back until the reader is near them. */
+  content-visibility:auto;
+  contain-intrinsic-size:auto 900px;
+}
 .chapter.tone-light{background:var(--white);}
 .chapter.tone-warm{background:rgba(120,156,159,.08);}
 .chapter.tone-dark{background:var(--ivory);color:var(--white);}

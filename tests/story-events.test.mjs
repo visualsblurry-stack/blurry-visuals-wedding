@@ -98,7 +98,10 @@ test("chapters alternate ground and lay photographs on rows of twelve", async ()
   assert.ok(rhythms, "js/main.js is missing GRID_RHYTHMS");
   // One rhythm per line; each cell reads [span, "ratio"].
   const rows = rhythms[1].split("\n").filter((line) => line.includes("[["));
-  assert.ok(rows.length >= 2, "one rhythm alone would make chapters rhyme");
+  assert.ok(
+    rows.length >= 4,
+    `only ${rows.length} layouts — chapters need their own look, not two alternating`,
+  );
   for (const row of rows) {
     const spans = [...row.matchAll(/(\d+),\s*"/g)].map((m) => Number(m[1]));
     assert.equal(spans.length % 2, 0, "a rhythm must pair its photographs");
@@ -257,6 +260,78 @@ test("real stories produce sections that add up", async () => {
   // A nikah wedding must surface its nikah rather than dropping it.
   const nikah = stories.find((s) => s.gallery.some((g) => g.event === "nikah"));
   assert.ok(nikah, "no story exercises the nikah path");
+});
+
+test("no chapter ships empty, and each has copy and four frames", async () => {
+  const stories = await loadStories();
+
+  for (const story of stories) {
+    const byEvent = {};
+    for (const shot of story.gallery) {
+      (byEvent[shot.event] ??= []).push(shot);
+    }
+
+    // Every chapter the renderer will draw for this wedding.
+    const rendered = EVENT_ORDER.filter(
+      (key) => CORE.includes(key) || (byEvent[key] || []).length > 0,
+    );
+
+    for (const key of rendered) {
+      const shots = byEvent[key] || [];
+      assert.ok(
+        shots.length >= 4,
+        `${story.slug}: ${key} has ${shots.length} frames, needs at least 4`,
+      );
+      assert.ok(
+        story.chapters[key] && story.chapters[key].title,
+        `${story.slug}: ${key} has no chapter copy`,
+      );
+      assert.ok(
+        story.chapters[key].note,
+        `${story.slug}: ${key} has no note`,
+      );
+
+      // A chapter must not show the same frame twice.
+      const srcs = shots.map((s) => s.img);
+      assert.equal(
+        new Set(srcs).size,
+        srcs.length,
+        `${story.slug}: ${key} repeats a photograph`,
+      );
+    }
+
+    for (const shot of story.gallery) {
+      assert.ok(shot.label, `${story.slug}: a photograph has no caption`);
+      assert.ok(shot.img, `${story.slug}: "${shot.label}" has no image`);
+    }
+  }
+});
+
+test("placeholder photographs are flagged so they can be swapped out", async () => {
+  const [stories, src] = await Promise.all([
+    loadStories(),
+    readProjectFile("js/stories-data.js"),
+  ]);
+
+  const placeholders = stories.flatMap((s) =>
+    s.gallery.filter((g) => g.placeholder),
+  );
+  assert.ok(placeholders.length > 0, "no photographs are marked as placeholders");
+
+  for (const shot of placeholders) {
+    assert.match(
+      shot.img,
+      /^https:\/\/images\.(pexels|unsplash)\.com\//,
+      `placeholder "${shot.label}" is not a known stock CDN URL`,
+    );
+  }
+
+  // The block has to be removable in one piece when real galleries arrive.
+  assert.match(
+    src,
+    /PLACEHOLDER PHOTOGRAPHS[\s\S]{0,400}?delete this whole block/i,
+    "the placeholder block must say plainly that it is disposable",
+  );
 });
 
 test("the story closes by inviting the reader", async () => {

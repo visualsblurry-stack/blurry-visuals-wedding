@@ -350,4 +350,168 @@
       ["Coverage", story.type]
     ];
   });
+
+  /* ==================================================================
+     PLACEHOLDER PHOTOGRAPHS — delete this whole block when the studio's
+     own galleries land, and nothing else has to change.
+
+     Stock frames from the Pexels CDN, grouped by ritual so every chapter
+     has a look of its own rather than a shared soup of wedding pictures.
+     Each chapter is topped up to four frames; anything the studio has
+     already filed keeps its place at the front.
+     ================================================================== */
+  var P = function (id, w) {
+    return "https://images.pexels.com/photos/" + id + "/pexels-photo-" + id +
+      ".jpeg?auto=compress&cs=tinysrgb&w=" + (w || 800);
+  };
+
+  var FILLER = {
+    haldi: [
+      [36098386, "First smear, from her mother"],
+      [36098363, "Waiting in the doorway"],
+      [19613666, "Marigold and turmeric"],
+      [36098378, "The hose arrives"],
+      [36248930, "Yellow on every hand"],
+      [36098379, "Washing it off, eventually"]
+    ],
+    mehndi: [
+      [30707334, "Hands, hour three"],
+      [6023737, "Her grandmother's song"],
+      [25677252, "Lamps on the terrace"],
+      [19613670, "Last detail before dinner"],
+      [19780151, "Cones, and a long queue"]
+    ],
+    sangeet: [
+      [29497170, "The eleven seconds"],
+      [32107250, "Watching from the side"],
+      [29153204, "Laughing mid-song"],
+      [33427272, "Fireworks over the lawn"],
+      [28210870, "The floor never emptied"]
+    ],
+    baraat: [
+      [33427272, "The arrival, and the noise"],
+      [29497170, "Dancing the last hundred metres"],
+      [28210870, "Drummers at the front"],
+      [32107250, "The family, waiting"],
+      [36098378, "Rose petals, all of them"]
+    ],
+    nikah: [
+      [17657612, "The qabool"],
+      [12968722, "Signing, with witnesses"],
+      [8621982, "First look afterwards"],
+      [36836727, "Duas from both sides"],
+      [36836726, "The room, held quiet"]
+    ],
+    pheras: [
+      [36836726, "Under the mandap"],
+      [12968722, "The fourth round"],
+      [8621982, "After the last vow"],
+      [17657612, "Walking out at sunrise"],
+      [36836727, "Fire, and the pandit's hands"]
+    ],
+    vidaai: [
+      [9778787, "Her father, not managing"],
+      [8621982, "The long goodbye"],
+      [17657612, "Rice over the shoulder"],
+      [36098369, "The car, and the crowd"],
+      [12968722, "Looking back once"]
+    ],
+    reception: [
+      [32483856, "Entrance"],
+      [36098383, "Between courses"],
+      [9778787, "Her hand, his mother's ring"],
+      [36098369, "The goodbye at the car"],
+      [28210870, "The floor, near midnight"]
+    ],
+    portraits: [
+      [36098383, "Ten minutes, door shut"],
+      [36098363, "Doorway light"],
+      [19780151, "Neither of them posing"],
+      [28210870, "The last frame of the night"],
+      [8621982, "Whatever they were laughing at"]
+    ]
+  };
+
+  /* Copy for a ritual the studio has not written up yet. Specific enough to
+     read properly, generic enough to be true of any wedding — and always
+     beaten by anything in CHAPTERS above. */
+  var GENERIC_CHAPTER = {
+    haldi: {
+      time: "Morning, day one",
+      title: "Turmeric, and the mess it makes.",
+      note: "It is scheduled for forty minutes and it never takes forty minutes. We photograph it close, because this is the hour nobody is performing yet."
+    },
+    mehndi: {
+      time: "Evening, day one",
+      title: "Henna, and hours of it.",
+      note: "The slowest event of any wedding and the most photographable — hands held still, everyone else talking, and light that keeps dropping."
+    },
+    sangeet: {
+      time: "Night, day two",
+      title: "The night both families competed.",
+      note: "Weeks of rehearsal, about a verse of it remembered. What replaces the choreography is always better than the choreography."
+    },
+    baraat: {
+      time: "Late afternoon",
+      title: "The arrival, and the noise.",
+      note: "A procession that covers two hundred metres in an hour. We walk backwards through most of it."
+    },
+    nikah: {
+      time: "Dusk",
+      title: "The vows, unamplified.",
+      note: "Short, quiet, and over before most guests have settled. We stay still and let it happen."
+    },
+    pheras: {
+      time: "The ceremony",
+      title: "Seven rounds, one promise.",
+      note: "Firelight, a pandit's voice, and the part of the day the whole thing was built around. We keep it unhurried."
+    },
+    vidaai: {
+      time: "The farewell",
+      title: "The hardest frames of the day.",
+      note: "Families come back to these years later, which is why we stay close and say nothing at all."
+    },
+    reception: {
+      time: "Night, last day",
+      title: "Where the celebration lands.",
+      note: "A receiving line, a room that never empties, and a goodbye at the car that takes far longer than anyone planned."
+    },
+    portraits: {
+      time: "Between events",
+      title: "The two of them, unhurried.",
+      note: "Stolen wherever the light was — a corridor, a lawn, ten minutes with the door shut. No posing, just somewhere quiet to stand."
+    }
+  };
+
+  var CORE_RITUALS = ["haldi", "mehndi", "sangeet", "pheras", "reception"];
+  var FRAMES_PER_CHAPTER = 4;
+
+  window.BLURRY_WEDDING_STORIES.forEach(function (story, si) {
+    var counted = {};
+    story.gallery.forEach(function (g) {
+      counted[g.event] = (counted[g.event] || 0) + 1;
+    });
+
+    // Every ritual that will render a chapter: the core five, plus whatever
+    // else this wedding actually had.
+    var keys = CORE_RITUALS.concat(
+      Object.keys(counted).filter(function (k) { return CORE_RITUALS.indexOf(k) === -1; })
+    );
+
+    keys.forEach(function (key) {
+      var pool = FILLER[key] || FILLER.portraits;
+      var need = FRAMES_PER_CHAPTER - (counted[key] || 0);
+      for (var i = 0; i < need; i += 1) {
+        // Offset by story so two weddings do not open with the same frame.
+        var pick = pool[(si + i) % pool.length];
+        story.gallery.push({
+          label: pick[1],
+          event: key,
+          img: P(pick[0]),
+          placeholder: true
+        });
+      }
+      if (!story.chapters[key]) story.chapters[key] = GENERIC_CHAPTER[key];
+    });
+  });
 })();
