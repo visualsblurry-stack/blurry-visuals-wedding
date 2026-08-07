@@ -1,5 +1,37 @@
+# Agent and assistant working directories. These hold local scratch state,
+# worktrees and machine-specific launch configs — nothing another checkout of
+# this repo can use.
 .worktrees/
 .superpowers/
+.claude/
+.codex/
+.cursor/
+.continue/
+.windsurf/
+.gstack/
+.aider*
+
+# Editor and OS droppings.
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secrets. Nothing in this site needs them today; the rule is here so a
+# stray key never becomes a commit.
+.env
+.env.*
+*.pem
+
+# Dependencies and build output, should this ever gain a toolchain.
+node_modules/
+.cache/
+*.log
+npm-debug.log*
 
 # Full-resolution originals. These are converted into img/hero/*.webp for the
 # site; committing the multi-megabyte source files only bloats the repo.
