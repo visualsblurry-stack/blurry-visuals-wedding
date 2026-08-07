@@ -498,9 +498,10 @@ body.investment-open{overflow:hidden;}
 .story-hero .phera{color:var(--white);}
 .story-hero .phera b{color:var(--white);}
 .story-hero .phera::after{background:rgba(255,255,255,.5);}
+.story-crumbs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:26px;}
 .story-back{
-  display:inline-flex;align-items:center;gap:9px;margin-bottom:26px;
-  padding:10px 18px 10px 14px;border:1px solid rgba(255,255,255,.6);
+  display:inline-flex;align-items:center;gap:9px;
+  padding:10px 18px;border:1px solid rgba(255,255,255,.6);
   font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
   color:var(--white);transition:background .2s,border-color .2s,color .2s;
 }

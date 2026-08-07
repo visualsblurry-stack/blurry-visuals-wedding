@@ -467,7 +467,10 @@
 
     storyRoot.innerHTML =
       '<section class="story-hero">' + heroMedia + '<div class="wrap">' +
-        '<a class="story-back" href="index.html#stories"><span aria-hidden="true">←</span> All weddings</a>' +
+        '<nav class="story-crumbs" aria-label="Breadcrumb">' +
+          '<a class="story-back" href="index.html"><span aria-hidden="true">←</span> Home</a>' +
+          '<a class="story-back" href="index.html#stories">All weddings</a>' +
+        "</nav>" +
         '<div class="phera"><b>Real wedding ' + ("0" + (idx + 1)).slice(-2) + "</b> — " + esc(st.city) + "</div>" +
         "<h1>" + esc(st.couple[0]) + " <em>&amp;</em> " + esc(st.couple[1]) + "</h1>" +
         '<div class="story-meta">' +
