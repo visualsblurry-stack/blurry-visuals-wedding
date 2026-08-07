@@ -494,6 +494,31 @@
 
   }
 
+  /* ---------- story page: floating way out ---------- */
+  /* The hero breadcrumb is gone by the second photograph, so mirror it in a
+     fixed control that appears once the breadcrumb has scrolled past. Driven
+     by scroll position rather than IntersectionObserver so it still resolves
+     in a tab that is not compositing frames. */
+  var storyReturn = document.getElementById("story-return");
+  if (storyReturn) {
+    var crumbs = document.querySelector(".story-crumbs");
+    var storyFooter = document.querySelector(".ftr");
+    var returnAt = 320;          // fallback if the breadcrumb never rendered
+    var returnUntil = Infinity;  // the footer carries its own way home
+    var measureReturn = function () {
+      if (crumbs) returnAt = crumbs.getBoundingClientRect().bottom + window.scrollY;
+      if (storyFooter) returnUntil = storyFooter.getBoundingClientRect().top + window.scrollY;
+    };
+    var onReturnScroll = function () {
+      var y = window.scrollY;
+      storyReturn.classList.toggle("in", y > returnAt && y + window.innerHeight < returnUntil);
+    };
+    measureReturn();
+    onReturnScroll();
+    window.addEventListener("scroll", onReturnScroll, { passive: true });
+    window.addEventListener("resize", function () { measureReturn(); onReturnScroll(); }, { passive: true });
+  }
+
   /* ---------- index: build story cards from data ---------- */
   var storiesGrid = document.getElementById("stories-grid");
   if (storiesGrid && window.BLURRY_WEDDING_STORIES) {
