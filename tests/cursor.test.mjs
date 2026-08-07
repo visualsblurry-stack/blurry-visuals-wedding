@@ -202,11 +202,13 @@ test("the static pages label their own hover targets", async () => {
     "every film tile must announce Watch",
   );
 
-  assert.deepEqual(
-    labels(storyHtml),
-    ["Home", "Weddings"],
-    "the floating return control must label both routes",
-  );
+  const storyLabels = labels(storyHtml);
+  for (const expected of ["Home", "Weddings", "Close", "Previous", "Next"]) {
+    assert.ok(
+      storyLabels.includes(expected),
+      `story.html is missing a "${expected}" hover label`,
+    );
+  }
 
   // Labels stay short enough to sit inside the 92px disc without wrapping.
   for (const label of indexLabels.concat(labels(storyHtml))) {

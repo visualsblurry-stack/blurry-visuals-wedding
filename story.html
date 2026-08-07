@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="img/blurry-visuals-logo-web.png">
-<link rel="stylesheet" href="css/style.css?v=20260731s">
+<link rel="stylesheet" href="css/style.css?v=20260731u">
 </head>
 <body>
 
@@ -55,6 +55,15 @@
   <a class="story-return-link" href="index.html#stories" data-cursor="Weddings">All weddings</a>
 </nav>
 
+<!-- full-size photograph viewer -->
+<div class="photobox" id="photobox" hidden role="dialog" aria-modal="true" aria-label="Photograph">
+  <button class="photobox-close" type="button" data-cursor="Close" aria-label="Close photograph">✕</button>
+  <button class="photobox-step prev" type="button" data-cursor="Previous" aria-label="Previous photograph"><span aria-hidden="true">←</span></button>
+  <img class="photobox-img" alt="">
+  <button class="photobox-step next" type="button" data-cursor="Next" aria-label="Next photograph"><span aria-hidden="true">→</span></button>
+  <p class="photobox-caption"><b data-photobox-count></b><span data-photobox-label></span></p>
+</div>
+
 <footer class="ftr">
   <div class="wrap">
     <p>© <span id="yr"></span> Blurry Visuals Weddings · Photography &amp; Films, Mumbai.</p>
@@ -68,7 +77,7 @@
   </div>
 </footer>
 
-<script src="js/stories-data.js?v=20260731s"></script>
-<script src="js/main.js?v=20260731s"></script>
+<script src="js/stories-data.js?v=20260731u"></script>
+<script src="js/main.js?v=20260731u"></script>
 </body>
 </html>

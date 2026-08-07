@@ -551,6 +551,58 @@ body.menu-open .story-return{opacity:0;visibility:hidden;transform:translateY(10
 .story-nav a:hover b{color:var(--champagne);}
 .story-nav a.next{text-align:right;margin-left:auto;}
 
+/* ============= full-size photograph viewer ================
+   Every photograph on the site is a button that opens here. The stage is a
+   plain <img> rather than a background so the browser can pick the natural
+   size and the picture is never cropped. */
+button.ph{width:100%;padding:0;border:0;font:inherit;}
+.photobox[hidden]{display:none;}
+.photobox{
+  position:fixed;inset:0;z-index:210;
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;
+  gap:clamp(8px,2vw,26px);padding:clamp(56px,7vh,84px) clamp(10px,3vw,40px);
+  background:rgba(12,35,38,.94);backdrop-filter:blur(8px);
+}
+body.photobox-open{overflow:hidden;}
+.photobox-img{
+  grid-column:2;justify-self:center;
+  max-width:100%;max-height:100%;width:auto;height:auto;
+  object-fit:contain;border-radius:2px;background:var(--ivory);
+  box-shadow:0 30px 90px rgba(4,16,18,.55);
+}
+.photobox-step{
+  display:grid;place-items:center;width:52px;height:52px;flex:none;
+  border-radius:50%;background:rgba(250,248,245,.12);color:var(--white);
+  font-size:20px;line-height:1;transition:background .2s,transform .2s;
+}
+.photobox-step:hover{background:var(--teal-deep);transform:scale(1.06);}
+.photobox-step.prev{grid-column:1;}
+.photobox-step.next{grid-column:3;}
+/* display:grid above would otherwise defeat the hidden attribute. */
+.photobox-step[hidden]{display:none;}
+.photobox-close{
+  position:absolute;top:clamp(12px,2.4vh,22px);right:clamp(12px,3vw,30px);
+  display:grid;place-items:center;width:46px;height:46px;
+  background:var(--teal-deep);color:var(--white);font-size:17px;line-height:1;
+  transition:background .2s;
+}
+.photobox-close:hover{background:var(--white);color:var(--ivory);}
+.photobox-caption{
+  position:absolute;left:0;right:0;bottom:clamp(12px,2.4vh,22px);margin:0;
+  display:flex;justify-content:center;align-items:baseline;gap:14px;
+  padding:0 20px;text-align:center;
+  font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(255,255,255,.72);
+}
+.photobox-caption b{color:var(--white);font-weight:700;}
+@media (max-width:640px){
+  .photobox{grid-template-columns:1fr;padding:64px 12px 84px;}
+  .photobox-img{grid-column:1;}
+  .photobox-step{position:absolute;bottom:calc(clamp(12px,2.4vh,22px) + 26px);}
+  .photobox-step.prev{grid-column:1;left:16px;}
+  .photobox-step.next{grid-column:1;right:16px;}
+}
+
 /* ===================== custom cursor ======================
    Ported from the Claude design's motion engine: a teal ring that trails the
    pointer and a dot that tracks it exactly, the ring swelling into a filled,

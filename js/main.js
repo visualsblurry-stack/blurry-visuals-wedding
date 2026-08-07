@@ -376,6 +376,91 @@
     });
   }
 
+  /* ---------- full-size photograph viewer ---------- */
+  var photobox = document.getElementById("photobox");
+  if (photobox) {
+    var pbImg = photobox.querySelector(".photobox-img");
+    var pbCount = photobox.querySelector("[data-photobox-count]");
+    var pbLabel = photobox.querySelector("[data-photobox-label]");
+    var pbPrev = photobox.querySelector(".photobox-step.prev");
+    var pbNext = photobox.querySelector(".photobox-step.next");
+    var pbClose = photobox.querySelector(".photobox-close");
+    var pbSet = [];
+    var pbIndex = 0;
+    var pbLastFocus = null;
+
+    /* The tiles ask the Unsplash CDN for only as many pixels as they render.
+       Full size wants a bigger one, and both the homepage and the story data
+       carry the size in the same query string. */
+    function fullSize(url) {
+      return url.replace(/([?&]w=)\d+/, "$12000").replace(/([?&]q=)\d+/, "$180");
+    }
+    function photoUrl(el) {
+      var found = (el.style.backgroundImage || "").match(/url\((['"]?)(.*?)\1\)/);
+      return found ? fullSize(found[2]) : "";
+    }
+
+    function showPhoto(i) {
+      if (!pbSet.length) return;
+      pbIndex = (i + pbSet.length) % pbSet.length;
+      var el = pbSet[pbIndex];
+      var caption = el.getAttribute("data-caption") || "";
+      pbImg.src = photoUrl(el);
+      pbImg.alt = caption;
+      pbLabel.textContent = caption;
+      pbCount.textContent = pbIndex + 1 + " / " + pbSet.length;
+      var many = pbSet.length > 1;
+      pbPrev.hidden = !many;
+      pbNext.hidden = !many;
+    }
+
+    function openPhotobox(el) {
+      /* Collected at open time, not at load: the portfolio filters hide tiles,
+         and someone stepping through should only meet the ones on screen. */
+      pbSet = Array.prototype.filter.call(
+        document.querySelectorAll("[data-expand]"),
+        function (n) { return n.offsetParent !== null; }
+      );
+      var at = pbSet.indexOf(el);
+      if (at === -1) { pbSet = [el]; at = 0; }
+      // The tile itself, not document.activeElement: a mouse click does not
+      // reliably focus a button, and closing must still land back on the
+      // photograph the visitor opened.
+      pbLastFocus = el;
+      photobox.hidden = false;
+      document.body.classList.add("photobox-open");
+      showPhoto(at);
+      pbClose.focus();
+    }
+
+    function closePhotobox() {
+      if (photobox.hidden) return;
+      photobox.hidden = true;
+      document.body.classList.remove("photobox-open");
+      pbImg.removeAttribute("src");
+      if (pbLastFocus && pbLastFocus.focus) pbLastFocus.focus();
+    }
+
+    document.addEventListener("click", function (e) {
+      var target = e.target.closest && e.target.closest("[data-expand]");
+      if (!target) return;
+      e.preventDefault();
+      openPhotobox(target);
+    });
+    pbPrev.addEventListener("click", function () { showPhoto(pbIndex - 1); });
+    pbNext.addEventListener("click", function () { showPhoto(pbIndex + 1); });
+    pbClose.addEventListener("click", closePhotobox);
+    photobox.addEventListener("click", function (e) {
+      if (e.target === photobox) closePhotobox();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (photobox.hidden) return;
+      if (e.key === "Escape") closePhotobox();
+      else if (e.key === "ArrowLeft") showPhoto(pbIndex - 1);
+      else if (e.key === "ArrowRight") showPhoto(pbIndex + 1);
+    });
+  }
+
   /* ---------- Investment & FAQs modal ---------- */
   var investmentModal = document.getElementById("investment-modal");
   var investmentDialog = investmentModal ? investmentModal.querySelector(".investment-dialog") : null;
@@ -509,8 +594,12 @@
 
     var galleryHtml = st.gallery.map(function (g) {
       if (g.img) {
-        return '<figure class="ph ph-img' + (g.wide ? " g-wide" : "") + '" role="img" aria-label="' +
-          esc(g.label) + '" style="background-image:url(\'' + esc(g.img) + "')\"></figure>";
+        // A button, not a figure: the photograph opens full size, so it has to
+        // be reachable by keyboard as well as by pointer.
+        return '<button class="ph ph-img' + (g.wide ? " g-wide" : "") +
+          '" type="button" data-expand data-cursor="Expand" data-caption="' + esc(g.label) +
+          '" aria-label="Expand photograph: ' + esc(g.label) +
+          '" style="background-image:url(\'' + esc(g.img) + "')\"></button>";
       }
       return '<figure class="ph ph-' + esc(g.tone || "smoke") + (g.wide ? ' g-wide"' : '"') + '>' +
         '<div class="ph-label"><em>' + esc(g.label) + "</em>Photograph placeholder</div></figure>";
