@@ -592,7 +592,7 @@
     };
     document.title = st.couple[0] + " & " + st.couple[1] + " | Blurry Visuals Weddings";
 
-    var galleryHtml = st.gallery.map(function (g) {
+    function photoHtml(g) {
       if (g.img) {
         // A button, not a figure: the photograph opens full size, so it has to
         // be reachable by keyboard as well as by pointer.
@@ -603,7 +603,58 @@
       }
       return '<figure class="ph ph-' + esc(g.tone || "smoke") + (g.wide ? ' g-wide"' : '"') + '>' +
         '<div class="ph-label"><em>' + esc(g.label) + "</em>Photograph placeholder</div></figure>";
+    }
+
+    /* The day, in the order it happened. The five core rituals always appear,
+       even with nothing under them yet, so a story reads as a complete plan
+       rather than whatever happens to be uploaded. The rest — a nikah instead
+       of pheras, a baraat, loose portraits — only appear when photographed. */
+    var STORY_EVENTS = [
+      { key: "haldi",     name: "Haldi",     note: "Turmeric, laughter, ruined clothes.", core: true },
+      { key: "mehndi",    name: "Mehndi",    note: "Hours of henna and gossip.",          core: true },
+      { key: "sangeet",   name: "Sangeet",   note: "The night the families competed.",    core: true },
+      { key: "baraat",    name: "Baraat",    note: "The arrival.",                        core: false },
+      { key: "nikah",     name: "Nikah",     note: "The vows.",                           core: false },
+      { key: "pheras",    name: "Pheras",    note: "Seven rounds, one promise.",          core: true },
+      { key: "vidaai",    name: "Vidaai",    note: "The hardest frames of the day.",      core: false },
+      { key: "reception", name: "Reception", note: "Where the celebration lands.",        core: true },
+      { key: "portraits", name: "Portraits", note: "The two of them, unhurried.",         core: false }
+    ];
+
+    var byEvent = {};
+    st.gallery.forEach(function (g) {
+      var key = g.event || "portraits";
+      (byEvent[key] = byEvent[key] || []).push(g);
+    });
+
+    var galleryHtml = STORY_EVENTS.map(function (ev) {
+      var shots = byEvent[ev.key] || [];
+      if (!shots.length && !ev.core) return "";
+      var body = shots.length
+        ? '<div class="story-gallery">' + shots.map(photoHtml).join("") + "</div>"
+        : '<p class="story-event-empty">Photographs from the ' + esc(ev.name) +
+          " are still being edited.</p>";
+      var id = "event-" + esc(ev.key);
+      return '<section class="story-event" id="' + id + '" aria-labelledby="' + id + '-head">' +
+        '<div class="story-event-head">' +
+          '<h2 id="' + id + '-head">' + esc(ev.name) + "</h2>" +
+          "<p>" + esc(ev.note) + "</p>" +
+          '<span class="story-event-count">' +
+            (shots.length ? shots.length + (shots.length === 1 ? " frame" : " frames") : "Coming soon") +
+          "</span>" +
+        "</div>" + body + "</section>";
     }).join("");
+
+    // Only offer a jump list once there is more than one place to jump to.
+    var eventNavHtml = STORY_EVENTS.filter(function (ev) {
+      return (byEvent[ev.key] || []).length > 0;
+    });
+    eventNavHtml = eventNavHtml.length > 1
+      ? '<nav class="story-eventnav" aria-label="Events">' + eventNavHtml.map(function (ev) {
+          return '<a href="#event-' + esc(ev.key) + '" data-cursor="' + esc(ev.name) + '">' +
+            esc(ev.name) + "</a>";
+        }).join("") + "</nav>"
+      : "";
 
     var prev = list[(idx - 1 + list.length) % list.length];
     var next = list[(idx + 1) % list.length];
@@ -640,13 +691,26 @@
         '<p class="lede">' + esc(st.lede) + "</p>" +
         '<p class="txt">' + esc(st.story) + "</p>" +
       "</div></section>" +
-      '<div class="wrap"><div class="story-gallery">' + galleryHtml + "</div></div>" +
+      '<div class="wrap story-events">' + eventNavHtml + galleryHtml + "</div>" +
       '<section class="story-nav"><div class="wrap" style="display:flex;justify-content:space-between;gap:20px;width:min(1180px,92vw);">' +
         '<a class="prev" href="story.html?s=' + esc(prev.slug) + '" data-cursor="Previous"><small>← Previous wedding</small><b>' +
           esc(prev.couple[0]) + " &amp; " + esc(prev.couple[1]) + "</b></a>" +
         '<a class="next" href="story.html?s=' + esc(next.slug) + '" data-cursor="Next"><small>Next wedding →</small><b>' +
           esc(next.couple[0]) + " &amp; " + esc(next.couple[1]) + "</b></a>" +
-      "</div></section>";
+      "</div></section>" +
+      /* Closing invitation: the visitor has just read someone else's whole
+         day, which is the moment to ask about theirs. */
+      '<section class="story-cta"><div class="story-cta-media" aria-hidden="true"' +
+        (st.cover ? ' style="background-image:url(\'' + esc(st.cover) + '\')"' : "") + "></div>" +
+        '<div class="wrap">' +
+          '<div class="phera"><b>Phera VII</b> — Your turn</div>' +
+          "<h2>Your story could be <em>next</em></h2>" +
+          "<p>We take a handful of weddings each season so every one of them gets" +
+            " this much attention. Tell us the date and the city, and we will tell" +
+            " you honestly whether we are the right studio for it.</p>" +
+          '<a class="btn btn-gold" href="index.html#contact" data-cursor="Enquire">Get in touch</a>' +
+        "</div>" +
+      "</section>";
 
   }
 
