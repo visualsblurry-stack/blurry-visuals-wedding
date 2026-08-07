@@ -68,33 +68,144 @@ test("the renderer lists events in the order the day runs", async () => {
     "the five rituals that always show must be exactly haldi, mehndi, sangeet, pheras, reception",
   );
 
-  // Each event needs a human name and a line of copy under it.
+  // Each event needs a human name for its fallback heading and rail label.
   for (const row of block[1].split("\n").filter((l) => l.includes("key:"))) {
     assert.match(row, /name:\s*"[^"]+"/, `event row has no name: ${row.trim()}`);
-    assert.match(row, /note:\s*"[^"]+"/, `event row has no note: ${row.trim()}`);
   }
+});
+
+test("chapters alternate ground and lay photographs on rows of twelve", async () => {
+  const mainScript = await readProjectFile("js/main.js");
+
+  const tones = mainScript.match(/var CHAPTER_TONES = \[([^\]]*)\]/);
+  assert.ok(tones, "js/main.js is missing CHAPTER_TONES");
+  const list = [...tones[1].matchAll(/"(\w+)"/g)].map((m) => m[1]);
+  assert.ok(list.length >= 3, "too few tones to establish a rhythm");
+  assert.ok(
+    list.some((t) => t === "dark") && list.some((t) => t === "light"),
+    "chapters must alternate between light and dark ground",
+  );
+  for (let i = 1; i < list.length; i += 1) {
+    assert.notEqual(
+      list[i],
+      list[i - 1],
+      `two chapters in a row share the ${list[i]} ground`,
+    );
+  }
+
+  // Every rhythm must pair into rows that fill the twelve-column grid.
+  const rhythms = mainScript.match(/var GRID_RHYTHMS = \[([\s\S]*?)\n    \];/);
+  assert.ok(rhythms, "js/main.js is missing GRID_RHYTHMS");
+  // One rhythm per line; each cell reads [span, "ratio"].
+  const rows = rhythms[1].split("\n").filter((line) => line.includes("[["));
+  assert.ok(rows.length >= 2, "one rhythm alone would make chapters rhyme");
+  for (const row of rows) {
+    const spans = [...row.matchAll(/(\d+),\s*"/g)].map((m) => Number(m[1]));
+    assert.equal(spans.length % 2, 0, "a rhythm must pair its photographs");
+    for (let i = 0; i < spans.length; i += 2) {
+      assert.equal(
+        spans[i] + spans[i + 1],
+        12,
+        `spans ${spans[i]} + ${spans[i + 1]} do not fill a row`,
+      );
+    }
+  }
+
+  // The odd photograph out runs the full width rather than leaving a hole.
+  assert.match(
+    mainScript,
+    /if \(total % 2 === 1 && i === total - 1\)/,
+    "an odd trailing photograph must be widened",
+  );
+  assert.match(
+    mainScript,
+    /ratio = total === 1 \? "16\/9" : "21\/9";/,
+    "a lone photograph should be a feature frame, not a letterbox strip",
+  );
+});
+
+test("a chapter carries its number, time, headline and note", async () => {
+  const mainScript = await readProjectFile("js/main.js");
+
+  for (const [needle, why] of [
+    ['class="chapter-eyebrow"', "the eyebrow"],
+    ["copy.time", "the time of day"],
+    ["copy.title || ev.name", "a headline that falls back to the ritual name"],
+    ['class="chapter-note"', "the note beside the headline"],
+    ['class="chapter-quote"', "the optional pull-quote"],
+    ['class="chapter-shot-cap"', "a caption on each photograph"],
+  ]) {
+    assert.ok(mainScript.includes(needle), `a chapter is missing ${why}`);
+  }
+
+  // The rail lists every chapter on the page, empty ones included.
+  assert.match(
+    mainScript,
+    /chapters\.length > 1[\s\S]{0,200}?chapter-rail/,
+    "the rail must be built from the chapters actually rendered",
+  );
+});
+
+test("the opening note, client words and credits render from data", async () => {
+  const [mainScript, styles] = await Promise.all([
+    readProjectFile("js/main.js"),
+    readProjectFile("css/style.css"),
+  ]);
+
+  // Each optional block is skipped rather than rendered empty.
+  for (const [guard, cls] of [
+    ["st.brief", "story-brief"],
+    ["st.stats", "story-stats"],
+    ["st.words", "story-words"],
+  ]) {
+    assert.ok(
+      new RegExp(`${guard.replace(".", "\\.")}\\s*\\n?\\s*\\?`).test(mainScript),
+      `${cls} must be skipped when its data is missing`,
+    );
+  }
+
+  // The rail parks below the fixed header instead of hiding behind it.
+  const rail = styles.match(/\.chapter-rail\s*\{([^}]*)\}/s);
+  assert.ok(rail, ".chapter-rail style block is missing");
+  const railTop = Number(rail[1].match(/top\s*:\s*(\d+)px/)?.[1]);
+  const headerHeight = Number(
+    styles.match(/\.hdr-in\s*\{[^}]*height\s*:\s*(\d+)px/s)?.[1],
+  );
+  assert.ok(
+    Number.isFinite(railTop) && Number.isFinite(headerHeight) && railTop >= headerHeight,
+    `the rail parks at ${railTop}px, under a ${headerHeight}px header`,
+  );
+
+  // And a jump has to clear both bars.
+  const scrollMargin = Number(
+    styles.match(/\.chapter\s*\{[^}]*scroll-margin-top\s*:\s*(\d+)px/s)?.[1],
+  );
+  assert.ok(
+    scrollMargin > headerHeight,
+    `scroll-margin-top ${scrollMargin}px does not clear the header`,
+  );
 });
 
 test("core rituals always render, the rest only when photographed", async () => {
   const mainScript = await readProjectFile("js/main.js");
 
-  // A non-core event with nothing in it produces no markup at all.
+  // A non-core event with nothing in it never becomes a chapter.
   assert.match(
     mainScript,
-    /if \(!shots\.length && !ev\.core\) return "";/,
+    /return ev\.core \|\| \(byEvent\[ev\.key\] \|\| \[\]\)\.length > 0;/,
     "non-core events must be dropped when empty",
   );
 
   // An empty core event still renders, with a note instead of a grid.
   assert.match(
     mainScript,
-    /shots\.length\s*\?\s*'<div class="story-gallery">'[\s\S]{0,160}?:\s*'<p class="story-event-empty">/,
+    /shots\.length\s*\?\s*'<div class="chapter-grid">'[\s\S]{0,220}?:\s*'<p class="chapter-empty">/,
     "an empty core event must fall back to the placeholder note",
   );
   assert.match(
     mainScript,
-    /"Coming soon"/,
-    "an empty event must say so in its count",
+    /is-empty/,
+    "an empty chapter must be marked so it can be shown quietly",
   );
 
   // Every photograph lands somewhere even without a tag.
@@ -104,16 +215,12 @@ test("core rituals always render, the rest only when photographed", async () => 
     "an untagged photograph must still be filed somewhere",
   );
 
-  // The jump list only offers events that exist on the page.
+  // The rail mirrors the page: every chapter rendered gets a stop, empty ones
+  // included, so scrolling past one is never a surprise.
   assert.match(
     mainScript,
-    /return \(byEvent\[ev\.key\] \|\| \[\]\)\.length > 0;/,
-    "the jump list must skip empty events",
-  );
-  assert.match(
-    mainScript,
-    /eventNavHtml\.length > 1/,
-    "a jump list with one destination is not worth showing",
+    /chapterNavHtml = chapters\.length > 1/,
+    "the rail must be built from the chapters actually rendered",
   );
 });
 
@@ -160,27 +267,35 @@ test("the story closes by inviting the reader", async () => {
 
   assert.match(
     mainScript,
-    /Your story could be <em>next<\/em>/,
-    "the closing section must carry the invitation",
+    /Your story could be<br><em>next<\/em>/,
+    "the closing panel must carry the invitation",
   );
 
-  const cta = mainScript.match(/'<section class="story-cta">[\s\S]*?"<\/section>";/);
-  assert.ok(cta, "the closing section is missing");
+  const close = mainScript.match(/'<section class="story-close">[\s\S]*?"<\/section>";/);
+  assert.ok(close, "the closing section is missing");
   assert.match(
-    cta[0],
+    close[0],
     /href="index\.html#contact"[^>]*data-cursor="Enquire"[^>]*>Get in touch</,
     "the closing button must reach the enquiry form",
   );
+  // The other half of the panel carries the reader on to the next wedding.
+  assert.match(
+    close[0],
+    /class="story-close-next" href="story\.html\?s='/,
+    "the closing panel must offer the next story",
+  );
 
-  // It has to be the last thing rendered, after the previous/next links.
-  const ctaAt = mainScript.indexOf('<section class="story-cta">');
-  const navAt = mainScript.indexOf('<section class="story-nav">');
-  assert.ok(ctaAt > navAt, "the invitation must come after the story navigation");
+  // It is the last thing rendered.
+  assert.match(
+    mainScript,
+    /'<section class="story-close">[\s\S]*?"<\/section>";\s*\n/,
+    "the closing panel must terminate the rendered markup",
+  );
 
   // Legible: white copy over a darkened cover photograph, not bare over it.
   assert.match(
     styles,
-    /\.story-cta::after\s*\{[^}]*linear-gradient\([^)]*rgba\(12,\s*35,\s*38/is,
-    "the closing section needs a scrim over its photograph",
+    /\.story-close-next::after\s*\{[^}]*linear-gradient\([^)]*rgba\(12,\s*35,\s*38/is,
+    "the next-story panel needs a scrim over its photograph",
   );
 });

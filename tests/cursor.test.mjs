@@ -170,13 +170,8 @@ test("hover targets are delegated so rendered cards are covered", async () => {
   );
   assert.match(
     mainScript,
-    /class="prev"[\s\S]{0,120}?data-cursor="Previous"/,
-    "the previous-wedding link must carry a hover label",
-  );
-  assert.match(
-    mainScript,
-    /class="next"[\s\S]{0,120}?data-cursor="Next"/,
-    "the next-wedding link must carry a hover label",
+    /class="story-close-next"[\s\S]{0,160}?data-cursor="Next story"/,
+    "the next-story panel must carry a hover label",
   );
 });
 

@@ -540,68 +540,189 @@ body.menu-open .story-return{opacity:0;visibility:hidden;transform:translateY(10
 .story-body{padding:70px 0 30px;}
 .story-body .lede{font-family:var(--ff-display);font-style:italic;font-weight:340;font-size:clamp(20px,2.4vw,27px);line-height:1.5;max-width:30ch;color:var(--ivory);margin:0 0 26px;}
 .story-body .txt{max-width:64ch;color:var(--ash);}
-/* ---- the day, split into its rituals ---- */
-.story-events{padding-top:8px;}
-.story-eventnav{
-  display:flex;flex-wrap:wrap;gap:10px;
-  padding:0 0 8px;margin:0 0 18px;border-bottom:1px solid var(--line);
+/* ---- hero stat row ---- */
+.story-stats{
+  display:flex;flex-wrap:wrap;gap:14px clamp(20px,3.4vw,48px);
+  margin-top:clamp(20px,3.4vh,34px);padding-top:16px;
+  border-top:1px solid rgba(255,255,255,.22);
 }
-.story-eventnav a{
-  padding:9px 16px;border:1px solid var(--line);border-radius:999px;
-  font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--ash);transition:background .2s,border-color .2s,color .2s;
+.story-stats div{display:flex;align-items:baseline;gap:9px;}
+.story-stats b{font-family:var(--ff-display);font-weight:400;font-size:25px;color:var(--white);}
+.story-stats small{
+  font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,.66);
 }
-.story-eventnav a:hover{background:var(--teal-deep);border-color:var(--teal-deep);color:var(--white);}
-.story-event{scroll-margin-top:96px;}
-.story-event-head{
-  display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 18px;
-  padding-top:44px;
+
+/* ---- sticky chapter rail ---- */
+.chapter-rail{
+  /* Parks below the fixed header rather than at top:0, where it would sit
+     behind it and never be seen. */
+  position:sticky;top:76px;z-index:45;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
 }
-.story-event-head h2{font-size:clamp(26px,3.4vw,40px);}
-.story-event-head p{margin:0;color:var(--ash);font-size:14px;}
-.story-event-count{
-  margin-left:auto;flex:none;
-  font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--champagne);
+.chapter-rail .wrap{
+  display:flex;align-items:center;gap:clamp(14px,2.4vw,32px);
+  overflow-x:auto;scrollbar-width:none;padding:15px 0;
 }
-.story-event-empty{
-  margin:22px 0 0;padding:34px 26px;
+.chapter-rail .wrap::-webkit-scrollbar{display:none;}
+.chapter-rail-label{
+  flex:none;font-size:9px;font-weight:700;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ash);
+}
+.chapter-rail a{
+  flex:none;white-space:nowrap;
+  font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ivory);transition:color .2s;
+}
+.chapter-rail a:hover{color:var(--champagne);}
+
+/* ---- opening note ---- */
+.story-brief{padding:clamp(56px,9vh,110px) 0;background:rgba(120,156,159,.06);}
+.story-brief .wrap{display:grid;grid-template-columns:.28fr .72fr;gap:clamp(26px,5vw,74px);align-items:start;}
+.story-brief-label,.story-credits-label,.story-words-label{
+  font-size:10px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:var(--champagne);
+}
+.story-brief-ask{
+  margin:0;font-family:var(--ff-display);font-weight:340;
+  font-size:clamp(23px,3.1vw,44px);line-height:1.24;color:var(--ivory);max-width:26ch;
+}
+.story-brief-text{margin:24px 0 0;max-width:58ch;color:var(--ash);}
+.story-brief-meta{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;
+  margin-top:32px;padding-top:24px;border-top:1px solid var(--line);
+}
+.story-brief-meta small,.story-credits small{
+  display:block;font-size:10px;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ash);
+}
+.story-brief-meta b,.story-credits b{
+  display:block;margin-top:8px;font-family:var(--ff-display);font-weight:400;font-size:19px;color:var(--ivory);
+}
+
+/* ---- a chapter of the day ---- */
+/* Clears the fixed header plus the parked rail, so a jump lands on the
+   chapter's own eyebrow rather than under both of them. */
+.chapter{padding:clamp(46px,7vh,88px) 0 clamp(54px,9vh,106px);scroll-margin-top:134px;}
+.chapter.tone-light{background:var(--white);}
+.chapter.tone-warm{background:rgba(120,156,159,.08);}
+.chapter.tone-dark{background:var(--ivory);color:var(--white);}
+.chapter.tone-dark h2,.chapter.tone-dark .chapter-note{color:var(--white);}
+.chapter.tone-dark .chapter-note{color:rgba(255,255,255,.74);}
+.chapter.tone-dark .chapter-eyebrow i{background:rgba(255,255,255,.24);}
+.chapter.tone-dark .chapter-eyebrow span{color:rgba(255,255,255,.7);}
+.chapter.tone-dark .chapter-empty{border-color:rgba(255,255,255,.26);color:rgba(255,255,255,.66);}
+.chapter.tone-dark .chapter-quote blockquote{color:var(--white);}
+/* An unphotographed ritual still holds its place, but quietly. */
+.chapter.is-empty{padding:clamp(30px,4.4vh,52px) 0;}
+.chapter.is-empty h2{font-size:clamp(22px,2.6vw,32px);}
+
+.chapter-head{
+  display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(20px,4vw,60px);align-items:end;
+  padding-bottom:clamp(22px,3.4vh,36px);border-bottom:1px solid var(--line);
+}
+.chapter.tone-dark .chapter-head{border-color:rgba(255,255,255,.18);}
+.chapter-eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:15px;}
+.chapter-eyebrow b{
+  font-size:10px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:var(--champagne);
+}
+.chapter-eyebrow span{
+  font-size:10px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:var(--ash);
+}
+.chapter-eyebrow i{flex:1;height:1px;background:var(--line);}
+.chapter-head h2{font-size:clamp(30px,4.8vw,68px);line-height:1.02;letter-spacing:-0.02em;}
+.chapter-note{margin:0;max-width:52ch;color:var(--ash);}
+
+.chapter-grid{
+  display:grid;grid-template-columns:repeat(12,1fr);
+  gap:clamp(12px,1.5vw,22px);margin-top:clamp(20px,3.4vh,34px);
+}
+.chapter-shot{
+  position:relative;overflow:hidden;border-radius:2px;padding:0;border:0;
+  grid-column:span var(--span,6);aspect-ratio:var(--ratio,4/5);
+  display:block;width:100%;
+  /* Longhand, not the shorthand: a placeholder tile also carries a .ph-* class
+     whose gradient is a background-image, and the shorthand would wipe it. */
+  background-color:var(--soot);
+  background-position:center;background-size:cover;background-repeat:no-repeat;
+}
+.chapter-shot .ph-label{position:absolute;inset:0;display:grid;place-items:center;}
+.chapter-shot-cap{
+  position:absolute;left:0;right:0;bottom:0;padding:13px 14px;text-align:left;
+  font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--white);
+  background:linear-gradient(to top,rgba(12,35,38,.62),rgba(12,35,38,0));
+}
+.chapter-empty{
+  margin:clamp(20px,3.4vh,34px) 0 0;padding:32px 26px;
   border:1px dashed var(--line);border-radius:2px;text-align:center;
   color:var(--ash);font-size:13px;letter-spacing:.04em;
 }
-.story-event .story-gallery{padding:22px 0 0;}
-.story-events > .story-event:last-of-type .story-gallery,
-.story-events > .story-event:last-of-type .story-event-empty{margin-bottom:90px;}
+.chapter-quote{margin:clamp(28px,5vh,56px) auto 0;max-width:min(100%,880px);text-align:center;}
+.chapter-quote blockquote{
+  margin:0;font-family:var(--ff-display);font-style:italic;font-weight:340;
+  font-size:clamp(21px,2.8vw,38px);line-height:1.32;color:var(--ivory);
+}
+.chapter-quote figcaption{
+  margin-top:16px;font-size:10px;font-weight:700;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--champagne);
+}
 
-/* ---- closing invitation ---- */
-.story-cta{
+/* ---- in their words ---- */
+.story-words{
   position:relative;isolation:isolate;overflow:hidden;
-  padding:clamp(70px,10vh,116px) 0;color:var(--white);text-align:center;
+  padding:clamp(66px,11vh,132px) 0;background:var(--ivory);color:var(--white);text-align:center;
 }
-.story-cta-media{
-  position:absolute;inset:0;z-index:-2;
-  background:var(--ivory) center/cover no-repeat;
+.story-words-media{position:absolute;inset:0;z-index:-1;background:center/cover no-repeat;opacity:.22;}
+.story-words .wrap{max-width:1000px;}
+.story-words-label{margin-bottom:clamp(22px,4vh,38px);}
+.story-words blockquote{
+  margin:0;font-family:var(--ff-display);font-weight:340;
+  font-size:clamp(24px,3.6vw,54px);line-height:1.22;letter-spacing:-0.01em;color:var(--white);
 }
-.story-cta::after{
-  content:"";position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(0deg,rgba(12,35,38,.86) 0%,rgba(12,35,38,.74) 100%);
+.story-words cite{
+  display:block;margin-top:clamp(22px,4vh,38px);font-style:normal;
+  font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.78);
 }
-.story-cta .wrap{position:relative;max-width:640px;}
-.story-cta .phera{justify-content:center;color:rgba(255,255,255,.72);}
-.story-cta .phera b{color:var(--white);}
-.story-cta .phera::after{background:rgba(255,255,255,.4);}
-.story-cta h2,.story-cta h2 em{color:var(--white);}
-.story-cta p{margin:18px auto 30px;max-width:52ch;color:rgba(255,255,255,.82);}
 
-.story-gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;padding:40px 0 90px;}
-.story-gallery .g-wide{grid-column:1/-1;}
-.story-gallery .g-wide .ph{aspect-ratio:21/9;}
-.story-gallery .ph{aspect-ratio:4/5;}
-.story-nav{border-top:1px solid var(--line);padding:44px 0 90px;display:flex;justify-content:space-between;gap:20px;}
-.story-nav a{display:flex;flex-direction:column;gap:6px;max-width:44%;}
-.story-nav a small{font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--ash);}
-.story-nav a b{font-family:var(--ff-display);font-weight:380;font-size:24px;color:var(--ivory);transition:color .2s;}
-.story-nav a:hover b{color:var(--champagne);}
-.story-nav a.next{text-align:right;margin-left:auto;}
+/* ---- credits ---- */
+.story-credits{padding:clamp(52px,9vh,100px) 0;background:rgba(120,156,159,.08);border-bottom:1px solid var(--line);}
+.story-credits .wrap{display:grid;grid-template-columns:.28fr .72fr;gap:clamp(26px,5vw,74px);align-items:start;}
+.story-credits .wrap > div:last-child{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:clamp(18px,2.6vw,34px);
+}
+.story-credits .wrap > div:last-child > div{padding-top:17px;border-top:1px solid var(--line);}
+
+/* ---- next story + invitation ---- */
+.story-close{display:grid;grid-template-columns:1fr 1fr;}
+.story-close-next{
+  position:relative;isolation:isolate;overflow:hidden;
+  display:flex;align-items:flex-end;min-height:clamp(320px,50vh,520px);
+  padding:clamp(26px,4vw,50px);color:var(--white);
+}
+.story-close-media{position:absolute;inset:0;z-index:-2;background:var(--ivory) center/cover no-repeat;transition:transform .8s cubic-bezier(.16,.84,.3,1);}
+.story-close-next::after{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(to top,rgba(12,35,38,.84) 0%,rgba(12,35,38,.1) 72%);
+}
+.story-close-next:hover .story-close-media{transform:scale(1.04);}
+.story-close-next-in{display:grid;gap:12px;}
+.story-close-next-in small{font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--champagne);}
+.story-close-next-in b{font-family:var(--ff-display);font-weight:400;font-size:clamp(29px,4.2vw,58px);line-height:1.02;}
+.story-close-next-in em{font-style:normal;font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.74);}
+.story-close-cta{
+  display:flex;flex-direction:column;justify-content:center;gap:20px;
+  padding:clamp(38px,6vw,70px) clamp(22px,4vw,58px);background:var(--teal-deep);color:var(--white);
+}
+.story-close-cta small{font-size:10px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:rgba(255,255,255,.78);}
+.story-close-cta h2,.story-close-cta h2 em{color:var(--white);}
+.story-close-cta h2{font-size:clamp(29px,4.2vw,58px);line-height:1.04;}
+.story-close-cta h2 em{font-style:italic;}
+.story-close-cta p{margin:0;max-width:42ch;color:rgba(255,255,255,.82);}
+.story-close-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:4px;}
+.story-close-actions .btn-gold{background:var(--white);color:var(--ivory);}
+.story-close-actions .btn-line{border-color:rgba(255,255,255,.44);color:var(--white);}
+.story-close-actions .btn-line:hover{border-color:var(--white);background:rgba(255,255,255,.1);}
 
 /* ============= full-size photograph viewer ================
    Every photograph on the site is a button that opens here. The stage is a
@@ -730,11 +851,18 @@ body.cursor-custom textarea{cursor:auto;}
   .about-people{grid-template-columns:1fr;gap:20px;}
   .contact-grid{grid-template-columns:1fr;}
   .investment-intro,.faq-heading{grid-template-columns:1fr;gap:18px;}
+  .story-brief .wrap,.story-credits .wrap{grid-template-columns:1fr;gap:22px;}
+  .chapter-head{grid-template-columns:1fr;gap:18px;align-items:start;}
+  .story-close{grid-template-columns:1fr;}
   .nav{display:none;}
   .burger{display:flex;}
 }
 @media (max-width:640px){
   .sec{padding:66px 0;}
+  /* One column, one rhythm: the twelve-column spans stop earning their keep
+     on a phone and every photograph gets the same portrait crop. */
+  .chapter-grid{grid-template-columns:1fr;}
+  .chapter-shot{grid-column:1/-1;aspect-ratio:4/5;}
   .masonry{columns:1;}
   .stories{grid-template-columns:1fr;}
   .form{grid-template-columns:1fr;}

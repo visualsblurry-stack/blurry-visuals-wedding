@@ -592,33 +592,30 @@
     };
     document.title = st.couple[0] + " & " + st.couple[1] + " | Blurry Visuals Weddings";
 
-    function photoHtml(g) {
-      if (g.img) {
-        // A button, not a figure: the photograph opens full size, so it has to
-        // be reachable by keyboard as well as by pointer.
-        return '<button class="ph ph-img' + (g.wide ? " g-wide" : "") +
-          '" type="button" data-expand data-cursor="Expand" data-caption="' + esc(g.label) +
-          '" aria-label="Expand photograph: ' + esc(g.label) +
-          '" style="background-image:url(\'' + esc(g.img) + "')\"></button>";
-      }
-      return '<figure class="ph ph-' + esc(g.tone || "smoke") + (g.wide ? ' g-wide"' : '"') + '>' +
-        '<div class="ph-label"><em>' + esc(g.label) + "</em>Photograph placeholder</div></figure>";
-    }
-
     /* The day, in the order it happened. The five core rituals always appear,
        even with nothing under them yet, so a story reads as a complete plan
        rather than whatever happens to be uploaded. The rest — a nikah instead
        of pheras, a baraat, loose portraits — only appear when photographed. */
     var STORY_EVENTS = [
-      { key: "haldi",     name: "Haldi",     note: "Turmeric, laughter, ruined clothes.", core: true },
-      { key: "mehndi",    name: "Mehndi",    note: "Hours of henna and gossip.",          core: true },
-      { key: "sangeet",   name: "Sangeet",   note: "The night the families competed.",    core: true },
-      { key: "baraat",    name: "Baraat",    note: "The arrival.",                        core: false },
-      { key: "nikah",     name: "Nikah",     note: "The vows.",                           core: false },
-      { key: "pheras",    name: "Pheras",    note: "Seven rounds, one promise.",          core: true },
-      { key: "vidaai",    name: "Vidaai",    note: "The hardest frames of the day.",      core: false },
-      { key: "reception", name: "Reception", note: "Where the celebration lands.",        core: true },
-      { key: "portraits", name: "Portraits", note: "The two of them, unhurried.",         core: false }
+      { key: "haldi",     name: "Haldi",     core: true },
+      { key: "mehndi",    name: "Mehndi",    core: true },
+      { key: "sangeet",   name: "Sangeet",   core: true },
+      { key: "baraat",    name: "Baraat",    core: false },
+      { key: "nikah",     name: "Nikah",     core: false },
+      { key: "pheras",    name: "Pheras",    core: true },
+      { key: "vidaai",    name: "Vidaai",    core: false },
+      { key: "reception", name: "Reception", core: true },
+      { key: "portraits", name: "Portraits", core: false }
+    ];
+
+    /* Chapters alternate ground so the page reads as a sequence rather than
+       one long scroll, and the photographs inside each one are laid on a
+       twelve-column grid in a repeating wide/narrow rhythm. Two rhythms,
+       swapped per chapter, keep neighbouring chapters from rhyming. */
+    var CHAPTER_TONES = ["light", "dark", "light", "warm", "dark"];
+    var GRID_RHYTHMS = [
+      [[7, "16/11"], [5, "4/5"], [5, "4/5"], [7, "16/11"]],
+      [[4, "4/5"], [8, "3/2"], [8, "3/2"], [4, "4/5"]]
     ];
 
     var byEvent = {};
@@ -627,33 +624,126 @@
       (byEvent[key] = byEvent[key] || []).push(g);
     });
 
-    var galleryHtml = STORY_EVENTS.map(function (ev) {
+    var chapters = STORY_EVENTS.filter(function (ev) {
+      return ev.core || (byEvent[ev.key] || []).length > 0;
+    });
+
+    function photoHtml(g, rhythm, i, total) {
+      var cell = rhythm[i % rhythm.length];
+      var span = cell[0];
+      var ratio = cell[1];
+      /* The rhythm pairs photographs into rows of twelve. An odd one out at
+         the end would leave a hole, so it runs the full width instead — as a
+         closing band under the others, or as a single feature frame when it
+         is the only photograph in the chapter. */
+      if (total % 2 === 1 && i === total - 1) {
+        span = 12;
+        ratio = total === 1 ? "16/9" : "21/9";
+      }
+      if (!g.img) {
+        return '<figure class="chapter-shot ph ph-' + esc(g.tone || "smoke") +
+          '" style="--span:' + span + ';--ratio:' + ratio + '">' +
+          '<div class="ph-label"><em>' + esc(g.label) + "</em>Photograph placeholder</div></figure>";
+      }
+      // A button, not a figure: the photograph opens full size, so it has to
+      // be reachable by keyboard as well as by pointer.
+      return '<button class="chapter-shot" type="button" data-expand data-cursor="Expand"' +
+        ' data-caption="' + esc(g.label) + '" aria-label="Expand photograph: ' + esc(g.label) +
+        '" style="--span:' + span + ";--ratio:" + ratio +
+        ";background-image:url('" + esc(g.img) + "')\">" +
+        '<span class="chapter-shot-cap">' + esc(g.label) + "</span></button>";
+    }
+
+    var galleryHtml = chapters.map(function (ev, n) {
       var shots = byEvent[ev.key] || [];
-      if (!shots.length && !ev.core) return "";
+      var copy = (st.chapters && st.chapters[ev.key]) || {};
+      var tone = CHAPTER_TONES[n % CHAPTER_TONES.length];
+      var rhythm = GRID_RHYTHMS[n % GRID_RHYTHMS.length];
+      var id = "chapter-" + esc(ev.key);
+      var num = ("0" + (n + 1)).slice(-2);
+
       var body = shots.length
-        ? '<div class="story-gallery">' + shots.map(photoHtml).join("") + "</div>"
-        : '<p class="story-event-empty">Photographs from the ' + esc(ev.name) +
+        ? '<div class="chapter-grid">' +
+            shots.map(function (g, i) { return photoHtml(g, rhythm, i, shots.length); }).join("") +
+          "</div>"
+        : '<p class="chapter-empty">Photographs from the ' + esc(ev.name) +
           " are still being edited.</p>";
-      var id = "event-" + esc(ev.key);
-      return '<section class="story-event" id="' + id + '" aria-labelledby="' + id + '-head">' +
-        '<div class="story-event-head">' +
-          '<h2 id="' + id + '-head">' + esc(ev.name) + "</h2>" +
-          "<p>" + esc(ev.note) + "</p>" +
-          '<span class="story-event-count">' +
-            (shots.length ? shots.length + (shots.length === 1 ? " frame" : " frames") : "Coming soon") +
-          "</span>" +
-        "</div>" + body + "</section>";
+
+      var quote = copy.quote
+        ? '<figure class="chapter-quote"><blockquote>' + esc(copy.quote) + "</blockquote>" +
+          "<figcaption>" + esc(copy.quoteWho || "") + "</figcaption></figure>"
+        : "";
+
+      return '<section class="chapter tone-' + tone + (shots.length ? "" : " is-empty") +
+        '" id="' + id + '" aria-labelledby="' + id + '-head">' +
+        '<div class="wrap">' +
+          '<div class="chapter-head">' +
+            "<div>" +
+              '<div class="chapter-eyebrow"><b>' + num + "</b>" +
+                (copy.time ? "<span>" + esc(copy.time) + "</span>" : "") +
+                '<i aria-hidden="true"></i></div>' +
+              '<h2 id="' + id + '-head">' + esc(copy.title || ev.name) + "</h2>" +
+            "</div>" +
+            (copy.note ? '<p class="chapter-note">' + esc(copy.note) + "</p>" : "") +
+          "</div>" +
+          body + quote +
+        "</div></section>";
     }).join("");
 
-    // Only offer a jump list once there is more than one place to jump to.
-    var eventNavHtml = STORY_EVENTS.filter(function (ev) {
-      return (byEvent[ev.key] || []).length > 0;
-    });
-    eventNavHtml = eventNavHtml.length > 1
-      ? '<nav class="story-eventnav" aria-label="Events">' + eventNavHtml.map(function (ev) {
-          return '<a href="#event-' + esc(ev.key) + '" data-cursor="' + esc(ev.name) + '">' +
-            esc(ev.name) + "</a>";
-        }).join("") + "</nav>"
+    /* Sticky chapter rail. Every chapter on the page is listed, empty ones
+       included, so the rail matches what a visitor actually scrolls past. */
+    var chapterNavHtml = chapters.length > 1
+      ? '<nav class="chapter-rail" aria-label="Chapters"><div class="wrap">' +
+          '<span class="chapter-rail-label">Jump to</span>' +
+          chapters.map(function (ev) {
+            return '<a href="#chapter-' + esc(ev.key) + '" data-cursor="' + esc(ev.name) + '">' +
+              esc(ev.name) + "</a>";
+          }).join("") +
+        "</div></nav>"
+      : "";
+
+    /* Opening note: the ask in the couple's words, how we answered it, and
+       the three facts a visitor weighing us up actually wants. */
+    var briefHtml = st.brief
+      ? '<section class="story-brief"><div class="wrap">' +
+          '<div class="story-brief-label">The brief</div>' +
+          "<div>" +
+            '<p class="story-brief-ask">' + esc(st.brief.ask) + "</p>" +
+            '<p class="story-brief-text">' + esc(st.brief.text) + "</p>" +
+            '<div class="story-brief-meta">' +
+              (st.brief.meta || []).map(function (row) {
+                return "<div><small>" + esc(row[0]) + "</small><b>" + esc(row[1]) + "</b></div>";
+              }).join("") +
+            "</div>" +
+          "</div>" +
+        "</div></section>"
+      : "";
+
+    var statsHtml = st.stats
+      ? '<div class="story-stats">' + st.stats.map(function (row) {
+          return "<div><b>" + esc(row[0]) + "</b><small>" + esc(row[1]) + "</small></div>";
+        }).join("") + "</div>"
+      : "";
+
+    var wordsHtml = st.words
+      ? '<section class="story-words">' +
+          '<div class="story-words-media" aria-hidden="true"' +
+            (st.cover ? ' style="background-image:url(\'' + esc(st.cover) + '\')"' : "") + "></div>" +
+          '<div class="wrap">' +
+            '<div class="story-words-label">In their words</div>' +
+            "<blockquote>" + esc(st.words.quote) + "</blockquote>" +
+            "<cite>" + esc(st.words.who) + " — " + esc(st.city) + "</cite>" +
+          "</div>" +
+        "</section>"
+      : "";
+
+    var creditsHtml = st.credits && st.credits.length
+      ? '<section class="story-credits"><div class="wrap">' +
+          '<div class="story-credits-label">Credits</div>' +
+          "<div>" + st.credits.map(function (row) {
+            return "<div><small>" + esc(row[0]) + "</small><b>" + esc(row[1]) + "</b></div>";
+          }).join("") + "</div>" +
+        "</div></section>"
       : "";
 
     var prev = list[(idx - 1 + list.length) % list.length];
@@ -685,30 +775,39 @@
           "<div><small>Venue</small><b>" + esc(st.venue) + "</b></div>" +
           "<div><small>City</small><b>" + esc(st.city) + "</b></div>" +
           "<div><small>Coverage</small><b>" + esc(st.type) + "</b></div>" +
-        "</div>" +
+        "</div>" + statsHtml +
       "</div></section>" +
+      chapterNavHtml +
+      briefHtml +
       '<section class="story-body"><div class="wrap">' +
         '<p class="lede">' + esc(st.lede) + "</p>" +
         '<p class="txt">' + esc(st.story) + "</p>" +
       "</div></section>" +
-      '<div class="wrap story-events">' + eventNavHtml + galleryHtml + "</div>" +
-      '<section class="story-nav"><div class="wrap" style="display:flex;justify-content:space-between;gap:20px;width:min(1180px,92vw);">' +
-        '<a class="prev" href="story.html?s=' + esc(prev.slug) + '" data-cursor="Previous"><small>← Previous wedding</small><b>' +
-          esc(prev.couple[0]) + " &amp; " + esc(prev.couple[1]) + "</b></a>" +
-        '<a class="next" href="story.html?s=' + esc(next.slug) + '" data-cursor="Next"><small>Next wedding →</small><b>' +
-          esc(next.couple[0]) + " &amp; " + esc(next.couple[1]) + "</b></a>" +
-      "</div></section>" +
-      /* Closing invitation: the visitor has just read someone else's whole
-         day, which is the moment to ask about theirs. */
-      '<section class="story-cta"><div class="story-cta-media" aria-hidden="true"' +
-        (st.cover ? ' style="background-image:url(\'' + esc(st.cover) + '\')"' : "") + "></div>" +
-        '<div class="wrap">' +
-          '<div class="phera"><b>Phera VII</b> — Your turn</div>' +
-          "<h2>Your story could be <em>next</em></h2>" +
+      galleryHtml +
+      wordsHtml +
+      creditsHtml +
+      /* Closing pair: the next wedding on the left for anyone still browsing,
+         the invitation on the right for anyone who has decided. */
+      '<section class="story-close">' +
+        '<a class="story-close-next" href="story.html?s=' + esc(next.slug) + '" data-cursor="Next story">' +
+          '<span class="story-close-media" aria-hidden="true"' +
+            (next.cover ? ' style="background-image:url(\'' + esc(next.cover) + '\')"' : "") + "></span>" +
+          '<span class="story-close-next-in">' +
+            "<small>Next story</small>" +
+            "<b>" + esc(next.couple[0]) + " &amp; " + esc(next.couple[1]) + "</b>" +
+            "<em>" + esc(next.city) + " · " + esc(next.date) + " →</em>" +
+          "</span>" +
+        "</a>" +
+        '<div class="story-close-cta">' +
+          "<small>Your turn</small>" +
+          "<h2>Your story could be<br><em>next</em></h2>" +
           "<p>We take a handful of weddings each season so every one of them gets" +
-            " this much attention. Tell us the date and the city, and we will tell" +
-            " you honestly whether we are the right studio for it.</p>" +
-          '<a class="btn btn-gold" href="index.html#contact" data-cursor="Enquire">Get in touch</a>' +
+            " this much attention. Send us the date and we will come back to you" +
+            " honestly, within a day.</p>" +
+          '<div class="story-close-actions">' +
+            '<a class="btn btn-gold" href="index.html#contact" data-cursor="Enquire">Get in touch</a>' +
+            '<a class="btn btn-line" href="index.html#stories" data-cursor="Weddings">All weddings</a>' +
+          "</div>" +
         "</div>" +
       "</section>";
 

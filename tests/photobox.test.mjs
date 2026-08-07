@@ -62,11 +62,11 @@ test("expandable photographs are buttons, not decorative divs", async () => {
     assert.match(tag, /aria-label="Expand photograph: [^"]+"/, "an expandable photograph is unlabelled");
   }
 
-  // The story gallery is rendered from data and must follow the same shape.
+  // The chapter galleries are rendered from data and must follow the same shape.
   assert.match(
     mainScript,
-    /'<button class="ph ph-img'[\s\S]{0,400}?data-expand data-cursor="Expand"/,
-    "js/main.js must render gallery photographs as expandable buttons",
+    /'<button class="chapter-shot"[\s\S]{0,120}?data-expand data-cursor="Expand"/,
+    "js/main.js must render chapter photographs as expandable buttons",
   );
   assert.ok(
     !/<figure class="ph ph-img'/.test(mainScript),
