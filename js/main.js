@@ -168,6 +168,54 @@
     });
   }
 
+  /* ---------- hero: previews of what is coming ---------- */
+  /* Three frames showing the next slides. They are built only after the page
+     has loaded, because populating them fetches images the slideshow would
+     otherwise not have touched yet — doing it earlier would put them in
+     competition with the first slide, which is the largest paint on the
+     page. Hidden from assistive tech: the dots already reach every
+     photograph, so these would announce the same destinations a second
+     time. */
+  var heroThumbStrip = document.querySelector(".hero-thumbs");
+  var heroThumbs = [];
+  var HERO_THUMB_COUNT = 3;
+
+  function heroSlideSource(index) {
+    var slide = slides[index];
+    if (!slide) return "";
+    if (slide.dataset.bg) return slide.dataset.bg;
+    var inline = (slide.style.backgroundImage || "").match(/url\(["']?(.*?)["']?\)/);
+    return inline ? inline[1] : "";
+  }
+
+  function updateHeroThumbs() {
+    heroThumbs.forEach(function (thumb, offset) {
+      var target = (slideIndex + offset + 1) % slides.length;
+      var source = heroSlideSource(target);
+      thumb.dataset.slide = String(target);
+      if (source) thumb.style.backgroundImage = 'url("' + source.replace(/"/g, "%22") + '")';
+    });
+  }
+
+  function buildHeroThumbs() {
+    if (!heroThumbStrip || slides.length <= HERO_THUMB_COUNT) return;
+    for (var i = 0; i < HERO_THUMB_COUNT; i += 1) {
+      var thumb = document.createElement("button");
+      thumb.type = "button";
+      thumb.className = "hero-thumb";
+      thumb.tabIndex = -1;
+      heroThumbStrip.appendChild(thumb);
+      heroThumbs.push(thumb);
+    }
+    heroThumbStrip.addEventListener("click", function (e) {
+      var thumb = e.target.closest && e.target.closest(".hero-thumb");
+      if (!thumb) return;
+      showHeroSlide(Number(thumb.dataset.slide)).then(scheduleHeroAutoplay);
+    });
+    updateHeroThumbs();
+    heroThumbStrip.classList.add("in");
+  }
+
   function showHeroSlide(index) {
     var nextIndex = (index + slides.length) % slides.length;
     return loadHeroSlide(nextIndex).then(function (loaded) {
@@ -176,6 +224,7 @@
       slideIndex = nextIndex;
       slides[slideIndex].classList.add("act");
       updateHeroDots();
+      updateHeroThumbs();
       typeHeroTagline(slideIndex);
       loadHeroSlide((slideIndex + 1) % slides.length);
       return true;
@@ -245,6 +294,19 @@
     updateHeroDots();
     typeHeroTagline(slideIndex);
     scheduleHeroAutoplay();
+
+    // The copy has to clear the proof bar, whatever height it wraps to.
+    var heroFoot = document.querySelector(".hero-foot");
+    if (heroFoot && hero) {
+      var measureHeroFoot = function () {
+        hero.style.setProperty("--hero-foot-h", Math.round(heroFoot.offsetHeight) + "px");
+      };
+      measureHeroFoot();
+      window.addEventListener("resize", measureHeroFoot, { passive: true });
+    }
+
+    if (document.readyState === "complete") buildHeroThumbs();
+    else window.addEventListener("load", buildHeroThumbs, { once: true });
   }
 
   /* ---------- reveal on scroll ---------- */
