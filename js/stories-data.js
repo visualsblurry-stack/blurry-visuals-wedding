@@ -1,5 +1,5 @@
 /* ============================================================
-   PHERAA — real wedding stories data
+   Blurry Visuals Weddings — real wedding stories data
    Stock photos (Unsplash CDN) for now — replace `cover` and
    gallery `img` URLs with img/stories/<slug>/NN.jpg when real
    photos arrive (see img/README.md). Order = prev/next order.
@@ -10,7 +10,7 @@
     return "https://images.unsplash.com/photo-" + id + "?auto=format&fit=crop&w=" + (w || 1200) + "&q=70";
   };
 
-  window.PHERAA_STORIES = [
+  window.BLURRY_WEDDING_STORIES = [
     {
       slug: "anaya-rohan",
       couple: ["Anaya", "Rohan"],
@@ -23,12 +23,12 @@
       lede: "Some weddings arrive quietly. This one arrived with two hundred dancers and a horse that refused to hurry.",
       story: "Anaya and Rohan met in a Bandra bookshop and married ten minutes from it, over three days that moved from an intimate haldi on the lawns to a sangeet that ran ninety minutes over schedule — nobody minded. We photographed the rituals close and the sea wide, keeping the pheras unhurried and the dance floor loud.",
       gallery: [
-        { label: "Bride portrait, golden hour", img: U("1587271315307-eaebc181c749"), wide: false },
-        { label: "Baraat energy on the bandstand", img: U("1597157639073-69284dc0fdaf"), wide: false },
-        { label: "Pheras by the sea", img: U("1587271636175-90d58cdad458", 1600), wide: true },
-        { label: "Mangalsutra moment", img: U("1621801306185-8c0ccf9c8eb8"), wide: false },
-        { label: "First look, corridor light", img: U("1537633552985-df8429e8048b"), wide: false },
-        { label: "Vidaai, held together", img: U("1599462616558-2b75fd26a283", 1600), wide: true }
+        { label: "Bride portrait, golden hour", event: "portraits", img: U("1587271315307-eaebc181c749"), wide: false },
+        { label: "Baraat energy on the bandstand", event: "baraat", img: U("1597157639073-69284dc0fdaf"), wide: false },
+        { label: "Pheras by the sea", event: "pheras", img: U("1587271636175-90d58cdad458", 1600), wide: true },
+        { label: "Mangalsutra moment", event: "pheras", img: U("1621801306185-8c0ccf9c8eb8"), wide: false },
+        { label: "First look, corridor light", event: "portraits", img: U("1537633552985-df8429e8048b"), wide: false },
+        { label: "Vidaai, held together", event: "vidaai", img: U("1599462616558-2b75fd26a283", 1600), wide: true }
       ],
       film: "https://www.youtube.com/watch?v=a9uRfuujFY8"
     },
@@ -44,10 +44,10 @@
       lede: "They wanted a wedding that felt like a long dinner with the people they love. The sea agreed to host.",
       story: "A ferry, a beach house, and a nikah at dusk. Meher and Zain kept the guest list at forty and the plans loose, which gave us room to work like documentarians — barefoot processions, quiet duas, and a dance floor made of sand. The frames stay soft, salt-aired, and unposed.",
       gallery: [
-        { label: "Couple at the waterline", img: U("1460364157752-926555421a7e", 1600), wide: true },
-        { label: "Nikah at dusk", img: U("1591604466107-ec97de577aff"), wide: false },
-        { label: "Mehndi detail, sea breeze", img: U("1505932794465-147d1f1b2c97"), wide: false },
-        { label: "Dinner under string lights", img: U("1519225421980-715cb0215aed", 1600), wide: true }
+        { label: "Couple at the waterline", event: "portraits", img: U("1460364157752-926555421a7e", 1600), wide: true },
+        { label: "Nikah at dusk", event: "nikah", img: U("1591604466107-ec97de577aff"), wide: false },
+        { label: "Mehndi detail, sea breeze", event: "mehndi", img: U("1505932794465-147d1f1b2c97"), wide: false },
+        { label: "Dinner under string lights", event: "reception", img: U("1519225421980-715cb0215aed", 1600), wide: true }
       ],
       film: ""
     },
@@ -63,12 +63,12 @@
       lede: "Jaipur gave us sandstone, brass bands, and light that behaves like it studied art direction.",
       story: "Ishita and Arjun flew ninety guests to a heritage palace and let the city set the palette. We shot the pheras against carved jharokhas, the sangeet under a courtyard moon, and stole the couple away at sunrise for portraits before the palace woke. Every frame leans warm, formal, and a little grand — like the wedding itself.",
       gallery: [
-        { label: "Palace facade, first light", img: U("1727430256509-0f897d6f4765", 1600), wide: true },
-        { label: "Bridal portrait, jharokha", img: U("1610173827043-9db50e0d8ef9"), wide: false },
-        { label: "Sangeet courtyard", img: U("1502635385003-ee1e6a1a742d"), wide: false },
-        { label: "Couple portrait, sunrise", img: U("1519671482749-fd09be7ccebf"), wide: false },
-        { label: "Pheras under the canopy", img: U("1665960213508-48f07086d49c"), wide: false },
-        { label: "Farewell arch, marigold", img: U("1587271636175-90d58cdad458", 1600), wide: true }
+        { label: "Palace facade, first light", event: "portraits", img: U("1727430256509-0f897d6f4765", 1600), wide: true },
+        { label: "Bridal portrait, jharokha", event: "portraits", img: U("1610173827043-9db50e0d8ef9"), wide: false },
+        { label: "Sangeet courtyard", event: "sangeet", img: U("1502635385003-ee1e6a1a742d"), wide: false },
+        { label: "Couple portrait, sunrise", event: "portraits", img: U("1519671482749-fd09be7ccebf"), wide: false },
+        { label: "Pheras under the canopy", event: "pheras", img: U("1665960213508-48f07086d49c"), wide: false },
+        { label: "Farewell arch, marigold", event: "vidaai", img: U("1587271636175-90d58cdad458", 1600), wide: true }
       ],
       film: "https://www.youtube.com/watch?v=UpZI5dOFGM0"
     },
@@ -84,10 +84,10 @@
       lede: "Big weddings are logistics. Great big weddings are logistics you never see in the photographs.",
       story: "Sana and Dev's week was built at scale — a sangeet with a live band, a wedding under the open Mumbai sky, and a guest list that filled the racecourse lawns. We ran a two-photographer, one-filmmaker crew and mapped every ritual in advance, so the coverage feels calm even where the evening wasn't.",
       gallery: [
-        { label: "Stage wide, sangeet night", img: U("1494955870715-979ca4f13bf0", 1600), wide: true },
-        { label: "Couple entry, sparklers", img: U("1722952934708-749c22eb2e58"), wide: false },
-        { label: "Choreography mid-air", img: U("1529636798458-92182e662485"), wide: false },
-        { label: "Skyline pheras", img: U("1583939003579-730e3918a45a", 1600), wide: true }
+        { label: "Stage wide, sangeet night", event: "sangeet", img: U("1494955870715-979ca4f13bf0", 1600), wide: true },
+        { label: "Couple entry, sparklers", event: "reception", img: U("1722952934708-749c22eb2e58"), wide: false },
+        { label: "Choreography mid-air", event: "sangeet", img: U("1529636798458-92182e662485"), wide: false },
+        { label: "Skyline pheras", event: "pheras", img: U("1583939003579-730e3918a45a", 1600), wide: true }
       ],
       film: ""
     },
@@ -103,11 +103,11 @@
       lede: "The haldi began politely. It did not end that way, and the photographs are better for it.",
       story: "Ria and Kabir married in daylight on a Karjat farmhouse lawn — a haldi that turned into a water fight, a noon ceremony under a mango tree, and a lunch that lasted till sunset. The set is bright, yellow-soaked, and full of motion; we let the mess in, because the mess was the memory.",
       gallery: [
-        { label: "Haldi hands, mid-throw", img: U("1634693343333-9b6013c30d57"), wide: false },
-        { label: "Yellow, everywhere", img: U("1681717075175-19feb7a6f664"), wide: false },
-        { label: "Mango-tree mandap", img: U("1727430256509-0f897d6f4765", 1600), wide: true },
-        { label: "Lawn lunch, long table", img: U("1525772764200-be829a350797"), wide: false },
-        { label: "Couple, golden field", img: U("1735052712464-9d24b69be5f5"), wide: false }
+        { label: "Haldi hands, mid-throw", event: "haldi", img: U("1634693343333-9b6013c30d57"), wide: false },
+        { label: "Yellow, everywhere", event: "haldi", img: U("1681717075175-19feb7a6f664"), wide: false },
+        { label: "Mango-tree mandap", event: "pheras", img: U("1727430256509-0f897d6f4765", 1600), wide: true },
+        { label: "Lawn lunch, long table", event: "reception", img: U("1525772764200-be829a350797"), wide: false },
+        { label: "Couple, golden field", event: "portraits", img: U("1735052712464-9d24b69be5f5"), wide: false }
       ],
       film: ""
     },
@@ -123,12 +123,395 @@
       lede: "Udaipur is the easiest city in India to photograph and the hardest one to leave.",
       story: "Tara and Vikram booked us film-first: a cinematic wedding film with stills built around it. Boat entries, ghat-side portraits, a pichola-blue hour that lasted exactly eleven minutes — we planned the whole wedding around light and it shows. The photographs read like stills pulled from the film, because that's what they are.",
       gallery: [
-        { label: "Boat entry, Lake Pichola", img: U("1537633552985-df8429e8048b", 1600), wide: true },
-        { label: "Bride, ghat steps", img: U("1587271315307-eaebc181c749"), wide: false },
-        { label: "Blue-hour couple portrait", img: U("1515934751635-c81c6bc9a2d8"), wide: false },
-        { label: "Jaimala, lakeside", img: U("1583939003579-730e3918a45a", 1600), wide: true }
+        { label: "Boat entry, Lake Pichola", event: "baraat", img: U("1537633552985-df8429e8048b", 1600), wide: true },
+        { label: "Bride, ghat steps", event: "portraits", img: U("1587271315307-eaebc181c749"), wide: false },
+        { label: "Blue-hour couple portrait", event: "portraits", img: U("1515934751635-c81c6bc9a2d8"), wide: false },
+        { label: "Jaimala, lakeside", event: "pheras", img: U("1583939003579-730e3918a45a", 1600), wide: true }
       ],
       film: "https://www.youtube.com/watch?v=Pm3NfZDC48k"
     }
   ];
+
+  /* ------------------------------------------------------------------
+     Chapter copy. Each ritual gets the time it happened, a sentence for a
+     headline, and a note beside it — the parts a caption cannot carry.
+     Keyed by slug, then by the event tags used in `gallery` above. Anything
+     missing falls back to the ritual's own name, so a wedding can be written
+     up gradually instead of all at once.
+     ------------------------------------------------------------------ */
+  var CHAPTERS = {
+    "anaya-rohan": {
+      baraat: {
+        time: "Day two · 6:20 pm",
+        title: "The baraat took the bandstand.",
+        note: "Two hundred dancers, one horse with no intention of hurrying, and a stretch of Bandra seafront that stopped to watch. We walked backwards for most of it."
+      },
+      pheras: {
+        time: "Day three · 7:05 pm",
+        title: "Pheras, with the sea for a witness.",
+        note: "The mandap faced west on purpose. Seven rounds against a falling tide, unhurried, while the last of the light did the work for us.",
+        quote: "We had planned every minute of that day except this one. It is the only part I remember properly.",
+        quoteWho: "Anaya, on the pheras"
+      },
+      vidaai: {
+        time: "Day three · 11:40 pm",
+        title: "Vidaai, and nobody let go first.",
+        note: "The hardest frames of any wedding, and the ones families come back to years later. We stay close and say nothing."
+      },
+      portraits: {
+        time: "Across three days",
+        title: "The two of them, unhurried.",
+        note: "Stolen between events — a corridor, a golden hour, ten minutes with the door shut. No posing, just somewhere quiet to stand."
+      }
+    },
+    "meher-zain": {
+      mehndi: {
+        time: "Day one · 5:30 pm",
+        title: "Mehndi with salt in the air.",
+        note: "Forty guests on a veranda, henna drying in a sea breeze that kept threatening to smudge it. Nobody hurried the artists."
+      },
+      nikah: {
+        time: "Day two · 6:48 pm",
+        title: "A nikah at the last of the light.",
+        note: "Barefoot, unamplified, and over in nine minutes. The quietest ceremony we have photographed, and the one we talk about most.",
+        quote: "There was no stage and no schedule. Just everyone we love, standing on sand.",
+        quoteWho: "Zain, on the nikah"
+      },
+      reception: {
+        time: "Day two · 9:15 pm",
+        title: "Dinner ran until the tide came in.",
+        note: "One long table, string lights, and a dance floor made of sand. It ended when the sea decided it should."
+      },
+      portraits: {
+        time: "Day two · golden hour",
+        title: "At the waterline, before anyone noticed.",
+        note: "Twenty minutes away from the party while the light held. They talked to each other and forgot we were there."
+      }
+    },
+    "ishita-arjun": {
+      sangeet: {
+        time: "Day two · 9:00 pm",
+        title: "A sangeet under a courtyard moon.",
+        note: "Sandstone walls, a brass band, and choreography that survived roughly one verse before the aunts took over."
+      },
+      pheras: {
+        time: "Day three · 5:15 am",
+        title: "Pheras beneath carved jharokhas.",
+        note: "The palace at its emptiest. Firelight on stone, a pandit's voice, and ninety guests trying very hard to stay awake.",
+        quote: "We flew everyone across the country for four minutes that felt like this. Worth it.",
+        quoteWho: "Ishita, on the pheras"
+      },
+      vidaai: {
+        time: "Day three · 10:20 am",
+        title: "Out through the marigold arch.",
+        note: "The last frames of the wedding, made under eight feet of flowers while the family formed a corridor neither of them could see the end of."
+      },
+      portraits: {
+        time: "Day three · first light",
+        title: "The palace, before it woke.",
+        note: "We stole them at sunrise. Empty courtyards, warm stone, and the only hour all week when nobody needed either of them."
+      }
+    },
+    "sana-dev": {
+      sangeet: {
+        time: "Day one · 9:30 pm",
+        title: "A live band and eight hundred people.",
+        note: "Built at scale and run to the minute. Two photographers, one filmmaker, and a plan for every ritual so the evening never had to wait for us."
+      },
+      pheras: {
+        time: "Day two · 8:40 pm",
+        title: "Pheras against the Mumbai skyline.",
+        note: "An open sky over the racecourse, the city lit behind the mandap, and a ceremony that stayed calm in the middle of all of it.",
+        quote: "Everyone warned us a wedding this size would feel like a production. In the photographs it does not.",
+        quoteWho: "Sana, on the wedding day"
+      },
+      reception: {
+        time: "Day two · 10:05 pm",
+        title: "An entrance, and then sparklers.",
+        note: "A receiving line that took ninety minutes and a room that never once emptied out."
+      }
+    },
+    "ria-kabir": {
+      haldi: {
+        time: "Day one · 9:50 am",
+        title: "Haldi, and then a water fight.",
+        note: "It was meant to last forty minutes. Two hours in, a cousin found the garden hose and the lawn turned yellow. Nobody changed clothes.",
+        quote: "The turmeric handprint on Kabir's back is my favourite photograph of the entire wedding.",
+        quoteWho: "Ria, on the haldi"
+      },
+      pheras: {
+        time: "Day one · 12:30 pm",
+        title: "A noon ceremony under a mango tree.",
+        note: "Daylight weddings give you nowhere to hide, which is the point. Hard sun, real faces, no lighting rig anywhere in sight."
+      },
+      reception: {
+        time: "Day one · 2:00 pm",
+        title: "Lunch on one very long table.",
+        note: "It was billed as an hour. It ran until sunset, which everybody had quietly expected."
+      },
+      portraits: {
+        time: "Day one · 5:40 pm",
+        title: "Golden field, end of the day.",
+        note: "Twenty minutes at the far end of the estate, both of them still faintly yellow."
+      }
+    },
+    "tara-vikram": {
+      baraat: {
+        time: "Day one · 4:30 pm",
+        title: "He arrived by boat.",
+        note: "Lake Pichola at half past four, a baraat spread across three boats, and a drummer who kept time with the oars."
+      },
+      pheras: {
+        time: "Day two · 7:10 pm",
+        title: "Jaimala at the water's edge.",
+        note: "Planned around the light rather than the schedule — which is what happens when a wedding is booked film-first.",
+        quote: "We watch the film every anniversary. The photographs are the film, held still.",
+        quoteWho: "Tara, a year on"
+      },
+      portraits: {
+        time: "Day two · blue hour",
+        title: "Eleven minutes of Pichola blue.",
+        note: "That is genuinely how long it lasts on that lake in April. We had the ghat steps cleared and waiting."
+      }
+    }
+  };
+
+  /* The opening note, the couple's own words, and the numbers behind the
+     coverage. Everything here is optional; a story drops the section it
+     lacks rather than rendering an empty one. */
+  var EXTRAS = {
+    "anaya-rohan": {
+      brief: {
+        ask: "Anaya asked for one thing: don't make us pose.",
+        text: "So for three days in Bandra we stayed at the edge of the room. A haldi on the lawns, a sangeet that ran ninety minutes over, pheras facing the sea. Everything below is in the order it happened.",
+        meta: [["Coverage", "Photo & film"], ["Venue", "Taj Lands End"], ["Delivered in", "21 days"]]
+      },
+      stats: [["642", "Frames delivered"], ["5", "Events"], ["4", "Crew on ground"]],
+      words: { quote: "We stopped noticing you were there. Then the gallery arrived and we cried through all six hundred pictures.", who: "Anaya & Rohan" }
+    },
+    "meher-zain": {
+      brief: {
+        ask: "They wanted a wedding that felt like a long dinner.",
+        text: "Forty guests, one shoreline, and no schedule to speak of. We worked like documentarians — barefoot processions, quiet duas, and a dance floor made of sand.",
+        meta: [["Coverage", "Photography"], ["Venue", "Private beach house"], ["Delivered in", "16 days"]]
+      },
+      stats: [["380", "Frames delivered"], ["3", "Events"], ["2", "Crew on ground"]],
+      words: { quote: "You photographed our nikah like it was a private thing you had been let into. Which is exactly what it was.", who: "Meher & Zain" }
+    },
+    "ishita-arjun": {
+      brief: {
+        ask: "Ishita wanted it to look like period cinema.",
+        text: "Jaipur gave us sandstone, brass bands, and light that behaves like it studied art direction. We let the city set the palette and shot it a little formal, a little grand.",
+        meta: [["Coverage", "Photo & film"], ["Venue", "Heritage palace"], ["Delivered in", "24 days"]]
+      },
+      stats: [["710", "Frames delivered"], ["6", "Events"], ["5", "Crew on ground"]],
+      words: { quote: "Our families still argue about which frame goes above the stairs. That is the highest compliment we have.", who: "Ishita & Arjun" }
+    },
+    "sana-dev": {
+      brief: {
+        ask: "Big weddings are logistics.",
+        text: "Great big weddings are logistics you never see in the photographs. We mapped every ritual in advance so the coverage feels calm even where the evening was not.",
+        meta: [["Coverage", "Photo & film"], ["Venue", "Mahalaxmi Racecourse"], ["Delivered in", "26 days"]]
+      },
+      stats: [["980", "Frames delivered"], ["4", "Events"], ["6", "Crew on ground"]],
+      words: { quote: "Eight hundred guests and not one photograph that looks like a crowd shot. We still do not know how.", who: "Sana & Dev" }
+    },
+    "ria-kabir": {
+      brief: {
+        ask: "The haldi began politely.",
+        text: "It did not end that way, and the photographs are better for it. A daylight wedding on a Karjat lawn, shot bright and yellow-soaked, with the mess left in.",
+        meta: [["Coverage", "Photography"], ["Venue", "Farmhouse estate"], ["Delivered in", "18 days"]]
+      },
+      stats: [["520", "Frames delivered"], ["3", "Events"], ["3", "Crew on ground"]],
+      words: { quote: "You left in every bit of the chaos. That is the wedding we actually had.", who: "Ria & Kabir" }
+    },
+    "tara-vikram": {
+      brief: {
+        ask: "They booked us film-first.",
+        text: "A cinematic wedding film with stills built around it. We planned the whole wedding around light, which is why the photographs read like frames pulled from the film.",
+        meta: [["Coverage", "Film & photo"], ["Venue", "Lakeside heritage hotel"], ["Delivered in", "28 days"]]
+      },
+      stats: [["465", "Frames delivered"], ["4", "Events"], ["4", "Crew on ground"]],
+      words: { quote: "We watch the film every anniversary and cry every single time. Thank you for making us slow down.", who: "Tara & Vikram" }
+    }
+  };
+
+  window.BLURRY_WEDDING_STORIES.forEach(function (story) {
+    var extra = EXTRAS[story.slug] || {};
+    story.chapters = CHAPTERS[story.slug] || {};
+    story.brief = extra.brief || null;
+    story.stats = extra.stats || null;
+    story.words = extra.words || null;
+    story.credits = [
+      ["Photography", "Blurry Visuals Weddings"],
+      ["Films", "Blurry Visuals Weddings"],
+      ["Venue", story.venue],
+      ["City", story.city],
+      ["Coverage", story.type]
+    ];
+  });
+
+  /* ==================================================================
+     PLACEHOLDER PHOTOGRAPHS — delete this whole block when the studio's
+     own galleries land, and nothing else has to change.
+
+     Stock frames from the Pexels CDN, grouped by ritual so every chapter
+     has a look of its own rather than a shared soup of wedding pictures.
+     Each chapter is topped up to four frames; anything the studio has
+     already filed keeps its place at the front.
+     ================================================================== */
+  var P = function (id, w) {
+    return "https://images.pexels.com/photos/" + id + "/pexels-photo-" + id +
+      ".jpeg?auto=compress&cs=tinysrgb&w=" + (w || 800);
+  };
+
+  var FILLER = {
+    haldi: [
+      [36098386, "First smear, from her mother"],
+      [36098363, "Waiting in the doorway"],
+      [19613666, "Marigold and turmeric"],
+      [36098378, "The hose arrives"],
+      [36248930, "Yellow on every hand"],
+      [36098379, "Washing it off, eventually"]
+    ],
+    mehndi: [
+      [30707334, "Hands, hour three"],
+      [6023737, "Her grandmother's song"],
+      [25677252, "Lamps on the terrace"],
+      [19613670, "Last detail before dinner"],
+      [19780151, "Cones, and a long queue"]
+    ],
+    sangeet: [
+      [29497170, "The eleven seconds"],
+      [32107250, "Watching from the side"],
+      [29153204, "Laughing mid-song"],
+      [33427272, "Fireworks over the lawn"],
+      [28210870, "The floor never emptied"]
+    ],
+    baraat: [
+      [33427272, "The arrival, and the noise"],
+      [29497170, "Dancing the last hundred metres"],
+      [28210870, "Drummers at the front"],
+      [32107250, "The family, waiting"],
+      [36098378, "Rose petals, all of them"]
+    ],
+    nikah: [
+      [17657612, "The qabool"],
+      [12968722, "Signing, with witnesses"],
+      [8621982, "First look afterwards"],
+      [36836727, "Duas from both sides"],
+      [36836726, "The room, held quiet"]
+    ],
+    pheras: [
+      [36836726, "Under the mandap"],
+      [12968722, "The fourth round"],
+      [8621982, "After the last vow"],
+      [17657612, "Walking out at sunrise"],
+      [36836727, "Fire, and the pandit's hands"]
+    ],
+    vidaai: [
+      [9778787, "Her father, not managing"],
+      [8621982, "The long goodbye"],
+      [17657612, "Rice over the shoulder"],
+      [36098369, "The car, and the crowd"],
+      [12968722, "Looking back once"]
+    ],
+    reception: [
+      [32483856, "Entrance"],
+      [36098383, "Between courses"],
+      [9778787, "Her hand, his mother's ring"],
+      [36098369, "The goodbye at the car"],
+      [28210870, "The floor, near midnight"]
+    ],
+    portraits: [
+      [36098383, "Ten minutes, door shut"],
+      [36098363, "Doorway light"],
+      [19780151, "Neither of them posing"],
+      [28210870, "The last frame of the night"],
+      [8621982, "Whatever they were laughing at"]
+    ]
+  };
+
+  /* Copy for a ritual the studio has not written up yet. Specific enough to
+     read properly, generic enough to be true of any wedding — and always
+     beaten by anything in CHAPTERS above. */
+  var GENERIC_CHAPTER = {
+    haldi: {
+      time: "Morning, day one",
+      title: "Turmeric, and the mess it makes.",
+      note: "It is scheduled for forty minutes and it never takes forty minutes. We photograph it close, because this is the hour nobody is performing yet."
+    },
+    mehndi: {
+      time: "Evening, day one",
+      title: "Henna, and hours of it.",
+      note: "The slowest event of any wedding and the most photographable — hands held still, everyone else talking, and light that keeps dropping."
+    },
+    sangeet: {
+      time: "Night, day two",
+      title: "The night both families competed.",
+      note: "Weeks of rehearsal, about a verse of it remembered. What replaces the choreography is always better than the choreography."
+    },
+    baraat: {
+      time: "Late afternoon",
+      title: "The arrival, and the noise.",
+      note: "A procession that covers two hundred metres in an hour. We walk backwards through most of it."
+    },
+    nikah: {
+      time: "Dusk",
+      title: "The vows, unamplified.",
+      note: "Short, quiet, and over before most guests have settled. We stay still and let it happen."
+    },
+    pheras: {
+      time: "The ceremony",
+      title: "Seven rounds, one promise.",
+      note: "Firelight, a pandit's voice, and the part of the day the whole thing was built around. We keep it unhurried."
+    },
+    vidaai: {
+      time: "The farewell",
+      title: "The hardest frames of the day.",
+      note: "Families come back to these years later, which is why we stay close and say nothing at all."
+    },
+    reception: {
+      time: "Night, last day",
+      title: "Where the celebration lands.",
+      note: "A receiving line, a room that never empties, and a goodbye at the car that takes far longer than anyone planned."
+    },
+    portraits: {
+      time: "Between events",
+      title: "The two of them, unhurried.",
+      note: "Stolen wherever the light was — a corridor, a lawn, ten minutes with the door shut. No posing, just somewhere quiet to stand."
+    }
+  };
+
+  var CORE_RITUALS = ["haldi", "mehndi", "sangeet", "pheras", "reception"];
+  var FRAMES_PER_CHAPTER = 4;
+
+  window.BLURRY_WEDDING_STORIES.forEach(function (story, si) {
+    var counted = {};
+    story.gallery.forEach(function (g) {
+      counted[g.event] = (counted[g.event] || 0) + 1;
+    });
+
+    // Every ritual that will render a chapter: the core five, plus whatever
+    // else this wedding actually had.
+    var keys = CORE_RITUALS.concat(
+      Object.keys(counted).filter(function (k) { return CORE_RITUALS.indexOf(k) === -1; })
+    );
+
+    keys.forEach(function (key) {
+      var pool = FILLER[key] || FILLER.portraits;
+      var need = FRAMES_PER_CHAPTER - (counted[key] || 0);
+      for (var i = 0; i < need; i += 1) {
+        // Offset by story so two weddings do not open with the same frame.
+        var pick = pool[(si + i) % pool.length];
+        story.gallery.push({
+          label: pick[1],
+          event: key,
+          img: P(pick[0]),
+          placeholder: true
+        });
+      }
+      if (!story.chapters[key]) story.chapters[key] = GENERIC_CHAPTER[key];
+    });
+  });
 })();

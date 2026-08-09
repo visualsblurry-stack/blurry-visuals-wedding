@@ -3,23 +3,31 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Real Wedding — Pheraa</title>
-<meta name="description" content="A real wedding photographed and filmed by Pheraa, Mumbai.">
-<meta name="theme-color" content="#171210">
+<title>Real Wedding | Blurry Visuals Weddings</title>
+<meta name="description" content="A real wedding photographed and filmed by Blurry Visuals Weddings, Mumbai.">
+<meta name="theme-color" content="#789c9f">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="icon" type="image/png" href="img/blurry-visuals-logo-web.png">
+<link rel="stylesheet" href="css/style.css?v=20260807c">
 </head>
 <body>
 
 <header class="hdr solid">
   <div class="wrap hdr-in">
-    <a class="brand" href="index.html">Pher<i>aa</i><small>Weddings · Mumbai</small></a>
+    <a class="brand" href="index.html" aria-label="Blurry Visuals Weddings home">
+      <img class="brand-logo" src="img/blurry-visuals-logo.png" srcset="img/blurry-visuals-logo-web.png 126w" sizes="42px" alt="" width="42" height="42">
+      <span class="brand-copy">
+        <b class="brand-name">Blurry Visuals</b>
+        <small>Weddings · Mumbai</small>
+      </span>
+    </a>
     <nav class="nav" aria-label="Primary">
-      <a href="index.html#work">Work</a>
-      <a href="index.html#films">Films</a>
+      <a href="index.html">Home</a>
       <a href="index.html#stories">Weddings</a>
+      <a href="index.html#films">Films</a>
+      <a href="index.html#investment">Investment</a>
       <a href="index.html#about">About</a>
       <a class="cta" href="index.html#contact">Inquire</a>
     </nav>
@@ -30,9 +38,10 @@
 </header>
 
 <div class="drawer" id="drawer">
-  <a href="index.html#work">Work</a>
-  <a href="index.html#films">Films</a>
+  <a href="index.html">Home</a>
   <a href="index.html#stories">Real Weddings</a>
+  <a href="index.html#films">Films</a>
+  <a href="index.html#investment">Investment &amp; FAQs</a>
   <a href="index.html#about">About</a>
   <a href="index.html#contact">Inquire</a>
 </div>
@@ -41,19 +50,34 @@
   <!-- rendered by js/main.js from js/stories-data.js via ?s=<slug> -->
 </main>
 
+<nav class="story-return" id="story-return" aria-label="Leave this wedding">
+  <a class="story-return-link" href="index.html" data-cursor="Home"><span aria-hidden="true">←</span> Home</a>
+  <a class="story-return-link" href="index.html#stories" data-cursor="Weddings">All weddings</a>
+</nav>
+
+<!-- full-size photograph viewer -->
+<div class="photobox" id="photobox" hidden role="dialog" aria-modal="true" aria-label="Photograph">
+  <button class="photobox-close" type="button" data-cursor="Close" aria-label="Close photograph">✕</button>
+  <button class="photobox-step prev" type="button" data-cursor="Previous" aria-label="Previous photograph"><span aria-hidden="true">←</span></button>
+  <img class="photobox-img" alt="">
+  <button class="photobox-step next" type="button" data-cursor="Next" aria-label="Next photograph"><span aria-hidden="true">→</span></button>
+  <p class="photobox-caption"><b data-photobox-count></b><span data-photobox-label></span></p>
+</div>
+
 <footer class="ftr">
   <div class="wrap">
-    <p>© <span id="yr"></span> Pheraa — Wedding Photography &amp; Films, Mumbai.</p>
+    <p>© <span id="yr"></span> Blurry Visuals Weddings · Photography &amp; Films, Mumbai.</p>
     <nav aria-label="Footer">
-      <a href="index.html#work">Work</a>
-      <a href="index.html#films">Films</a>
+      <a href="index.html">Home</a>
       <a href="index.html#stories">Weddings</a>
+      <a href="index.html#films">Films</a>
+      <a href="index.html#investment">Investment &amp; FAQs</a>
       <a href="index.html#contact">Inquire</a>
     </nav>
   </div>
 </footer>
 
-<script src="js/stories-data.js"></script>
-<script src="js/main.js"></script>
+<script src="js/stories-data.js?v=20260807c"></script>
+<script src="js/main.js?v=20260807c"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
-# Blurry Visuals Wedding
+# Blurry Visuals Weddings
 
-A static wedding photography and films website for Pheraa, Mumbai.
+A static wedding photography and films website for Blurry Visuals Weddings, Mumbai.
 
 ## Run locally
 
