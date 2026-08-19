@@ -183,6 +183,8 @@ body.menu-open{overflow:hidden;}
   transition:top .18s ease;
 }
 .skip-link:focus{top:0;}
+/* Unused while the hero carries no buttons — kept so restoring the pair is a
+   markup change only. */
 .hero-cta{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap;}
 .btn{
   display:inline-flex;align-items:center;gap:10px;
@@ -596,6 +598,18 @@ body.menu-open .story-return{opacity:0;visibility:hidden;transform:translateY(10
 .story-meta{display:flex;gap:34px;flex-wrap:wrap;margin-top:30px;}
 .story-meta div small{display:block;font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--white);margin-bottom:3px;}
 .story-meta div b{font-weight:600;}
+/* ---- flat gallery (STORY_LAYOUT = "flat") ----
+   One uninterrupted wall of photographs. No tone bands, no headings: the only
+   job here is to hold the grid and get out of the way. The chaptered layout
+   below still owns .chapter-*; this reuses .chapter-grid and .chapter-shot so
+   both layouts stay pixel-identical in how a single frame renders. */
+.story-gallery{padding:clamp(30px,5vh,58px) 0 clamp(46px,8vh,96px);background:var(--white);}
+.story-gallery .chapter-grid{margin-top:0;}
+/* A full story runs to about thirty frames and they are all in one section
+   now, so each tile skips layout and paint until it is near the viewport.
+   On the chaptered layout the section itself did this. */
+.story-gallery .chapter-shot{content-visibility:auto;contain-intrinsic-size:auto 420px;}
+
 .story-body{padding:70px 0 30px;}
 .story-body .lede{font-family:var(--ff-display);font-style:italic;font-weight:340;font-size:clamp(20px,2.4vw,27px);line-height:1.5;max-width:30ch;color:var(--ivory);margin:0 0 26px;}
 .story-body .txt{max-width:64ch;color:var(--ash);}

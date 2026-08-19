@@ -811,6 +811,20 @@
       { key: "portraits", name: "Portraits", core: false }
     ];
 
+    /* Two ways to lay a story out, both live code.
+
+       "flat"     — every photograph in one uninterrupted grid. No chapter
+                    headings, notes, quotes, tone bands or jump rail; the
+                    pictures and nothing between them. This is what the studio
+                    asked for: a visitor scrolls photographs, not a document.
+       "chapters" — the ritual-by-ritual layout below, each chapter titled,
+                    toned and timed, with the sticky "Jump to" rail.
+
+       Flip this one value to switch. Everything the chaptered layout needs is
+       still here and still exercised by the same data, so turning it back on
+       is a one-word change rather than an archaeology exercise. */
+    var STORY_LAYOUT = "flat";
+
     /* Chapters alternate ground so the page reads as a sequence rather than
        one long scroll, and the photographs inside each one are laid on a
        twelve-column grid in a repeating wide/narrow rhythm. Two rhythms,
@@ -859,7 +873,48 @@
         '<span class="chapter-shot-cap">' + esc(g.label) + "</span></button>";
     }
 
-    var galleryHtml = chapters.map(function (ev, n) {
+    /* Flat layout. A repeating pair-then-band rhythm: two half-width frames
+       side by side, then one full-width frame, over and over. It fills every
+       row of the twelve-column grid exactly, so the wall never leaves a hole,
+       and it gives the scroll a pulse without needing a single word. */
+    var FLAT_PATTERN = [[6, "3/2"], [6, "3/2"], [12, "3/2"]];
+
+    function flatPhotoHtml(g, i, total) {
+      var cell = FLAT_PATTERN[i % FLAT_PATTERN.length];
+      var span = cell[0];
+      var ratio = cell[1];
+      // A half-width frame with nothing to pair with would sit beside a gap.
+      if (i === total - 1 && span === 6 && i % FLAT_PATTERN.length === 0) span = 12;
+      if (!g.img) {
+        return '<figure class="chapter-shot ph ph-' + esc(g.tone || "smoke") +
+          '" style="--span:' + span + ';--ratio:' + ratio + '">' +
+          '<div class="ph-label"><em>' + esc(g.label) + "</em>Photograph placeholder</div></figure>";
+      }
+      /* The caption goes to assistive tech only. On screen this layout is
+         meant to be wordless, but the photobox still needs the label and a
+         screen reader still needs to know which photograph this is. */
+      return '<button class="chapter-shot" type="button" data-expand data-cursor="Expand"' +
+        ' data-caption="' + esc(g.label) + '" aria-label="Expand photograph: ' + esc(g.label) +
+        '" style="--span:' + span + ";--ratio:" + ratio +
+        ";background-image:url('" + esc(g.img) + "')\">" +
+        '<span class="sr-only">' + esc(g.label) + "</span></button>";
+    }
+
+    /* Chapter order still decides the sequence, so the day reads in the order
+       it happened — the headings are gone, the chronology is not. */
+    function flatGalleryHtml() {
+      var shots = chapters.reduce(function (all, ev) {
+        return all.concat(byEvent[ev.key] || []);
+      }, []);
+      if (!shots.length) return "";
+      return '<section class="story-gallery" aria-label="Photographs"><div class="wrap">' +
+        '<div class="chapter-grid">' +
+          shots.map(function (g, i) { return flatPhotoHtml(g, i, shots.length); }).join("") +
+        "</div></div></section>";
+    }
+
+    function chaptersGalleryHtml() {
+      return chapters.map(function (ev, n) {
       var shots = byEvent[ev.key] || [];
       var copy = (st.chapters && st.chapters[ev.key]) || {};
       var tone = CHAPTER_TONES[n % CHAPTER_TONES.length];
@@ -893,19 +948,26 @@
           "</div>" +
           body + quote +
         "</div></section>";
-    }).join("");
+      }).join("");
+    }
 
     /* Sticky chapter rail. Every chapter on the page is listed, empty ones
-       included, so the rail matches what a visitor actually scrolls past. */
-    var chapterNavHtml = chapters.length > 1
-      ? '<nav class="chapter-rail" aria-label="Chapters"><div class="wrap">' +
+       included, so the rail matches what a visitor actually scrolls past.
+       It names chapters, so it only makes sense when chapters are showing. */
+    function chapterRailHtml() {
+      if (chapters.length < 2) return "";
+      return '<nav class="chapter-rail" aria-label="Chapters"><div class="wrap">' +
           '<span class="chapter-rail-label">Jump to</span>' +
           chapters.map(function (ev) {
             return '<a href="#chapter-' + esc(ev.key) + '" data-cursor="' + esc(ev.name) + '">' +
               esc(ev.name) + "</a>";
           }).join("") +
-        "</div></nav>"
-      : "";
+        "</div></nav>";
+    }
+
+    var useChapters = STORY_LAYOUT === "chapters";
+    var galleryHtml = useChapters ? chaptersGalleryHtml() : flatGalleryHtml();
+    var chapterNavHtml = useChapters ? chapterRailHtml() : "";
 
     /* Opening note: the ask in the couple's words, how we answered it, and
        the three facts a visitor weighing us up actually wants. */
