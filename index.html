@@ -10,6 +10,28 @@
 <meta property="og:title" content="Blurry Visuals Weddings | Wedding Photography &amp; Films">
 <meta property="og:description" content="Wedding stories photographed with an editorial eye and documentary warmth.">
 <meta property="og:type" content="website">
+<!-- Every enquiry arrives through WhatsApp, so the link couples forward to each
+     other is the shop window. Without og:image that card renders as grey text.
+     JPEG, not the .webp hero: WhatsApp's preview fetcher is unreliable on WebP.
+
+     ON LAUNCH: set og:url and rel=canonical to the live address, and make this
+     og:image absolute (https://yourdomain.com/img/og-blurry-visuals.jpg).
+     A canonical pointing at the wrong host is worse than none, which is why
+     these two are commented rather than guessed:
+     <meta property="og:url" content="https://REPLACE-ME/">
+     <link rel="canonical" href="https://REPLACE-ME/"> -->
+<meta property="og:image" content="/img/og-blurry-visuals.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A couple at their Mumbai wedding, photographed by Blurry Visuals.">
+<meta property="og:locale" content="en_IN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Blurry Visuals Weddings | Wedding Photography &amp; Films">
+<meta name="twitter:description" content="Wedding stories photographed with an editorial eye and documentary warmth.">
+<meta name="twitter:image" content="/img/og-blurry-visuals.jpg">
+<!-- Set before first paint so the reveal-on-scroll styles never hide content
+     from a visitor whose JavaScript failed to run. -->
+<script>document.documentElement.className += " js";</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
@@ -21,6 +43,8 @@
 </script>
 </head>
 <body>
+
+<a class="skip-link" href="#top">Skip to content</a>
 
 <!-- ======================= header ======================= -->
 <header class="hdr">
@@ -53,7 +77,8 @@
   <a href="#contact">Inquire</a>
 </div>
 
-<main id="top">
+<!-- tabindex="-1" so the skip link actually moves focus here, not just scroll. -->
+<main id="top" tabindex="-1">
 
 <!-- ================= PHERA I · hero ================= -->
 <section class="hero">
@@ -212,22 +237,22 @@
     <div class="films">
       <!-- Sample films for demo — replace data-video URLs with Blurry Visuals Weddings' own films later.
            Posters auto-pull from YouTube; swap with img/films/*.jpg when real films land. -->
-      <a class="film rv" href="#" data-cursor="Watch" data-video="https://www.youtube.com/watch?v=a9uRfuujFY8">
+      <a class="film rv" href="https://www.youtube.com/watch?v=a9uRfuujFY8" target="_blank" rel="noopener" data-video="https://www.youtube.com/watch?v=a9uRfuujFY8">
         <div class="ph ph-img" role="img" aria-label="Wedding film — Taj Lands End" style="background-image:url('https://img.youtube.com/vi/a9uRfuujFY8/hqdefault.jpg')"></div>
         <div class="film-play"><span>▸</span></div>
         <div class="film-meta"><h3>The Sea-facing <em>Shaadi</em></h3><small>Taj Lands End · Mumbai</small></div>
       </a>
-      <a class="film rv" href="#" data-cursor="Watch" data-video="https://www.youtube.com/watch?v=UpZI5dOFGM0">
+      <a class="film rv" href="https://www.youtube.com/watch?v=UpZI5dOFGM0" target="_blank" rel="noopener" data-video="https://www.youtube.com/watch?v=UpZI5dOFGM0">
         <div class="ph ph-img" role="img" aria-label="Wedding teaser — Taj Lake Palace Udaipur" style="background-image:url('https://img.youtube.com/vi/UpZI5dOFGM0/hqdefault.jpg')"></div>
         <div class="film-play"><span>▸</span></div>
         <div class="film-meta"><h3>Eleven Minutes of <em>Blue</em></h3><small>Taj Lake Palace · Udaipur</small></div>
       </a>
-      <a class="film rv" href="#" data-cursor="Watch" data-video="https://www.youtube.com/watch?v=64VrMb17-zc">
+      <a class="film rv" href="https://www.youtube.com/watch?v=64VrMb17-zc" target="_blank" rel="noopener" data-video="https://www.youtube.com/watch?v=64VrMb17-zc">
         <div class="ph ph-img" role="img" aria-label="Wedding film — Taj Mahal Palace Mumbai" style="background-image:url('https://img.youtube.com/vi/64VrMb17-zc/hqdefault.jpg')"></div>
         <div class="film-play"><span>▸</span></div>
         <div class="film-meta"><h3>A Palace by the <em>Gateway</em></h3><small>Taj Mahal Palace · Colaba</small></div>
       </a>
-      <a class="film rv" href="#" data-cursor="Watch" data-video="https://www.youtube.com/watch?v=Pm3NfZDC48k">
+      <a class="film rv" href="https://www.youtube.com/watch?v=Pm3NfZDC48k" target="_blank" rel="noopener" data-video="https://www.youtube.com/watch?v=Pm3NfZDC48k">
         <div class="ph ph-img" role="img" aria-label="Destination wedding highlight film" style="background-image:url('https://img.youtube.com/vi/Pm3NfZDC48k/hqdefault.jpg')"></div>
         <div class="film-play"><span>▸</span></div>
         <div class="film-meta"><h3>Vows by the <em>Ocean</em></h3><small>Destination · Beachside</small></div>
@@ -338,6 +363,9 @@
           <button class="btn contact-submit" type="submit" data-cursor="Send"><svg class="lucide-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg><span>Send</span></button>
           <span class="form-hint">Opens WhatsApp with your details pre-filled. Nothing is stored.</span>
         </div>
+        <!-- Filled by main.js after submit. role=status announces the result to
+             a screen reader without stealing focus from the form. -->
+        <p class="form-status full" id="form-status" role="status" aria-live="polite" hidden></p>
       </form>
   </div>
 </section>
@@ -358,8 +386,8 @@
 </footer>
 
 <!-- film lightbox -->
-<div class="lightbox" id="lightbox" aria-hidden="true">
-  <button class="lightbox-close">Close ✕</button>
+<div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Wedding film">
+  <button class="lightbox-close" type="button" data-cursor="Close" aria-label="Close film">Close ✕</button>
   <div class="lightbox-frame"></div>
 </div>
 
@@ -389,7 +417,10 @@
     </header>
     <div class="investment-content">
       <div class="investment-intro">
-        <div><p class="investment-kicker">Investment &amp; FAQs</p><h1 id="investment-title">Stories worth<br><em>keeping.</em></h1></div>
+        <!-- h2, not h1: the panel is always in the DOM, so a second h1 gave the
+             document two competing top-level headings. It still labels the
+             dialog through aria-labelledby. -->
+        <div><p class="investment-kicker">Investment &amp; FAQs</p><h2 id="investment-title">Stories worth<br><em>keeping.</em></h2></div>
         <p>Thoughtful photography and cinematic films, shaped around the scale and rhythm of your celebration. Begin with one of our signature collections, then tailor the coverage to your wedding.</p>
       </div>
 

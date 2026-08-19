@@ -385,13 +385,48 @@
     if (m) return "https://player.vimeo.com/video/" + m[1] + "?autoplay=1";
     return url;
   }
+  /* The film viewer is a modal in every way that matters to a sighted visitor,
+     so it has to behave like one for everybody else too: announced as a dialog,
+     Tab held inside it while it is open, and focus handed back to the card that
+     opened it on close. The photograph viewer and the investment panel already
+     work this way; this one carried a hardcoded aria-hidden="true" that never
+     flipped, which hid the whole dialog from screen readers even while open. */
+  var lbLastFocus = null;
+  function lightboxOpen() {
+    return !!lightbox && lightbox.classList.contains("open");
+  }
+  function openLightbox(url, opener) {
+    if (!lightbox || !lbFrame) return false;
+    lbLastFocus = opener || document.activeElement;
+    lbFrame.innerHTML = '<iframe src="' + embedUrl(url) +
+      // allow="fullscreen" supersedes the legacy allowfullscreen attribute;
+      // carrying both only earned a console warning on every open.
+      '" title="Wedding film" allow="autoplay; fullscreen"></iframe>';
+    lightbox.classList.add("open");
+    lightbox.setAttribute("aria-hidden", "false");
+    var lbCloseBtn = lightbox.querySelector(".lightbox-close");
+    if (lbCloseBtn) lbCloseBtn.focus();
+    return true;
+  }
   function closeLightbox() {
     if (!lightbox) return;
+    var wasOpen = lightbox.classList.contains("open");
     lightbox.classList.remove("open");
+    lightbox.setAttribute("aria-hidden", "true");
+    // Emptying the frame is what actually stops the audio; the iframe keeps
+    // playing behind a hidden overlay otherwise.
     if (lbFrame) lbFrame.innerHTML = "";
+    if (wasOpen && lbLastFocus && document.contains(lbLastFocus) && lbLastFocus.focus) {
+      lbLastFocus.focus();
+    }
+    lbLastFocus = null;
   }
   document.querySelectorAll(".film").forEach(function (card) {
     card.addEventListener("click", function (ev) {
+      /* Each card is now a real link to its film, so a visitor who asks for a
+         new tab gets one and a visitor with no JavaScript still reaches the
+         video. Only a plain left click is ours to intercept for the lightbox. */
+      if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey || ev.button !== 0) return;
       ev.preventDefault();
       var url = card.dataset.video || "";
       var badge = card.querySelector(".film-play span");
@@ -402,13 +437,7 @@
         }
         return;
       }
-      if (lightbox && lbFrame) {
-        lbFrame.innerHTML = '<iframe src="' + embedUrl(url) +
-          '" title="Wedding film" allow="autoplay; fullscreen" allowfullscreen></iframe>';
-        lightbox.classList.add("open");
-      } else {
-        window.open(url, "_blank", "noopener");
-      }
+      if (!openLightbox(url, card)) window.open(url, "_blank", "noopener");
     });
   });
   if (lightbox) {
@@ -418,7 +447,24 @@
     var lbClose = lightbox.querySelector(".lightbox-close");
     if (lbClose) lbClose.addEventListener("click", closeLightbox);
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") closeLightbox();
+      if (!lightboxOpen()) return;
+      if (e.key === "Escape") { closeLightbox(); return; }
+      if (e.key !== "Tab") return;
+      /* Two stops only — the close button and the player — but without this,
+         Tab walks straight out of the overlay and into the page behind it. */
+      var focusable = [].slice.call(lightbox.querySelectorAll(
+        'button, iframe, a[href], [tabindex]:not([tabindex="-1"])'
+      )).filter(function (el) { return el.offsetParent !== null || el.tagName === "IFRAME"; });
+      if (!focusable.length) return;
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     });
   }
 
@@ -470,7 +516,25 @@
         v("message") ? "Details: " + v("message") : ""
       ].filter(Boolean);
       var url = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(lines.join("\n"));
-      window.open(url, "_blank", "noopener");
+
+      /* This is the only enquiry path on the site, and it used to end at a bare
+         window.open: when a popup blocker or an in-app browser swallowed that,
+         nothing moved and the visitor concluded the form was broken. Say what
+         happened either way, and leave a link they can press themselves. */
+      var opened = null;
+      try { opened = window.open(url, "_blank", "noopener"); } catch (err) { opened = null; }
+      var status = document.getElementById("form-status");
+      if (!status) return;
+      status.hidden = false;
+      if (opened) {
+        status.className = "form-status ok";
+        status.innerHTML = "Opening WhatsApp with your details. " +
+          '<a href="' + url + '" target="_blank" rel="noopener">Nothing happened? Tap here.</a>';
+      } else {
+        status.className = "form-status blocked";
+        status.innerHTML = "Your browser blocked the WhatsApp window. " +
+          '<a href="' + url + '" target="_blank" rel="noopener">Open the chat here.</a>';
+      }
     });
   }
 
@@ -689,6 +753,47 @@
       });
     };
     document.title = st.couple[0] + " & " + st.couple[1] + " | Blurry Visuals Weddings";
+
+    /* Point the sharing card at this couple rather than the studio's default.
+       A story link pasted into WhatsApp is the commonest way one couple sends
+       another here, and the preview should show the wedding they are talking
+       about. Crawlers that never run scripts keep the static tags in the head;
+       every browser-driven share gets these. */
+    (function storyMeta() {
+      var pair = st.couple[0] + " & " + st.couple[1];
+      var summary = pair + " — " + st.venue + ", " + st.city +
+        ", photographed by Blurry Visuals Weddings.";
+      var setMeta = function (attr, key, value) {
+        if (!value) return;
+        var el = document.head.querySelector("meta[" + attr + '="' + key + '"]');
+        if (!el) {
+          el = document.createElement("meta");
+          el.setAttribute(attr, key);
+          document.head.appendChild(el);
+        }
+        el.setAttribute("content", value);
+      };
+      // Story covers are absolute stock URLs today and will be site-relative
+      // once real photographs land; new URL() resolves both.
+      var cover = st.cover ? new URL(st.cover, location.href).href : "";
+      setMeta("property", "og:title", pair + " | Blurry Visuals Weddings");
+      setMeta("property", "og:description", summary);
+      setMeta("property", "og:url", location.href);
+      setMeta("name", "description", summary);
+      setMeta("name", "twitter:title", pair + " | Blurry Visuals Weddings");
+      setMeta("name", "twitter:description", summary);
+      if (cover) {
+        setMeta("property", "og:image", cover);
+        setMeta("property", "og:image:alt", pair + " at their wedding.");
+        setMeta("name", "twitter:image", cover);
+        // The static dimensions describe the studio's default card, not this
+        // cover. Stale numbers make a scraper crop to the wrong box, so drop
+        // them rather than guess at the replacement.
+        document.head.querySelectorAll(
+          'meta[property="og:image:width"],meta[property="og:image:height"]'
+        ).forEach(function (el) { el.remove(); });
+      }
+    })();
 
     /* The day, in the order it happened. The five core rituals always appear,
        even with nothing under them yet, so a story reads as a complete plan
