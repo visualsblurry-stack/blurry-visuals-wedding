@@ -141,10 +141,10 @@ test("a chapter carries its number, time, headline and note", async () => {
     assert.ok(mainScript.includes(needle), `a chapter is missing ${why}`);
   }
 
-  // The rail lists every chapter on the page, empty ones included.
+  // The rail still lists every chapter when chaptered layout is enabled.
   assert.match(
     mainScript,
-    /chapters\.length > 1[\s\S]{0,200}?chapter-rail/,
+    /function chapterRailHtml\(\)[\s\S]{0,120}?if \(chapters\.length < 2\) return "";/,
     "the rail must be built from the chapters actually rendered",
   );
 });
@@ -155,14 +155,20 @@ test("the opening note, client words and credits render from data", async () => 
     readProjectFile("css/style.css"),
   ]);
 
+  assert.match(
+    mainScript,
+    /var showStoryText = !st\.textlessStory;/,
+    "real gallery pages must be able to suppress the copy-heavy story sections",
+  );
+
   // Each optional block is skipped rather than rendered empty.
   for (const [guard, cls] of [
-    ["st.brief", "story-brief"],
-    ["st.stats", "story-stats"],
-    ["st.words", "story-words"],
+    ["showStoryText && st.brief", "story-brief"],
+    ["st.stats && !st.hideHeroStats", "story-stats"],
+    ["showStoryText && st.words", "story-words"],
   ]) {
     assert.ok(
-      new RegExp(`${guard.replace(".", "\\.")}\\s*\\n?\\s*\\?`).test(mainScript),
+      new RegExp(`${guard.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*\\n?\\s*\\?`).test(mainScript),
       `${cls} must be skipped when its data is missing`,
     );
   }
@@ -187,6 +193,263 @@ test("the opening note, client words and credits render from data", async () => 
     scrollMargin > headerHeight,
     `scroll-margin-top ${scrollMargin}px does not clear the header`,
   );
+});
+
+test("story heroes use each couple cover unless a real film file is provided", async () => {
+  const [mainScript, styles] = await Promise.all([
+    readProjectFile("js/main.js"),
+    readProjectFile("css/style.css"),
+  ]);
+
+  assert.doesNotMatch(
+    mainScript,
+    /placeholder-highlight\.mp4/,
+    "a shared placeholder video must not override the couple-specific cover",
+  );
+  assert.match(
+    mainScript,
+    /if \(st\.filmFile\) \{/,
+    "story hero video should be opt-in via a self-hosted filmFile",
+  );
+  assert.match(
+    mainScript,
+    /heroMedia \+= '<img src="' \+ esc\(heroPoster\) \+ '" alt="">';/,
+    "story hero must fall back to the couple cover image",
+  );
+  assert.match(
+    styles,
+    /\.story-hero-media video,\.story-hero-media img\{[^}]*object-fit\s*:\s*cover/s,
+    "story hero images and videos must fill the hero frame",
+  );
+});
+
+test("minimal real story heroes keep only the couple name and photo count", async () => {
+  const [mainScript, styles] = await Promise.all([
+    readProjectFile("js/main.js"),
+    readProjectFile("css/style.css"),
+  ]);
+
+  assert.match(
+    mainScript,
+    /var minimalHero = !!st\.textlessStory;/,
+    "minimal hero mode must be opt-in from story data",
+  );
+  assert.match(
+    mainScript,
+    /var crumbsHtml = minimalHero \? "" :/,
+    "minimal real story heroes must remove the Home and All weddings buttons",
+  );
+  assert.match(
+    mainScript,
+    /var storyKickerHtml = minimalHero \? "" :/,
+    "minimal real story heroes must remove the Real wedding label",
+  );
+  assert.match(
+    mainScript,
+    /var storyMetaHtml = minimalHero \? "" :/,
+    "minimal real story heroes must remove date, venue, city and coverage metadata",
+  );
+  assert.match(
+    mainScript,
+    /story-hero' \+ \(minimalHero \? " story-hero-minimal" : ""\)/,
+    "minimal real story heroes must carry a styling hook",
+  );
+  assert.match(
+    styles,
+    /body\.story-minimal\s+\.story-return\s*\{[^}]*display\s*:\s*none/s,
+    "minimal real story pages must also hide the floating Home and All weddings return buttons",
+  );
+});
+
+test("Sachi hero plays ten selected stills while the full gallery remains intact", async () => {
+  const [stories, mainScript, styles] = await Promise.all([
+    loadStories(),
+    readProjectFile("js/main.js"),
+    readProjectFile("css/style.css"),
+  ]);
+
+  const sachi = stories.find((story) => story.slug === "sachi-vedant");
+  assert.ok(sachi, "Sachi & Vedant story is missing");
+  assert.equal(sachi.gallery.length, 484, "the full Sachi gallery must remain on the page");
+  assert.deepEqual(
+    sachi.heroSequence,
+    [
+      "img/stories/sachi-vedant/257.webp",
+      "img/stories/sachi-vedant/264.webp",
+      "img/stories/sachi-vedant/268.webp",
+      "img/stories/sachi-vedant/303.webp",
+      "img/stories/sachi-vedant/304.webp",
+      "img/stories/sachi-vedant/306.webp",
+      "img/stories/sachi-vedant/307.webp",
+      "img/stories/sachi-vedant/356.webp",
+      "img/stories/sachi-vedant/369.webp",
+      "img/stories/sachi-vedant/418.webp",
+    ],
+    "Sachi hero must use the selected close/couple frames",
+  );
+
+  assert.match(
+    mainScript,
+    /st\.heroSequence && st\.heroSequence\.length/,
+    "story hero must detect a still-photo hero sequence",
+  );
+  assert.match(
+    mainScript,
+    /story-hero-sequence/,
+    "story hero must render a layered still-photo sequence",
+  );
+  assert.match(
+    styles,
+    /@keyframes storyHeroKenburns/,
+    "hero stills need a slow video-like pan and zoom",
+  );
+  assert.match(
+    styles,
+    /\.story-hero-slide\.is-active/,
+    "the active hero still must be crossfaded in",
+  );
+});
+
+test("Vedin and Megha hero plays ten selected stills while the full gallery remains intact", async () => {
+  const stories = await loadStories();
+
+  const vedin = stories.find((story) => story.slug === "vedin-megha");
+  assert.ok(vedin, "Vedin & Megha story is missing");
+  assert.equal(vedin.gallery.length, 278, "the full Vedin & Megha gallery must remain on the page");
+  assert.deepEqual(
+    vedin.heroSequence,
+    [
+      "img/stories/vedin-megha/081.webp",
+      "img/stories/vedin-megha/084.webp",
+      "img/stories/vedin-megha/124.webp",
+      "img/stories/vedin-megha/125.webp",
+      "img/stories/vedin-megha/195.webp",
+      "img/stories/vedin-megha/196.webp",
+      "img/stories/vedin-megha/208.webp",
+      "img/stories/vedin-megha/209.webp",
+      "img/stories/vedin-megha/224.webp",
+      "img/stories/vedin-megha/238.webp",
+    ],
+    "Vedin & Megha hero must use selected couple and close frames",
+  );
+  assert.deepEqual(
+    vedin.heroFocalPoints,
+    [
+      "center 43%",
+      "center 43%",
+      "center 45%",
+      "center 45%",
+      "center 44%",
+      "center 43%",
+      "center 45%",
+      "center 45%",
+      "center 44%",
+      "center 44%",
+    ],
+    "Vedin & Megha hero stills need tuned desktop focal points",
+  );
+});
+
+test("Sachi hero stills carry desktop-safe focal points", async () => {
+  const [stories, mainScript, styles] = await Promise.all([
+    loadStories(),
+    readProjectFile("js/main.js"),
+    readProjectFile("css/style.css"),
+  ]);
+
+  const sachi = stories.find((story) => story.slug === "sachi-vedant");
+  assert.ok(sachi, "Sachi & Vedant story is missing");
+  assert.deepEqual(
+    sachi.heroFocalPoints,
+    [
+      "center 42%",
+      "center 43%",
+      "center 44%",
+      "center 43%",
+      "center 43%",
+      "center 43%",
+      "center 43%",
+      "center 43%",
+      "center 44%",
+      "center 44%",
+    ],
+    "each selected hero still needs a tuned desktop focal point",
+  );
+
+  assert.match(
+    mainScript,
+    /var heroFocalPoints = st\.heroFocalPoints \|\| \[\];/,
+    "renderer must read focal points from story data",
+  );
+  assert.match(
+    mainScript,
+    /--hero-focus:/,
+    "renderer must pass the focal point to each hero still",
+  );
+  assert.match(
+    styles,
+    /object-position:var\(--hero-focus,center 45%\)/,
+    "hero stills must use the tuned focal point instead of browser-center cropping",
+  );
+  assert.doesNotMatch(
+    styles,
+    /storyHeroKenburns[\s\S]{0,180}?scale\(1\.11\)/,
+    "desktop hero motion must not zoom so far that faces are cropped",
+  );
+});
+
+test("minimal hero copy sits lower and farther left on desktop", async () => {
+  const styles = await readProjectFile("css/style.css");
+
+  assert.match(
+    styles,
+    /@media \(min-width:961px\)\{[\s\S]*?\.story-hero-minimal\{[^}]*padding-bottom:42px/s,
+    "desktop minimal heroes should anchor the couple copy closer to the bottom edge",
+  );
+  assert.match(
+    styles,
+    /\.story-hero-minimal \.wrap\{[^}]*left:clamp\(-44px,-2\.8vw,-18px\)/,
+    "desktop minimal hero copy should sit a little farther left",
+  );
+});
+
+test("Sachi's minimal hero can show only the couple name", async () => {
+  const [stories, mainScript, styles] = await Promise.all([
+    loadStories(),
+    readProjectFile("js/main.js"),
+    readProjectFile("css/style.css"),
+  ]);
+
+  const sachi = stories.find((story) => story.slug === "sachi-vedant");
+  assert.ok(sachi, "Sachi & Vedant story is missing");
+  assert.equal(sachi.hideHeroStats, true, "Sachi's hero count should be opt-out");
+  assert.match(
+    mainScript,
+    /var statsHtml = st\.stats && !st\.hideHeroStats\s*\?/,
+    "the hero stats row must be optional for name-only story heroes",
+  );
+  assert.match(
+    styles,
+    /\.story-hero-minimal\{padding-bottom:42px;\}/,
+    "the name-only desktop hero should sit a little lower",
+  );
+});
+
+test("every story uses the clean name-only gallery treatment", async () => {
+  const stories = await loadStories();
+
+  for (const story of stories) {
+    assert.equal(
+      story.textlessStory,
+      true,
+      `${story.slug}: story pages should use the clean photo-first layout`,
+    );
+    assert.equal(
+      story.hideHeroStats,
+      true,
+      `${story.slug}: the hero should show only the couple name`,
+    );
+  }
 });
 
 test("core rituals always render, the rest only when photographed", async () => {
@@ -218,12 +481,11 @@ test("core rituals always render, the rest only when photographed", async () => 
     "an untagged photograph must still be filed somewhere",
   );
 
-  // The rail mirrors the page: every chapter rendered gets a stop, empty ones
-  // included, so scrolling past one is never a surprise.
+  // The rail mirrors the page only when the chaptered layout is active.
   assert.match(
     mainScript,
-    /chapterNavHtml = chapters\.length > 1/,
-    "the rail must be built from the chapters actually rendered",
+    /var chapterNavHtml = useChapters \? chapterRailHtml\(\) : "";/,
+    "the flat gallery must suppress the chapter rail without deleting it",
   );
 });
 
@@ -257,15 +519,86 @@ test("real stories produce sections that add up", async () => {
     }
   }
 
-  // A nikah wedding must surface its nikah rather than dropping it.
-  const nikah = stories.find((s) => s.gallery.some((g) => g.event === "nikah"));
-  assert.ok(nikah, "no story exercises the nikah path");
+  assert.ok(EVENT_ORDER.includes("nikah"), "the renderer must keep nikah as a supported event");
 });
 
-test("no chapter ships empty, and each has copy and four frames", async () => {
+test("the first two story cards use real local wedding galleries", async () => {
+  const stories = await loadStories();
+  const expected = [
+    ["sachi-vedant", "Sachi", "Vedant", 484],
+    ["vedin-megha", "Vedin", "Megha", 278],
+  ];
+
+  for (const [index, slug, first, second, count] of expected.map((row, i) => [i, ...row])) {
+    const story = stories[index];
+    assert.equal(story.slug, slug);
+    assert.deepEqual(story.couple, [first, second]);
+    assert.equal(story.gallery.length, count);
+    assert.equal(story.noPlaceholders, true);
+    assert.equal(story.textlessStory, true);
+    assert.match(story.cover, new RegExp(`^img/stories/${slug}/cover\\.webp\\?v=20260905i$`));
+
+    story.gallery.forEach((shot, shotIndex) => {
+      const frame = String(shotIndex + 1).padStart(3, "0");
+      assert.equal(
+        shot.img,
+        `img/stories/${slug}/${frame}.webp`,
+        `${slug}: expected full gallery frame ${frame}`,
+      );
+      assert.match(
+        shot.img,
+        new RegExp(`^img/stories/${slug}/\\d{3}\\.webp$`),
+        `${slug}: ${shot.img} is not a generated local WebP`,
+      );
+      assert.notEqual(shot.placeholder, true, `${slug}: real gallery contains a placeholder`);
+    });
+
+    assert.deepEqual(story.stats, [[String(count), "Photographs"]]);
+  }
+});
+
+test("the homepage story grid shows real covers plus one coming-soon teaser", async () => {
+  const [stories, mainScript] = await Promise.all([
+    loadStories(),
+    readProjectFile("js/main.js"),
+  ]);
+
+  const homepageStories = stories.filter((story) => story.noPlaceholders || story.homepageTeaser);
+  assert.deepEqual(
+    homepageStories.map((story) => story.slug),
+    ["sachi-vedant", "vedin-megha", "ishita-arjun"],
+    "the homepage should show two live stories and Ishita & Arjun as the only teaser",
+  );
+
+  const teaser = stories.find((story) => story.slug === "ishita-arjun");
+  assert.equal(
+    teaser.homepageTeaser,
+    true,
+    "Ishita & Arjun should remain visible as a coming-soon teaser",
+  );
+  assert.match(
+    mainScript,
+    /BLURRY_WEDDING_STORIES\.filter\(function \(st\) \{\s*return st\.noPlaceholders \|\| st\.homepageTeaser;\s*\}\)\.map/,
+    "homepage story cards must filter out second-row placeholders",
+  );
+  assert.match(
+    mainScript,
+    /st\.homepageTeaser[\s\S]{0,240}?data-cursor="Coming soon"/,
+    "teaser cards must advertise Coming soon on hover",
+  );
+  assert.match(
+    mainScript,
+    /st\.homepageTeaser[\s\S]{0,360}?<article class="story-card rv story-card-soon"/,
+    "teaser cards must render as non-link cards so clicks cannot open the inner page",
+  );
+});
+
+test("placeholder-backed stories have copy and four frames per chapter", async () => {
   const stories = await loadStories();
 
   for (const story of stories) {
+    if (story.noPlaceholders) continue;
+
     const byEvent = {};
     for (const shot of story.gallery) {
       (byEvent[shot.event] ??= []).push(shot);

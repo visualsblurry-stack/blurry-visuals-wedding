@@ -20,11 +20,11 @@
   onScroll();
 
   /* ---------- custom cursor ---------- */
-  /* A ring trails the pointer while a dot tracks it exactly; over anything
-     carrying data-cursor the ring swells into a filled disc and names the
-     action. Pointer devices only, and never under reduced motion — the class
-     that hides the native cursor goes on only once the replacement exists,
-     so nobody is left without a pointer if this block does not run.
+  /* A ring trails the pointer only over labelled hover targets; everywhere
+     else the regular OS cursor stays visible. Pointer devices only, and never
+     under reduced motion — the class that scopes native cursor hiding goes on
+     only once the replacement exists, so nobody is left without a pointer if
+     this block does not run.
 
      Hover is delegated from the document rather than bound per element: the
      story cards and every story page are rendered from data further down this
@@ -51,8 +51,6 @@
     window.addEventListener("mousemove", function (e) {
       mx = e.clientX;
       my = e.clientY;
-      ring.classList.add("on");
-      dot.classList.add("on");
     }, { passive: true });
 
     var hideCursor = function () {
@@ -75,13 +73,15 @@
       var target = e.target.closest && e.target.closest("[data-cursor]");
       if (!target) return;
       cursorLabel.textContent = target.getAttribute("data-cursor") || "View";
+      ring.classList.add("on");
+      dot.classList.add("on");
       ring.classList.add("grown");
     });
     document.addEventListener("mouseout", function (e) {
       var target = e.target.closest && e.target.closest("[data-cursor]");
-      if (!target) return;
-      // Moving between a target's own children must not collapse the ring.
-      if (e.relatedTarget && target.contains(e.relatedTarget)) return;
+      if (!target || (e.relatedTarget && target.contains(e.relatedTarget))) return;
+      ring.classList.remove("on");
+      dot.classList.remove("on");
       ring.classList.remove("grown");
     });
   }
@@ -558,6 +558,8 @@
       return url.replace(/([?&]w=)\d+/, "$12000").replace(/([?&]q=)\d+/, "$180");
     }
     function photoUrl(el) {
+      var inlineImg = el.querySelector && el.querySelector("img");
+      if (inlineImg) return fullSize(inlineImg.currentSrc || inlineImg.src || inlineImg.getAttribute("src") || "");
       var found = (el.style.backgroundImage || "").match(/url\((['"]?)(.*?)\1\)/);
       return found ? fullSize(found[2]) : "";
     }
@@ -868,8 +870,8 @@
       // be reachable by keyboard as well as by pointer.
       return '<button class="chapter-shot" type="button" data-expand data-cursor="Expand"' +
         ' data-caption="' + esc(g.label) + '" aria-label="Expand photograph: ' + esc(g.label) +
-        '" style="--span:' + span + ";--ratio:" + ratio +
-        ";background-image:url('" + esc(g.img) + "')\">" +
+        '" style="--span:' + span + ";--ratio:" + ratio + '">' +
+        '<img src="' + esc(g.img) + '" alt="" loading="lazy" decoding="async">' +
         '<span class="chapter-shot-cap">' + esc(g.label) + "</span></button>";
     }
 
@@ -895,8 +897,8 @@
          screen reader still needs to know which photograph this is. */
       return '<button class="chapter-shot" type="button" data-expand data-cursor="Expand"' +
         ' data-caption="' + esc(g.label) + '" aria-label="Expand photograph: ' + esc(g.label) +
-        '" style="--span:' + span + ";--ratio:" + ratio +
-        ";background-image:url('" + esc(g.img) + "')\">" +
+        '" style="--span:' + span + ";--ratio:" + ratio + '">' +
+        '<img src="' + esc(g.img) + '" alt="" loading="lazy" decoding="async">' +
         '<span class="sr-only">' + esc(g.label) + "</span></button>";
     }
 
@@ -968,10 +970,13 @@
     var useChapters = STORY_LAYOUT === "chapters";
     var galleryHtml = useChapters ? chaptersGalleryHtml() : flatGalleryHtml();
     var chapterNavHtml = useChapters ? chapterRailHtml() : "";
+    var showStoryText = !st.textlessStory;
+    var minimalHero = !!st.textlessStory;
+    document.body.classList.toggle("story-minimal", minimalHero);
 
     /* Opening note: the ask in the couple's words, how we answered it, and
        the three facts a visitor weighing us up actually wants. */
-    var briefHtml = st.brief
+    var briefHtml = showStoryText && st.brief
       ? '<section class="story-brief"><div class="wrap">' +
           '<div class="story-brief-label">The brief</div>' +
           "<div>" +
@@ -986,13 +991,20 @@
         "</div></section>"
       : "";
 
-    var statsHtml = st.stats
+    var statsHtml = st.stats && !st.hideHeroStats
       ? '<div class="story-stats">' + st.stats.map(function (row) {
           return "<div><b>" + esc(row[0]) + "</b><small>" + esc(row[1]) + "</small></div>";
         }).join("") + "</div>"
       : "";
 
-    var wordsHtml = st.words
+    var storyCopyHtml = showStoryText
+      ? '<section class="story-body"><div class="wrap">' +
+          '<p class="lede">' + esc(st.lede) + "</p>" +
+          '<p class="txt">' + esc(st.story) + "</p>" +
+        "</div></section>"
+      : "";
+
+    var wordsHtml = showStoryText && st.words
       ? '<section class="story-words">' +
           '<div class="story-words-media" aria-hidden="true"' +
             (st.cover ? ' style="background-image:url(\'' + esc(st.cover) + '\')"' : "") + "></div>" +
@@ -1004,7 +1016,7 @@
         "</section>"
       : "";
 
-    var creditsHtml = st.credits && st.credits.length
+    var creditsHtml = showStoryText && st.credits && st.credits.length
       ? '<section class="story-credits"><div class="wrap">' +
           '<div class="story-credits-label">Credits</div>' +
           "<div>" + st.credits.map(function (row) {
@@ -1015,41 +1027,57 @@
 
     var prev = list[(idx - 1 + list.length) % list.length];
     var next = list[(idx + 1) % list.length];
+    var crumbsHtml = minimalHero ? "" :
+      '<nav class="story-crumbs" aria-label="Breadcrumb">' +
+        '<a class="story-back" href="index.html" data-cursor="Home"><span aria-hidden="true">←</span> Home</a>' +
+        '<a class="story-back" href="index.html#stories" data-cursor="Weddings">All weddings</a>' +
+      "</nav>";
+    var storyKickerHtml = minimalHero ? "" :
+      '<div class="phera"><b>Real wedding ' + ("0" + (idx + 1)).slice(-2) + "</b> — " + esc(st.city) + "</div>";
+    var storyMetaHtml = minimalHero ? "" :
+      '<div class="story-meta">' +
+        "<div><small>Date</small><b>" + esc(st.date) + "</b></div>" +
+        "<div><small>Venue</small><b>" + esc(st.venue) + "</b></div>" +
+        "<div><small>City</small><b>" + esc(st.city) + "</b></div>" +
+        "<div><small>Coverage</small><b>" + esc(st.type) + "</b></div>" +
+      "</div>";
 
-    /* The couple's cinematic highlight plays silently behind their name.
-       Self-hosted: filmFile when the story names one, otherwise the shared
-       placeholder. The poster shows before the first frame decodes, and when
-       the visitor prefers reduced motion it is all they get. */
-    var heroFilm = st.filmFile || "video/placeholder-highlight.mp4";
+    /* The couple's cover photograph anchors the story hero. A self-hosted
+       film can take over when a story names `filmFile`; a heroSequence can
+       stand in as a video-like still montage until the real film arrives. */
     var heroPoster = st.filmPoster || st.cover || "";
-    var heroMedia =
-      '<div class="story-hero-media" aria-hidden="true">' +
-        "<video " + (REDUCED ? "" : "autoplay ") + 'muted loop playsinline preload="metadata"' +
+    var heroSequence = st.heroSequence && st.heroSequence.length ? st.heroSequence : null;
+    var heroFocalPoints = st.heroFocalPoints || [];
+    var heroMedia = '<div class="story-hero-media" aria-hidden="true">';
+    if (st.filmFile) {
+      heroMedia += "<video " + (REDUCED ? "" : "autoplay ") + 'muted loop playsinline preload="metadata"' +
         (heroPoster ? ' poster="' + esc(heroPoster) + '"' : "") + ">" +
-        '<source src="' + esc(heroFilm) + '" type="video/mp4">' +
-      "</video></div>";
+        '<source src="' + esc(st.filmFile) + '" type="video/mp4">' +
+      "</video>";
+    } else if (heroSequence) {
+      heroMedia += '<div class="story-hero-sequence' + (REDUCED ? "" : " is-animated") + '">';
+      heroMedia += heroSequence.map(function (src, i) {
+        var focus = heroFocalPoints[i] || "center 45%";
+        return '<img class="story-hero-slide' + (i === 0 ? " is-active" : "") +
+          '" style="--hero-focus:' + esc(focus) + ';" src="' + esc(src) +
+          '" alt="" loading="' + (i === 0 ? "eager" : "lazy") +
+          '" decoding="async">';
+      }).join("");
+      heroMedia += "</div>";
+    } else if (heroPoster) {
+      heroMedia += '<img src="' + esc(heroPoster) + '" alt="">';
+    }
+    heroMedia += "</div>";
 
     storyRoot.innerHTML =
-      '<section class="story-hero">' + heroMedia + '<div class="wrap">' +
-        '<nav class="story-crumbs" aria-label="Breadcrumb">' +
-          '<a class="story-back" href="index.html" data-cursor="Home"><span aria-hidden="true">←</span> Home</a>' +
-          '<a class="story-back" href="index.html#stories" data-cursor="Weddings">All weddings</a>' +
-        "</nav>" +
-        '<div class="phera"><b>Real wedding ' + ("0" + (idx + 1)).slice(-2) + "</b> — " + esc(st.city) + "</div>" +
+      '<section class="story-hero' + (minimalHero ? " story-hero-minimal" : "") + '">' +
+        heroMedia + '<div class="wrap">' + crumbsHtml + storyKickerHtml +
         "<h1>" + esc(st.couple[0]) + " <em>&amp;</em> " + esc(st.couple[1]) + "</h1>" +
-        '<div class="story-meta">' +
-          "<div><small>Date</small><b>" + esc(st.date) + "</b></div>" +
-          "<div><small>Venue</small><b>" + esc(st.venue) + "</b></div>" +
-          "<div><small>City</small><b>" + esc(st.city) + "</b></div>" +
-          "<div><small>Coverage</small><b>" + esc(st.type) + "</b></div>" +
-        "</div>" + statsHtml +
+        storyMetaHtml + statsHtml +
       "</div></section>" +
       chapterNavHtml +
       briefHtml +
-      '<section class="story-body"><div class="wrap">' +
-        '<p class="lede">' + esc(st.lede) + "</p>" +
-        '<p class="txt">' + esc(st.story) + "</p>" +
-      "</div></section>" +
+      storyCopyHtml +
       galleryHtml +
       wordsHtml +
       creditsHtml +
@@ -1077,6 +1105,16 @@
           "</div>" +
         "</div>" +
       "</section>";
+
+    var heroSlides = storyRoot.querySelectorAll(".story-hero-sequence .story-hero-slide");
+    if (!REDUCED && heroSlides.length > 1) {
+      var heroSlideIndex = 0;
+      window.setInterval(function () {
+        heroSlides[heroSlideIndex].classList.remove("is-active");
+        heroSlideIndex = (heroSlideIndex + 1) % heroSlides.length;
+        heroSlides[heroSlideIndex].classList.add("is-active");
+      }, 3600);
+    }
 
   }
 
@@ -1108,12 +1146,20 @@
   /* ---------- index: build story cards from data ---------- */
   var storiesGrid = document.getElementById("stories-grid");
   if (storiesGrid && window.BLURRY_WEDDING_STORIES) {
-    storiesGrid.innerHTML = window.BLURRY_WEDDING_STORIES.map(function (st) {
+    storiesGrid.innerHTML = window.BLURRY_WEDDING_STORIES.filter(function (st) {
+      return st.noPlaceholders || st.homepageTeaser;
+    }).map(function (st) {
       var fig = st.cover
         ? '<figure class="ph ph-img" role="img" aria-label="' + st.couple[0] + " and " + st.couple[1] +
           '" style="background-image:url(\'' + st.cover + "')\"></figure>"
         : '<figure class="ph ph-' + (st.tone || "smoke") + '"><div class="ph-label"><em>' +
           st.couple[0] + " &amp; " + st.couple[1] + "</em>Cover photograph</div></figure>";
+      if (st.homepageTeaser) {
+        return '<article class="story-card rv story-card-soon" data-cursor="Coming soon" aria-disabled="true">' + fig +
+          "<h3>" + st.couple[0] + " <em>&amp;</em> " + st.couple[1] + "</h3>" +
+          "<p>" + st.venue + " · " + st.city + "</p>" +
+          '<span class="more">Coming soon</span></article>';
+      }
       return '<a class="story-card rv" href="story.html?s=' + st.slug + '" data-cursor="View story">' + fig +
         "<h3>" + st.couple[0] + " <em>&amp;</em> " + st.couple[1] + "</h3>" +
         "<p>" + st.venue + " · " + st.city + "</p>" +

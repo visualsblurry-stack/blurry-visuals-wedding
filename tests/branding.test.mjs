@@ -247,7 +247,6 @@ test("text buttons use teal backgrounds with white labels", async () => {
     ".hdr:not(.solid) .nav a.cta",
     ".btn-gold,.btn-line",
     ".filters button",
-    ".lightbox-close",
   ]) {
     const declarations = declarationsFor(selector);
     assert.match(
@@ -261,6 +260,18 @@ test("text buttons use teal backgrounds with white labels", async () => {
       `${selector} must use white button text`,
     );
   }
+
+  const lightboxClose = declarationsFor(".lightbox-close");
+  assert.match(
+    lightboxClose,
+    /background\s*:\s*var\(--teal-deep\)\s*;/i,
+    ".lightbox-close must use the darker teal background for white text contrast",
+  );
+  assert.match(
+    lightboxClose,
+    /color\s*:\s*var\(--white\)\s*;/i,
+    ".lightbox-close must use white button text",
+  );
 
   assert.doesNotMatch(
     styles,

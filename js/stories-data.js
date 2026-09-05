@@ -1,54 +1,107 @@
 /* ============================================================
    Blurry Visuals Weddings — real wedding stories data
-   Stock photos (Unsplash CDN) for now — replace `cover` and
-   gallery `img` URLs with img/stories/<slug>/NN.jpg when real
-   photos arrive (see img/README.md). Order = prev/next order.
+   The first two stories use full local real wedding galleries. The remaining
+   portfolio slots still use stock placeholders until their real photos land.
    ============================================================ */
 
 (function () {
   var U = function (id, w) {
     return "https://images.unsplash.com/photo-" + id + "?auto=format&fit=crop&w=" + (w || 1200) + "&q=70";
   };
+  var localGallery = function (slug, count, pair) {
+    var shots = [];
+    for (var i = 1; i <= count; i += 1) {
+      var n = String(i).padStart(3, "0");
+      shots.push({
+        label: pair + " photograph " + n,
+        event: "portraits",
+        img: "img/stories/" + slug + "/" + n + ".webp"
+      });
+    }
+    return shots;
+  };
 
   window.BLURRY_WEDDING_STORIES = [
     {
-      slug: "anaya-rohan",
-      couple: ["Anaya", "Rohan"],
-      date: "December 2025",
-      venue: "Taj Lands End",
-      city: "Bandra, Mumbai",
-      type: "Three-day classic wedding",
-      cover: U("1610173827043-9db50e0d8ef9", 900),
-      oneLiner: "A sea-facing shaadi where the baraat outdanced the DJ.",
-      lede: "Some weddings arrive quietly. This one arrived with two hundred dancers and a horse that refused to hurry.",
-      story: "Anaya and Rohan met in a Bandra bookshop and married ten minutes from it, over three days that moved from an intimate haldi on the lawns to a sangeet that ran ninety minutes over schedule — nobody minded. We photographed the rituals close and the sea wide, keeping the pheras unhurried and the dance floor loud.",
-      gallery: [
-        { label: "Bride portrait, golden hour", event: "portraits", img: U("1587271315307-eaebc181c749"), wide: false },
-        { label: "Baraat energy on the bandstand", event: "baraat", img: U("1597157639073-69284dc0fdaf"), wide: false },
-        { label: "Pheras by the sea", event: "pheras", img: U("1587271636175-90d58cdad458", 1600), wide: true },
-        { label: "Mangalsutra moment", event: "pheras", img: U("1621801306185-8c0ccf9c8eb8"), wide: false },
-        { label: "First look, corridor light", event: "portraits", img: U("1537633552985-df8429e8048b"), wide: false },
-        { label: "Vidaai, held together", event: "vidaai", img: U("1599462616558-2b75fd26a283", 1600), wide: true }
+      slug: "sachi-vedant",
+      couple: ["Sachi", "Vedant"],
+      date: "Wedding story",
+      venue: "Real wedding",
+      city: "India",
+      type: "Photography coverage",
+      cover: "img/stories/sachi-vedant/cover.webp?v=20260905i",
+      heroSequence: [
+        "img/stories/sachi-vedant/257.webp",
+        "img/stories/sachi-vedant/264.webp",
+        "img/stories/sachi-vedant/268.webp",
+        "img/stories/sachi-vedant/303.webp",
+        "img/stories/sachi-vedant/304.webp",
+        "img/stories/sachi-vedant/306.webp",
+        "img/stories/sachi-vedant/307.webp",
+        "img/stories/sachi-vedant/356.webp",
+        "img/stories/sachi-vedant/369.webp",
+        "img/stories/sachi-vedant/418.webp"
       ],
-      film: "https://www.youtube.com/watch?v=a9uRfuujFY8"
+      heroFocalPoints: [
+        "center 42%",
+        "center 43%",
+        "center 44%",
+        "center 43%",
+        "center 43%",
+        "center 43%",
+        "center 43%",
+        "center 43%",
+        "center 44%",
+        "center 44%"
+      ],
+      oneLiner: "A real wedding gallery told through the studio's full web selection.",
+      lede: "Sachi and Vedant's page is now built from real photographs, arranged as one uninterrupted visual story.",
+      story: "The gallery below uses a tighter edit from their web-ready image selection: ten frames, no chapter breaks, and no interruptions between photographs.",
+      gallery: localGallery("sachi-vedant", 484, "Sachi & Vedant"),
+      noPlaceholders: true,
+      textlessStory: true,
+      hideHeroStats: true,
+      film: ""
     },
     {
-      slug: "meher-zain",
-      couple: ["Meher", "Zain"],
-      date: "November 2025",
-      venue: "Private beach house",
-      city: "Alibaug",
-      type: "Intimate coastal wedding",
-      cover: U("1523438885200-e635ba2c371e", 900),
-      oneLiner: "Forty guests, one shoreline, zero schedules.",
-      lede: "They wanted a wedding that felt like a long dinner with the people they love. The sea agreed to host.",
-      story: "A ferry, a beach house, and a nikah at dusk. Meher and Zain kept the guest list at forty and the plans loose, which gave us room to work like documentarians — barefoot processions, quiet duas, and a dance floor made of sand. The frames stay soft, salt-aired, and unposed.",
-      gallery: [
-        { label: "Couple at the waterline", event: "portraits", img: U("1460364157752-926555421a7e", 1600), wide: true },
-        { label: "Nikah at dusk", event: "nikah", img: U("1591604466107-ec97de577aff"), wide: false },
-        { label: "Mehndi detail, sea breeze", event: "mehndi", img: U("1505932794465-147d1f1b2c97"), wide: false },
-        { label: "Dinner under string lights", event: "reception", img: U("1519225421980-715cb0215aed", 1600), wide: true }
+      slug: "vedin-megha",
+      couple: ["Vedin", "Megha"],
+      date: "Wedding story",
+      venue: "Real wedding",
+      city: "India",
+      type: "Photography coverage",
+      cover: "img/stories/vedin-megha/cover.webp?v=20260905i",
+      heroSequence: [
+        "img/stories/vedin-megha/081.webp",
+        "img/stories/vedin-megha/084.webp",
+        "img/stories/vedin-megha/124.webp",
+        "img/stories/vedin-megha/125.webp",
+        "img/stories/vedin-megha/195.webp",
+        "img/stories/vedin-megha/196.webp",
+        "img/stories/vedin-megha/208.webp",
+        "img/stories/vedin-megha/209.webp",
+        "img/stories/vedin-megha/224.webp",
+        "img/stories/vedin-megha/238.webp"
       ],
+      heroFocalPoints: [
+        "center 43%",
+        "center 43%",
+        "center 45%",
+        "center 45%",
+        "center 44%",
+        "center 43%",
+        "center 45%",
+        "center 45%",
+        "center 44%",
+        "center 44%"
+      ],
+      oneLiner: "A bright real wedding gallery told through the studio's full web selection.",
+      lede: "Vedin and Megha's page is built from real photographs from their celebration.",
+      story: "The gallery keeps the edit direct and visual: ten selected WebP frames, no chapter breaks, and no long copy between the images.",
+      gallery: localGallery("vedin-megha", 278, "Vedin & Megha"),
+      noPlaceholders: true,
+      textlessStory: true,
+      hideHeroStats: true,
       film: ""
     },
     {
@@ -70,6 +123,9 @@
         { label: "Pheras under the canopy", event: "pheras", img: U("1665960213508-48f07086d49c"), wide: false },
         { label: "Farewell arch, marigold", event: "vidaai", img: U("1587271636175-90d58cdad458", 1600), wide: true }
       ],
+      textlessStory: true,
+      hideHeroStats: true,
+      homepageTeaser: true,
       film: "https://www.youtube.com/watch?v=UpZI5dOFGM0"
     },
     {
@@ -89,6 +145,8 @@
         { label: "Choreography mid-air", event: "sangeet", img: U("1529636798458-92182e662485"), wide: false },
         { label: "Skyline pheras", event: "pheras", img: U("1583939003579-730e3918a45a", 1600), wide: true }
       ],
+      textlessStory: true,
+      hideHeroStats: true,
       film: ""
     },
     {
@@ -109,6 +167,8 @@
         { label: "Lawn lunch, long table", event: "reception", img: U("1525772764200-be829a350797"), wide: false },
         { label: "Couple, golden field", event: "portraits", img: U("1735052712464-9d24b69be5f5"), wide: false }
       ],
+      textlessStory: true,
+      hideHeroStats: true,
       film: ""
     },
     {
@@ -128,6 +188,8 @@
         { label: "Blue-hour couple portrait", event: "portraits", img: U("1515934751635-c81c6bc9a2d8"), wide: false },
         { label: "Jaimala, lakeside", event: "pheras", img: U("1583939003579-730e3918a45a", 1600), wide: true }
       ],
+      textlessStory: true,
+      hideHeroStats: true,
       film: "https://www.youtube.com/watch?v=Pm3NfZDC48k"
     }
   ];
@@ -140,52 +202,18 @@
      up gradually instead of all at once.
      ------------------------------------------------------------------ */
   var CHAPTERS = {
-    "anaya-rohan": {
-      baraat: {
-        time: "Day two · 6:20 pm",
-        title: "The baraat took the bandstand.",
-        note: "Two hundred dancers, one horse with no intention of hurrying, and a stretch of Bandra seafront that stopped to watch. We walked backwards for most of it."
-      },
-      pheras: {
-        time: "Day three · 7:05 pm",
-        title: "Pheras, with the sea for a witness.",
-        note: "The mandap faced west on purpose. Seven rounds against a falling tide, unhurried, while the last of the light did the work for us.",
-        quote: "We had planned every minute of that day except this one. It is the only part I remember properly.",
-        quoteWho: "Anaya, on the pheras"
-      },
-      vidaai: {
-        time: "Day three · 11:40 pm",
-        title: "Vidaai, and nobody let go first.",
-        note: "The hardest frames of any wedding, and the ones families come back to years later. We stay close and say nothing."
-      },
+    "sachi-vedant": {
       portraits: {
-        time: "Across three days",
-        title: "The two of them, unhurried.",
-        note: "Stolen between events — a corridor, a golden hour, ten minutes with the door shut. No posing, just somewhere quiet to stand."
+        time: "Across the celebration",
+        title: "Sachi and Vedant, frame by frame.",
+        note: "A real gallery from the studio's web selection, kept as one continuous visual story."
       }
     },
-    "meher-zain": {
-      mehndi: {
-        time: "Day one · 5:30 pm",
-        title: "Mehndi with salt in the air.",
-        note: "Forty guests on a veranda, henna drying in a sea breeze that kept threatening to smudge it. Nobody hurried the artists."
-      },
-      nikah: {
-        time: "Day two · 6:48 pm",
-        title: "A nikah at the last of the light.",
-        note: "Barefoot, unamplified, and over in nine minutes. The quietest ceremony we have photographed, and the one we talk about most.",
-        quote: "There was no stage and no schedule. Just everyone we love, standing on sand.",
-        quoteWho: "Zain, on the nikah"
-      },
-      reception: {
-        time: "Day two · 9:15 pm",
-        title: "Dinner ran until the tide came in.",
-        note: "One long table, string lights, and a dance floor made of sand. It ended when the sea decided it should."
-      },
+    "vedin-megha": {
       portraits: {
-        time: "Day two · golden hour",
-        title: "At the waterline, before anyone noticed.",
-        note: "Twenty minutes away from the party while the light held. They talked to each other and forgot we were there."
+        time: "Across the celebration",
+        title: "Vedin and Megha, frame by frame.",
+        note: "A real gallery from the studio's web selection, kept as one continuous visual story."
       }
     },
     "ishita-arjun": {
@@ -280,23 +308,11 @@
      coverage. Everything here is optional; a story drops the section it
      lacks rather than rendering an empty one. */
   var EXTRAS = {
-    "anaya-rohan": {
-      brief: {
-        ask: "Anaya asked for one thing: don't make us pose.",
-        text: "So for three days in Bandra we stayed at the edge of the room. A haldi on the lawns, a sangeet that ran ninety minutes over, pheras facing the sea. Everything below is in the order it happened.",
-        meta: [["Coverage", "Photo & film"], ["Venue", "Taj Lands End"], ["Delivered in", "21 days"]]
-      },
-      stats: [["642", "Frames delivered"], ["5", "Events"], ["4", "Crew on ground"]],
-      words: { quote: "We stopped noticing you were there. Then the gallery arrived and we cried through all six hundred pictures.", who: "Anaya & Rohan" }
+    "sachi-vedant": {
+      stats: [["484", "Photographs"]]
     },
-    "meher-zain": {
-      brief: {
-        ask: "They wanted a wedding that felt like a long dinner.",
-        text: "Forty guests, one shoreline, and no schedule to speak of. We worked like documentarians — barefoot processions, quiet duas, and a dance floor made of sand.",
-        meta: [["Coverage", "Photography"], ["Venue", "Private beach house"], ["Delivered in", "16 days"]]
-      },
-      stats: [["380", "Frames delivered"], ["3", "Events"], ["2", "Crew on ground"]],
-      words: { quote: "You photographed our nikah like it was a private thing you had been let into. Which is exactly what it was.", who: "Meher & Zain" }
+    "vedin-megha": {
+      stats: [["278", "Photographs"]]
     },
     "ishita-arjun": {
       brief: {
@@ -487,6 +503,8 @@
   var FRAMES_PER_CHAPTER = 4;
 
   window.BLURRY_WEDDING_STORIES.forEach(function (story, si) {
+    if (story.noPlaceholders) return;
+
     var counted = {};
     story.gallery.forEach(function (g) {
       counted[g.event] = (counted[g.event] || 0) + 1;
