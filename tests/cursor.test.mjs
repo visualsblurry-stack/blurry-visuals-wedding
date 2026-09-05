@@ -243,7 +243,10 @@ test("the static pages label their own hover targets", async () => {
 });
 
 test("the films section uses the studio YouTube links", async () => {
-  const indexHtml = await readProjectFile("index.html");
+  const [indexHtml, mainScript] = await Promise.all([
+    readProjectFile("index.html"),
+    readProjectFile("js/main.js"),
+  ]);
   const filmSection = indexHtml.match(/<section class="sec" id="films">([\s\S]*?)<\/section>/)?.[1] || "";
   const expected = [
     "dEK0R24OtOY",
@@ -260,10 +263,105 @@ test("the films section uses the studio YouTube links", async () => {
     const card = cards[index];
     assert.ok(card.includes(`watch?v=${id}`), `film card ${index + 1} is missing YouTube id ${id}`);
     assert.ok(card.includes(`img.youtube.com/vi/${id}/hqdefault.jpg`), `film card ${index + 1} is missing its poster`);
+    assert.ok(card.includes('target="_blank"'), `film card ${index + 1} must open YouTube directly`);
+    assert.ok(card.includes('rel="noopener"'), `film card ${index + 1} must keep the outbound link safe`);
     assert.ok(card.includes('data-cursor="Watch"'), `film card ${index + 1} must keep the Watch hover label`);
   });
 
   for (const oldId of ["a9uRfuujFY8", "UpZI5dOFGM0", "64VrMb17-zc", "Pm3NfZDC48k"]) {
     assert.ok(!filmSection.includes(oldId), `dummy YouTube id ${oldId} should not remain`);
   }
+
+  assert.match(
+    mainScript,
+    /function canPlayInLightbox\(url\) \{[\s\S]*?if \(isYouTubeUrl\(url\)\) return false;/,
+    "YouTube films must not be embedded in the lightbox because some studio videos refuse iframe playback",
+  );
+
+  const handler = mainScript.match(/card\.addEventListener\("click", function \(ev\) \{([\s\S]*?)\n    \}\);/)?.[1] || "";
+  const directLinkGate = handler.indexOf("if (url && !canPlayInLightbox(url)) return;");
+  const firstPreventDefault = handler.indexOf("ev.preventDefault();");
+  assert.ok(directLinkGate >= 0, "the film click handler must let non-embeddable videos follow their href");
+  assert.ok(
+    directLinkGate < firstPreventDefault,
+    "non-embeddable film links must escape before the handler prevents normal navigation",
+  );
+});
+
+test("film cards use the approved cinematic secondary-color frame", async () => {
+  const [indexHtml, styles] = await Promise.all([
+    readProjectFile("index.html"),
+    readProjectFile("css/style.css").then(stripComments),
+  ]);
+  const filmSection = indexHtml.match(/<section class="sec" id="films">([\s\S]*?)<\/section>/)?.[1] || "";
+  const cards = [...filmSection.matchAll(/<a class="film rv"[\s\S]*?<\/a>/g)].map((match) => match[0]);
+
+  assert.equal(cards.length, 4, "the cinematic treatment must cover all four film cards");
+  cards.forEach((card, index) => {
+    assert.ok(
+      card.includes('<span class="film-watch">Watch film</span>'),
+      `film card ${index + 1} is missing its visible watch cue`,
+    );
+  });
+
+  const card = declarationsFor(styles, ".film");
+  assert.match(card, /border\s*:\s*2px\s+solid\s+var\(--teal\)/i, "film cards need a strong secondary-color frame");
+  assert.match(card, /background\s*:\s*var\(--teal\)/i, "the frame must continue behind the title strip");
+  assert.match(card, /box-shadow\s*:[^;]*var\(--teal-deep\)/i, "the frame needs a deeper offset for dimension");
+
+  const meta = declarationsFor(styles, ".film-meta");
+  assert.match(meta, /background\s*:\s*var\(--teal\)/i, "film metadata must sit on the secondary-color strip");
+  assert.match(meta, /color\s*:\s*var\(--white\)/i, "film titles must be readable on the secondary-color strip");
+  const number = declarationsFor(styles, ".film-meta h3 em");
+  assert.match(
+    number,
+    /color\s*:\s*rgba\(255\s*,\s*255\s*,\s*255\s*,\s*\.78\)/i,
+    "film numbers need contrast against the secondary-color strip",
+  );
+
+  const play = declarationsFor(styles, ".film-play > span:first-child");
+  assert.match(play, /background\s*:\s*var\(--teal-deep\)/i, "the play control needs contrast against the secondary frame");
+  assert.match(play, /color\s*:\s*var\(--white\)/i);
+  assert.match(play, /border\s*:\s*2px\s+solid\s+var\(--white\)/i);
+
+  const playLayer = declarationsFor(styles, ".film-play");
+  assert.match(playLayer, /aspect-ratio\s*:\s*16\s*\/\s*9/i, "the play layer must cover only the thumbnail");
+  assert.match(playLayer, /bottom\s*:\s*auto/i, "the watch cue must not overlap the title strip");
+
+  const watch = declarationsFor(styles, ".film-watch");
+  assert.match(watch, /position\s*:\s*absolute/i);
+  assert.match(watch, /color\s*:\s*var\(--white\)/i);
+
+  const interactive = declarationsFor(styles, ".film:hover,.film:focus-visible");
+  assert.match(interactive, /translate\s*:\s*-/i);
+  assert.match(interactive, /box-shadow\s*:[^;]*var\(--teal-deep\)/i);
+
+  assert.match(
+    styles,
+    /@media \(prefers-reduced-motion:reduce\)\s*\{[\s\S]*?\.film:hover,\.film:focus-visible\s*\{[^}]*translate\s*:\s*none/is,
+    "reduced-motion visitors must not receive the card lift",
+  );
+});
+
+test("the film lightbox can render self-hosted mp4 files", async () => {
+  const [mainScript, styles] = await Promise.all([
+    readProjectFile("js/main.js"),
+    readProjectFile("css/style.css").then(stripComments),
+  ]);
+
+  assert.match(
+    mainScript,
+    /function lightboxMarkup\(url\) \{[\s\S]*?\.mp4[\s\S]*?<video class="lightbox-video"/,
+    "self-hosted mp4 films should render with a real video element",
+  );
+  assert.match(
+    mainScript,
+    /<source src="' \+ escAttr\(url\) \+ '" type="video\/mp4">/,
+    "the lightbox video source must be escaped before it is injected",
+  );
+
+  const player = declarationsFor(styles, ".lightbox-frame iframe,.lightbox-frame video");
+  assert.match(player, /width\s*:\s*100%/i);
+  assert.match(player, /height\s*:\s*100%/i);
+  assert.match(player, /border\s*:\s*0/i);
 });

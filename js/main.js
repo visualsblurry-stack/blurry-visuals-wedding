@@ -132,32 +132,6 @@
     return pendingSlides[source];
   }
 
-  /* Each slide carries its own tagline, typed out character by character.
-     The animated span is hidden from assistive tech; the sr-only label
-     beside it gets the whole line at once so it is never read letter by
-     letter. */
-  var taglineTyped = document.querySelector(".hero-typed");
-  var taglineLabel = document.querySelector("[data-tagline-label]");
-  var taglineTimer = 0;
-
-  function typeHeroTagline(index) {
-    if (!taglineTyped) return;
-    var slide = slides[index];
-    var text = (slide && slide.dataset.tagline) || "";
-    window.clearTimeout(taglineTimer);
-    if (taglineLabel) taglineLabel.textContent = text;
-    if (REDUCED) {
-      taglineTyped.textContent = text;
-      return;
-    }
-    var cursor = 0;
-    (function step() {
-      taglineTyped.textContent = text.slice(0, cursor);
-      if (cursor++ >= text.length) return;
-      taglineTimer = window.setTimeout(step, 42);
-    })();
-  }
-
   function updateHeroDots() {
     heroDots.forEach(function (dot, index) {
       var active = index === slideIndex;
@@ -224,7 +198,6 @@
       slides[slideIndex].classList.add("act");
       updateHeroDots();
       updateHeroThumbs();
-      typeHeroTagline(slideIndex);
       loadHeroSlide((slideIndex + 1) % slides.length);
       return true;
     });
@@ -328,7 +301,6 @@
   if (slides.length) {
     loadHeroSlide(1 % slides.length);
     updateHeroDots();
-    typeHeroTagline(slideIndex);
     scheduleHeroAutoplay();
 
     // The copy has to clear the proof bar, whatever height it wraps to.
@@ -378,12 +350,35 @@
   /* ---------- films lightbox ---------- */
   var lightbox = document.getElementById("lightbox");
   var lbFrame = lightbox ? lightbox.querySelector(".lightbox-frame") : null;
+  function escAttr(url) {
+    return String(url).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+  function isYouTubeUrl(url) {
+    return /(?:^https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)\//i.test(url);
+  }
   function embedUrl(url) {
-    var m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{6,})/);
-    if (m) return "https://www.youtube.com/embed/" + m[1] + "?autoplay=1";
-    m = url.match(/vimeo\.com\/(\d+)/);
+    var m = url.match(/vimeo\.com\/(\d+)/);
     if (m) return "https://player.vimeo.com/video/" + m[1] + "?autoplay=1";
-    return url;
+    return "";
+  }
+  function canPlayInLightbox(url) {
+    if (isYouTubeUrl(url)) return false;
+    return /\.mp4(?:[?#]|$)/i.test(url) || !!embedUrl(url);
+  }
+  function lightboxMarkup(url) {
+    if (/\.mp4(?:[?#]|$)/i.test(url)) {
+      return '<video class="lightbox-video" controls autoplay playsinline preload="metadata">' +
+        '<source src="' + escAttr(url) + '" type="video/mp4">' +
+        "</video>";
+    }
+    var embedded = embedUrl(url);
+    if (!embedded) return "";
+    return '<iframe src="' + escAttr(embedded) +
+      // allow="fullscreen" supersedes the legacy allowfullscreen attribute;
+      // carrying both only earned a console warning on every open.
+      '" title="Wedding film" allow="autoplay; fullscreen"></iframe>';
   }
   /* The film viewer is a modal in every way that matters to a sighted visitor,
      so it has to behave like one for everybody else too: announced as a dialog,
@@ -397,11 +392,10 @@
   }
   function openLightbox(url, opener) {
     if (!lightbox || !lbFrame) return false;
+    var markup = lightboxMarkup(url);
+    if (!markup) return false;
     lbLastFocus = opener || document.activeElement;
-    lbFrame.innerHTML = '<iframe src="' + embedUrl(url) +
-      // allow="fullscreen" supersedes the legacy allowfullscreen attribute;
-      // carrying both only earned a console warning on every open.
-      '" title="Wedding film" allow="autoplay; fullscreen"></iframe>';
+    lbFrame.innerHTML = markup;
     lightbox.classList.add("open");
     lightbox.setAttribute("aria-hidden", "false");
     var lbCloseBtn = lightbox.querySelector(".lightbox-close");
@@ -427,8 +421,9 @@
          new tab gets one and a visitor with no JavaScript still reaches the
          video. Only a plain left click is ours to intercept for the lightbox. */
       if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey || ev.button !== 0) return;
-      ev.preventDefault();
       var url = card.dataset.video || "";
+      if (url && !canPlayInLightbox(url)) return;
+      ev.preventDefault();
       var badge = card.querySelector(".film-play span");
       if (!url) { // no link yet — quiet "coming soon" pulse
         if (badge) {
@@ -551,9 +546,9 @@
     var pbIndex = 0;
     var pbLastFocus = null;
 
-    /* The tiles ask the Unsplash CDN for only as many pixels as they render.
-       Full size wants a bigger one, and both the homepage and the story data
-       carry the size in the same query string. */
+    /* Placeholder tiles ask the Unsplash CDN for only as many pixels as they
+       render. Full size requests a bigger one when those query parameters are
+       present; local gallery files pass through unchanged. */
     function fullSize(url) {
       return url.replace(/([?&]w=)\d+/, "$12000").replace(/([?&]q=)\d+/, "$180");
     }
@@ -775,8 +770,8 @@
         }
         el.setAttribute("content", value);
       };
-      // Story covers are absolute stock URLs today and will be site-relative
-      // once real photographs land; new URL() resolves both.
+      // Story covers may be absolute placeholder URLs or site-relative local
+      // photographs; new URL() resolves both.
       var cover = st.cover ? new URL(st.cover, location.href).href : "";
       setMeta("property", "og:title", pair + " | Blurry Visuals Weddings");
       setMeta("property", "og:description", summary);

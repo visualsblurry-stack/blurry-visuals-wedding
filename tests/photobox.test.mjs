@@ -147,6 +147,11 @@ test("photobox styling keeps the picture whole and above the page", async () => 
 
   const box = declarationsFor(styles, ".photobox");
   assert.match(box, /(?:^|[;{])\s*position\s*:\s*fixed\s*(?:;|})/i);
+  assert.match(
+    box,
+    /grid-template-rows\s*:\s*minmax\(\s*0\s*,\s*1fr\s*\)/i,
+    "the viewer row must stay within the viewport for portrait photographs",
+  );
   const boxZ = Number(box.match(/z-index\s*:\s*(\d+)/i)?.[1]);
   const cursorZ = Number(
     declarationsFor(styles, ".cursor-ring").match(/z-index\s*:\s*(\d+)/i)?.[1],
