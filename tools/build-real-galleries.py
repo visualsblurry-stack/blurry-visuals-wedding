@@ -11,7 +11,7 @@ EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
 
 GALLERIES = [
     {
-        "slug": "sachi-vedant",
+        "slug": "shachi-vedant",
         "source": Path(r"D:\BlurryVisuals-Wedding-publish\img\for Wedding website\Shachi & Vedant\for web"),
         "cover": "snv web-251.jpg",
     },

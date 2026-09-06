@@ -29,7 +29,7 @@ A story uses its own film once its entry in `js/stories-data.js` names one:
 
 ```js
 filmFile: "video/stories/anaya-rohan.mp4",
-filmPoster: "img/hero/hero-sachi-vedant-184.webp",
+filmPoster: "img/hero/hero-shachi-vedant-184.webp",
 ```
 
 `filmPoster` is the still shown while the film loads. Without it the story's

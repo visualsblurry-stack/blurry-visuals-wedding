@@ -288,7 +288,7 @@ test("the films section uses the studio YouTube links", async () => {
   );
 });
 
-test("film cards use the plain simple-style frame, not the teal cinematic one", async () => {
+test("film cards carry no title/credit text, a thicker frame, and a visible play button", async () => {
   const [indexHtml, styles] = await Promise.all([
     readProjectFile("index.html"),
     readProjectFile("css/style.css").then(stripComments),
@@ -296,27 +296,28 @@ test("film cards use the plain simple-style frame, not the teal cinematic one", 
   const filmSection = indexHtml.match(/<section class="sec" id="films">([\s\S]*?)<\/section>/)?.[1] || "";
   const cards = [...filmSection.matchAll(/<a class="film rv"[\s\S]*?<\/a>/g)].map((match) => match[0]);
 
-  assert.equal(cards.length, 4, "the simple style must cover all four film cards");
+  assert.equal(cards.length, 4, "the films section should keep four cards");
   cards.forEach((card, index) => {
     assert.ok(
       /<div class="film-play"><span>[^<]+<\/span><\/div>/.test(card),
       `film card ${index + 1} should carry a single plain play icon, no watch-cue span`,
     );
     assert.ok(!card.includes("film-watch"), `film card ${index + 1} should not carry the cinematic watch cue`);
+    assert.ok(!card.includes("film-meta"), `film card ${index + 1} must not show a title or credit line`);
+    assert.ok(!card.includes("Wedding Film"), `film card ${index + 1} must not show a "Wedding Film" title`);
+    assert.ok(!card.includes(">Blurry Visuals<"), `film card ${index + 1} must not show the "Blurry Visuals" credit`);
   });
 
   const card = declarationsFor(styles, ".film");
-  assert.doesNotMatch(card, /border\s*:\s*2px\s+solid\s+var\(--teal\)/i, "film cards must not keep the teal frame border");
-  assert.doesNotMatch(card, /box-shadow/i, "film cards must not keep the cinematic offset shadow");
+  assert.match(card, /border\s*:\s*2px\s+solid\s+var\(--teal\)/i, "film tiles need a visibly thicker frame");
+  assert.doesNotMatch(card, /box-shadow/i, "the tile frame should stay a plain border, not the cinematic offset shadow");
+  assert.doesNotMatch(card, /background\s*:\s*var\(--teal\)/i, "the tile must not fill with teal behind the thumbnail");
 
   const play = declarationsFor(styles, ".film-play span");
-  assert.match(play, /border\s*:\s*1px\s+solid\s+var\(--champagne\)/i, "the play control returns to its plain champagne ring");
-  assert.match(play, /background\s*:\s*rgba\(255\s*,\s*255\s*,\s*255\s*,0?\.82\)/i, "the play control returns to its translucent white disc");
+  assert.match(play, /border\s*:\s*2px\s+solid\s+var\(--champagne\)/i, "the play control's ring should be thicker, not the hairline default");
+  assert.match(play, /background\s*:\s*rgba\(255\s*,\s*255\s*,\s*255\s*,0?\.92\)/i, "the play control needs a more opaque disc to read clearly over any thumbnail");
 
-  const meta = declarationsFor(styles, ".film-meta");
-  assert.doesNotMatch(meta, /background\s*:\s*var\(--teal\)/i, "film metadata must not sit on a teal strip");
-  assert.doesNotMatch(meta, /color\s*:\s*var\(--white\)/i, "film titles return to the page's default text color");
-
+  assert.doesNotMatch(styles, /\.film-meta\s*\{/, "the .film-meta rule should be removed along with its markup");
   assert.doesNotMatch(
     styles,
     /\.film-watch\s*\{/,
