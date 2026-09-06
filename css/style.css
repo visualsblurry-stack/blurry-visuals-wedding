@@ -358,7 +358,22 @@ body.menu-open{overflow:hidden;}
 
 /* ========================= about ========================= */
 .about-grid{display:grid;grid-template-columns:0.85fr 1fr;gap:64px;align-items:center;}
-.about-grid .ph{aspect-ratio:4/5;}
+.founder-portraits{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;
+  width:100%;max-width:620px;align-items:start;
+}
+.founder-portrait{min-width:0;margin:0;}
+.founder-frame{
+  overflow:hidden;aspect-ratio:2/3;border:2px solid var(--teal);
+  background:rgba(120,156,159,.12);box-shadow:6px 6px 0 var(--teal-deep);
+}
+.founder-frame img{width:100%;height:100%;object-fit:cover;}
+.founder-portrait-akash img{object-position:center 42%;}
+.founder-portrait-gautam img{object-position:center 25%;}
+.founder-portrait figcaption{
+  margin-top:13px;font-size:10px;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ivory);
+}
 .about-copy>p{color:var(--ash);margin:0 0 18px;}
 .about-copy>p:first-of-type{color:var(--ivory);font-size:18px;}
 /* The two founders, side by side under the studio's story. */
@@ -1029,5 +1044,6 @@ body.cursor-custom [data-cursor] *{cursor:none;}
   .hero-proof dt{font-size:19px;}
   .hero-dots{margin-left:-10px;}
   .hero-dot{width:38px;height:44px;}
+  .founder-portraits{grid-template-columns:1fr;max-width:320px;gap:28px;}
   .about-facts{gap:24px;}
 }

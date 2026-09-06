@@ -74,3 +74,50 @@ test("the About section presents Akash and Gautam in accessible portrait frames"
   assert.doesNotMatch(html, /\bAakash\b/, "the old spelling must not remain");
   assert.match(html, /Akash · WhatsApp/);
 });
+
+test("founder portraits use the approved responsive twin-frame treatment", async () => {
+  const styles = (await readProjectFile("css/style.css")).replace(
+    /\/\*[\s\S]*?\*\//g,
+    "",
+  );
+  const declarationsFor = (selector) => {
+    const escaped = selector.replace(/[.*+?^$()|[\]\\{}]/g, "\\$&");
+    const block = styles.match(
+      new RegExp(escaped + "\\s*\\{([^}]*)\\}", "s"),
+    );
+    assert.ok(block, selector + " style block is missing");
+    return block[1];
+  };
+
+  const pair = declarationsFor(".founder-portraits");
+  assert.match(
+    pair,
+    /grid-template-columns\s*:\s*repeat\(2,minmax\(0,1fr\)\)/i,
+  );
+  assert.match(pair, /max-width\s*:\s*620px/i);
+
+  const frame = declarationsFor(".founder-frame");
+  assert.match(frame, /aspect-ratio\s*:\s*2\/3/i);
+  assert.match(frame, /border\s*:\s*2px\s+solid\s+var\(--teal\)/i);
+  assert.match(
+    frame,
+    /box-shadow\s*:\s*6px\s+6px\s+0\s+var\(--teal-deep\)/i,
+  );
+
+  const image = declarationsFor(".founder-frame img");
+  assert.match(image, /object-fit\s*:\s*cover/i);
+  assert.match(
+    declarationsFor(".founder-portrait-akash img"),
+    /object-position\s*:\s*center\s+42%/i,
+  );
+  assert.match(
+    declarationsFor(".founder-portrait-gautam img"),
+    /object-position\s*:\s*center\s+25%/i,
+  );
+
+  assert.match(
+    styles,
+    /@media\s*\(max-width:640px\)\s*\{[\s\S]*?\.founder-portraits\s*\{[^}]*grid-template-columns\s*:\s*1fr/is,
+    "founder portraits must stack at the existing phone breakpoint",
+  );
+});
