@@ -73,7 +73,7 @@ and leak live markup onto the page.
 
 ### Hero
 
-- Eight slides, all studio-owned WebP in `img/hero/`. No stock.
+- Thirteen slides, all studio-owned WebP in `img/hero/`. No stock.
 - First slide loads eagerly and is preloaded; the rest lazy-load via `data-bg`.
 - Hero copy is intentionally limited to the static headline and the three proof figures.
   Photographs continue rotating without changing the text.

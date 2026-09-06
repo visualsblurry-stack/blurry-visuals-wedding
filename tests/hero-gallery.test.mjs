@@ -7,26 +7,31 @@ const read = (path, encoding = "utf8") =>
   readFile(new URL(path, root), encoding);
 
 const heroAssets = [
+  "img/hero/hero-shachi-vedant-ceremony.webp",
+  "img/hero/hero-wedding-portrait-closeup.webp",
+  "img/hero/hero-vedin-megha-night-walk.webp",
   "img/hero/hero-abhi-isha.webp",
-  "img/hero/hero-sachi-vedant-embrace.webp",
-  "img/hero/hero-sachi-vedant-ceremony.webp",
-  "img/hero/hero-wedding-portrait-couple.webp",
-  "img/hero/hero-wedding-portrait-walk.webp",
-  "img/hero/hero-wedding-portrait-hands.webp",
-  "img/hero/hero-sachi-vedant-184.webp",
-  "img/hero/hero-sushmita-harsh-151.webp",
+  "img/hero/hero-shachi-vedant-embrace.webp",
+  "img/hero/hero-sushmita-harsh-haldi.webp",
+  "img/hero/hero-vedin-megha-closeup.webp",
+  "img/hero/hero-sangeet-close-embrace.webp",
+  "img/hero/hero-vedin-megha-street-style.webp",
+  "img/hero/hero-wedding-hands-detail.webp",
+  "img/hero/hero-shachi-vedant-solo.webp",
+  "img/hero/hero-wedding-portrait-arch-walk.webp",
+  "img/hero/hero-shachi-vedant-kiss.webp",
 ];
 
-test("hero is an eight-image gallery of the studio's own photographs", async () => {
+test("hero is a thirteen-image gallery of the studio's own photographs", async () => {
   const html = await read("index.html");
-  assert.equal((html.match(/class="hero-slide(?: act)?"/g) ?? []).length, 8);
-  assert.equal((html.match(/class="hero-dot(?: act)?"/g) ?? []).length, 8);
+  assert.equal((html.match(/class="hero-slide(?: act)?"/g) ?? []).length, 13);
+  assert.equal((html.match(/class="hero-dot(?: act)?"/g) ?? []).length, 13);
 
   // No stock imagery in the hero: every slide must be a local studio asset.
   const heroBlock = html.match(/<div class="hero-slides"[\s\S]*?<\/div>\s*<\/div>/)[0];
   const heroSection = html.match(/<section class="hero">[\s\S]*?<\/section>/)[0];
   assert.doesNotMatch(heroBlock, /unsplash\.com/);
-  assert.equal((heroBlock.match(/img\/hero\/[a-z0-9-]+\.webp/g) ?? []).length, 8);
+  assert.equal((heroBlock.match(/img\/hero\/[a-z0-9-]+\.webp/g) ?? []).length, 13);
   for (const path of heroAssets) assert.ok(heroBlock.includes(path), `${path} missing from hero`);
   assert.match(
     html,
