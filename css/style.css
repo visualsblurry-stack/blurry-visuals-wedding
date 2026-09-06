@@ -341,11 +341,11 @@ body.menu-open{overflow:hidden;}
 }
 .founder-portrait{min-width:0;margin:0;}
 .founder-frame{
-  overflow:hidden;aspect-ratio:2/3;border:2px solid var(--teal);
-  background:rgba(120,156,159,.12);box-shadow:6px 6px 0 var(--teal-deep);
+  overflow:hidden;aspect-ratio:2/3;border:3px solid #000;
+  background:#f0f0f0;
 }
 .founder-frame img{width:100%;height:100%;object-fit:cover;}
-.founder-portrait-akash img{object-position:center 42%;}
+.founder-portrait-akash img{object-position:center 30%;}
 .founder-portrait-gautam img{object-position:center 25%;}
 .founder-portrait figcaption{
   margin-top:13px;font-size:10px;font-weight:700;letter-spacing:.18em;
