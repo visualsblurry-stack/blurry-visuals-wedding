@@ -288,7 +288,7 @@ test("the films section uses the studio YouTube links", async () => {
   );
 });
 
-test("film cards use the approved cinematic secondary-color frame", async () => {
+test("film cards use the plain simple-style frame, not the teal cinematic one", async () => {
   const [indexHtml, styles] = await Promise.all([
     readProjectFile("index.html"),
     readProjectFile("css/style.css").then(stripComments),
@@ -296,50 +296,31 @@ test("film cards use the approved cinematic secondary-color frame", async () => 
   const filmSection = indexHtml.match(/<section class="sec" id="films">([\s\S]*?)<\/section>/)?.[1] || "";
   const cards = [...filmSection.matchAll(/<a class="film rv"[\s\S]*?<\/a>/g)].map((match) => match[0]);
 
-  assert.equal(cards.length, 4, "the cinematic treatment must cover all four film cards");
+  assert.equal(cards.length, 4, "the simple style must cover all four film cards");
   cards.forEach((card, index) => {
     assert.ok(
-      card.includes('<span class="film-watch">Watch film</span>'),
-      `film card ${index + 1} is missing its visible watch cue`,
+      /<div class="film-play"><span>[^<]+<\/span><\/div>/.test(card),
+      `film card ${index + 1} should carry a single plain play icon, no watch-cue span`,
     );
+    assert.ok(!card.includes("film-watch"), `film card ${index + 1} should not carry the cinematic watch cue`);
   });
 
   const card = declarationsFor(styles, ".film");
-  assert.match(card, /border\s*:\s*2px\s+solid\s+var\(--teal\)/i, "film cards need a strong secondary-color frame");
-  assert.match(card, /background\s*:\s*var\(--teal\)/i, "the frame must continue behind the title strip");
-  assert.match(card, /box-shadow\s*:[^;]*var\(--teal-deep\)/i, "the frame needs a deeper offset for dimension");
+  assert.doesNotMatch(card, /border\s*:\s*2px\s+solid\s+var\(--teal\)/i, "film cards must not keep the teal frame border");
+  assert.doesNotMatch(card, /box-shadow/i, "film cards must not keep the cinematic offset shadow");
+
+  const play = declarationsFor(styles, ".film-play span");
+  assert.match(play, /border\s*:\s*1px\s+solid\s+var\(--champagne\)/i, "the play control returns to its plain champagne ring");
+  assert.match(play, /background\s*:\s*rgba\(255\s*,\s*255\s*,\s*255\s*,0?\.82\)/i, "the play control returns to its translucent white disc");
 
   const meta = declarationsFor(styles, ".film-meta");
-  assert.match(meta, /background\s*:\s*var\(--teal\)/i, "film metadata must sit on the secondary-color strip");
-  assert.match(meta, /color\s*:\s*var\(--white\)/i, "film titles must be readable on the secondary-color strip");
-  const number = declarationsFor(styles, ".film-meta h3 em");
-  assert.match(
-    number,
-    /color\s*:\s*rgba\(255\s*,\s*255\s*,\s*255\s*,\s*\.78\)/i,
-    "film numbers need contrast against the secondary-color strip",
-  );
+  assert.doesNotMatch(meta, /background\s*:\s*var\(--teal\)/i, "film metadata must not sit on a teal strip");
+  assert.doesNotMatch(meta, /color\s*:\s*var\(--white\)/i, "film titles return to the page's default text color");
 
-  const play = declarationsFor(styles, ".film-play > span:first-child");
-  assert.match(play, /background\s*:\s*var\(--teal-deep\)/i, "the play control needs contrast against the secondary frame");
-  assert.match(play, /color\s*:\s*var\(--white\)/i);
-  assert.match(play, /border\s*:\s*2px\s+solid\s+var\(--white\)/i);
-
-  const playLayer = declarationsFor(styles, ".film-play");
-  assert.match(playLayer, /aspect-ratio\s*:\s*16\s*\/\s*9/i, "the play layer must cover only the thumbnail");
-  assert.match(playLayer, /bottom\s*:\s*auto/i, "the watch cue must not overlap the title strip");
-
-  const watch = declarationsFor(styles, ".film-watch");
-  assert.match(watch, /position\s*:\s*absolute/i);
-  assert.match(watch, /color\s*:\s*var\(--white\)/i);
-
-  const interactive = declarationsFor(styles, ".film:hover,.film:focus-visible");
-  assert.match(interactive, /translate\s*:\s*-/i);
-  assert.match(interactive, /box-shadow\s*:[^;]*var\(--teal-deep\)/i);
-
-  assert.match(
+  assert.doesNotMatch(
     styles,
-    /@media \(prefers-reduced-motion:reduce\)\s*\{[\s\S]*?\.film:hover,\.film:focus-visible\s*\{[^}]*translate\s*:\s*none/is,
-    "reduced-motion visitors must not receive the card lift",
+    /\.film-watch\s*\{/,
+    "the .film-watch rule should be removed along with the cinematic markup",
   );
 });
 
