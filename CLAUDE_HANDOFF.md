@@ -14,18 +14,17 @@ That second folder is a different corporate website that is already hosted.
 
 ## Current State
 
-- Branch: `agent/claude-wedding-enhancements`
+- Branch: `claude/website-qa-testing-76db47`
 - Remote: `https://github.com/visualsblurry-stack/blurry-visuals-wedding.git`
 - Architecture: static HTML, CSS, and vanilla JavaScript; there is no build step.
 - Local URL: `http://127.0.0.1:8011/`
 - Investment modal URL: `http://127.0.0.1:8011/#investment`
-- Story page URL: `http://127.0.0.1:8011/story.html?s=anaya-rohan`
+- Story page URL: `http://127.0.0.1:8011/story.html?s=sachi-vedant`
 - Contact email: `visualsblurry@gmail.com`
 - WhatsApp: Aakash `+91 70323 90419`, Gautam `+91 98929 64884`
 - Brand colour: `#789c9f` (`--teal`); `#547c7f` (`--teal-deep`) wherever white text sits on it
 - Font stack begins with locally installed `TAN Angelton`, then falls back to Fraunces and Georgia.
 
-Working tree clean. Local branch is 42 commits ahead of `origin/main`.
 **Do not push until the owner explicitly requests it.**
 
 ## Run Locally
@@ -48,13 +47,13 @@ Expected: `200`. The server has died mid-session before; restart it if pages sto
 and `main.js` heuristically. A fresh `index.html` paired with a stale stylesheet has
 twice looked like broken code.
 
-CSS and JS URLs therefore carry a version query: `css/style.css?v=20260731m`.
+CSS and JS URLs therefore carry a version query: `css/style.css?v=20260906f`.
 
 **The stamp is fixed, not content-derived. Bump it by hand in both `index.html` and
 `story.html` after every CSS or JS change**, or you will be debugging a phantom:
 
 ```bash
-sed -i 's/?v=20260731m/?v=20260731n/g' index.html story.html
+sed -i 's/?v=20260906f/?v=NEXT_STAMP/g' index.html story.html
 ```
 
 The HTML files themselves are not stamped, so a hard refresh (`Ctrl+Shift+R`) is still
@@ -76,15 +75,15 @@ and leak live markup onto the page.
 
 - Eight slides, all studio-owned WebP in `img/hero/`. No stock.
 - First slide loads eagerly and is preloaded; the rest lazy-load via `data-bg`.
-- Per-slide tagline in `data-tagline`, typed out one character at a time with a caret.
-  The animated span is `aria-hidden`; a visually hidden sibling carries the full line.
+- Hero copy is intentionally limited to the static headline and the three proof figures.
+  Photographs continue rotating without changing the text.
 - Copy pinned left, capped at 620px, so the photograph keeps the right half of the frame.
 - Dots, autoplay, and touch swipe.
 
 ### Story pages (`story.html?s=<slug>`)
 
-- The couple's cinematic highlight plays muted and looping behind their name.
-  Self-hosted; no YouTube embed anywhere.
+- Real stories use selected still sequences behind the couple name, followed by a flat,
+  photo-first gallery with an expandable viewer.
 - Breadcrumb offers Home and All weddings; header, drawer, and footer also carry Home.
 - Prev/next wedding navigation at the foot.
 
@@ -116,7 +115,7 @@ and leak live markup onto the page.
 - `js/main.js` - hero, drawer, lightbox, WhatsApp form, modal, FAQ, story renderer
 - `js/stories-data.js` - real-wedding story data
 - `video/README.md` - where films go and how to encode them
-- `tests/` - `contact-investment`, `branding`, `hero-gallery`
+- `tests/` - Node regression tests for branding, contact, hero, films, stories, and galleries
 
 ## Verification
 
@@ -126,9 +125,8 @@ git diff --check
 git status --short
 ```
 
-10 tests passing. Verification in recent sessions has been DOM measurement and computed
-styles, not visual inspection - the browser pane could not capture screenshots. If you
-can see the page, look at it.
+Run the suite rather than relying on a saved count. Recent verification covered the full
+Node suite plus visual inspection in the browser at desktop and narrow widths.
 
 Two traps when measuring in a headless tab:
 
@@ -145,10 +143,8 @@ Two traps when measuring in a headless tab:
    the owner's stated 1,25,000 and 2,25,000. If the brochure is current, the site
    underquotes by about 1.5 lakh per booking.
 2. **Aakash or Akash.** The brochure spells it *Akash*; the site uses *Aakash*.
-3. **Film thumbnails** on the homepage are still YouTube stills from other studios' weddings.
-4. **Story data** in `js/stories-data.js` is invented - couples, galleries, and covers are
-   Unsplash. The brochure names real ones: Swapnesh + Nikhita, Shachi + Vedant.
-5. **Hero taglines** were written by Claude, not the studio.
+3. **Coming-soon stories.** Only Sachi + Vedant and Vedin + Megha currently have complete
+   local galleries. The remaining story records still need final studio photography.
 
 ## Safety And Editing Rules
 

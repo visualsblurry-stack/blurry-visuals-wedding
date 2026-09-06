@@ -20,11 +20,11 @@
   onScroll();
 
   /* ---------- custom cursor ---------- */
-  /* A ring trails the pointer while a dot tracks it exactly; over anything
-     carrying data-cursor the ring swells into a filled disc and names the
-     action. Pointer devices only, and never under reduced motion — the class
-     that hides the native cursor goes on only once the replacement exists,
-     so nobody is left without a pointer if this block does not run.
+  /* A ring trails the pointer only over labelled hover targets; everywhere
+     else the regular OS cursor stays visible. Pointer devices only, and never
+     under reduced motion — the class that scopes native cursor hiding goes on
+     only once the replacement exists, so nobody is left without a pointer if
+     this block does not run.
 
      Hover is delegated from the document rather than bound per element: the
      story cards and every story page are rendered from data further down this
@@ -51,8 +51,6 @@
     window.addEventListener("mousemove", function (e) {
       mx = e.clientX;
       my = e.clientY;
-      ring.classList.add("on");
-      dot.classList.add("on");
     }, { passive: true });
 
     var hideCursor = function () {
@@ -75,13 +73,15 @@
       var target = e.target.closest && e.target.closest("[data-cursor]");
       if (!target) return;
       cursorLabel.textContent = target.getAttribute("data-cursor") || "View";
+      ring.classList.add("on");
+      dot.classList.add("on");
       ring.classList.add("grown");
     });
     document.addEventListener("mouseout", function (e) {
       var target = e.target.closest && e.target.closest("[data-cursor]");
-      if (!target) return;
-      // Moving between a target's own children must not collapse the ring.
-      if (e.relatedTarget && target.contains(e.relatedTarget)) return;
+      if (!target || (e.relatedTarget && target.contains(e.relatedTarget))) return;
+      ring.classList.remove("on");
+      dot.classList.remove("on");
       ring.classList.remove("grown");
     });
   }
@@ -130,32 +130,6 @@
       image.src = source;
     });
     return pendingSlides[source];
-  }
-
-  /* Each slide carries its own tagline, typed out character by character.
-     The animated span is hidden from assistive tech; the sr-only label
-     beside it gets the whole line at once so it is never read letter by
-     letter. */
-  var taglineTyped = document.querySelector(".hero-typed");
-  var taglineLabel = document.querySelector("[data-tagline-label]");
-  var taglineTimer = 0;
-
-  function typeHeroTagline(index) {
-    if (!taglineTyped) return;
-    var slide = slides[index];
-    var text = (slide && slide.dataset.tagline) || "";
-    window.clearTimeout(taglineTimer);
-    if (taglineLabel) taglineLabel.textContent = text;
-    if (REDUCED) {
-      taglineTyped.textContent = text;
-      return;
-    }
-    var cursor = 0;
-    (function step() {
-      taglineTyped.textContent = text.slice(0, cursor);
-      if (cursor++ >= text.length) return;
-      taglineTimer = window.setTimeout(step, 42);
-    })();
   }
 
   function updateHeroDots() {
@@ -224,7 +198,6 @@
       slides[slideIndex].classList.add("act");
       updateHeroDots();
       updateHeroThumbs();
-      typeHeroTagline(slideIndex);
       loadHeroSlide((slideIndex + 1) % slides.length);
       return true;
     });
@@ -328,7 +301,6 @@
   if (slides.length) {
     loadHeroSlide(1 % slides.length);
     updateHeroDots();
-    typeHeroTagline(slideIndex);
     scheduleHeroAutoplay();
 
     // The copy has to clear the proof bar, whatever height it wraps to.
@@ -378,22 +350,80 @@
   /* ---------- films lightbox ---------- */
   var lightbox = document.getElementById("lightbox");
   var lbFrame = lightbox ? lightbox.querySelector(".lightbox-frame") : null;
+  function escAttr(url) {
+    return String(url).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+  function isYouTubeUrl(url) {
+    return /(?:^https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)\//i.test(url);
+  }
   function embedUrl(url) {
-    var m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{6,})/);
-    if (m) return "https://www.youtube.com/embed/" + m[1] + "?autoplay=1";
-    m = url.match(/vimeo\.com\/(\d+)/);
+    var m = url.match(/vimeo\.com\/(\d+)/);
     if (m) return "https://player.vimeo.com/video/" + m[1] + "?autoplay=1";
-    return url;
+    return "";
+  }
+  function canPlayInLightbox(url) {
+    if (isYouTubeUrl(url)) return false;
+    return /\.mp4(?:[?#]|$)/i.test(url) || !!embedUrl(url);
+  }
+  function lightboxMarkup(url) {
+    if (/\.mp4(?:[?#]|$)/i.test(url)) {
+      return '<video class="lightbox-video" controls autoplay playsinline preload="metadata">' +
+        '<source src="' + escAttr(url) + '" type="video/mp4">' +
+        "</video>";
+    }
+    var embedded = embedUrl(url);
+    if (!embedded) return "";
+    return '<iframe src="' + escAttr(embedded) +
+      // allow="fullscreen" supersedes the legacy allowfullscreen attribute;
+      // carrying both only earned a console warning on every open.
+      '" title="Wedding film" allow="autoplay; fullscreen"></iframe>';
+  }
+  /* The film viewer is a modal in every way that matters to a sighted visitor,
+     so it has to behave like one for everybody else too: announced as a dialog,
+     Tab held inside it while it is open, and focus handed back to the card that
+     opened it on close. The photograph viewer and the investment panel already
+     work this way; this one carried a hardcoded aria-hidden="true" that never
+     flipped, which hid the whole dialog from screen readers even while open. */
+  var lbLastFocus = null;
+  function lightboxOpen() {
+    return !!lightbox && lightbox.classList.contains("open");
+  }
+  function openLightbox(url, opener) {
+    if (!lightbox || !lbFrame) return false;
+    var markup = lightboxMarkup(url);
+    if (!markup) return false;
+    lbLastFocus = opener || document.activeElement;
+    lbFrame.innerHTML = markup;
+    lightbox.classList.add("open");
+    lightbox.setAttribute("aria-hidden", "false");
+    var lbCloseBtn = lightbox.querySelector(".lightbox-close");
+    if (lbCloseBtn) lbCloseBtn.focus();
+    return true;
   }
   function closeLightbox() {
     if (!lightbox) return;
+    var wasOpen = lightbox.classList.contains("open");
     lightbox.classList.remove("open");
+    lightbox.setAttribute("aria-hidden", "true");
+    // Emptying the frame is what actually stops the audio; the iframe keeps
+    // playing behind a hidden overlay otherwise.
     if (lbFrame) lbFrame.innerHTML = "";
+    if (wasOpen && lbLastFocus && document.contains(lbLastFocus) && lbLastFocus.focus) {
+      lbLastFocus.focus();
+    }
+    lbLastFocus = null;
   }
   document.querySelectorAll(".film").forEach(function (card) {
     card.addEventListener("click", function (ev) {
-      ev.preventDefault();
+      /* Each card is now a real link to its film, so a visitor who asks for a
+         new tab gets one and a visitor with no JavaScript still reaches the
+         video. Only a plain left click is ours to intercept for the lightbox. */
+      if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey || ev.button !== 0) return;
       var url = card.dataset.video || "";
+      if (url && !canPlayInLightbox(url)) return;
+      ev.preventDefault();
       var badge = card.querySelector(".film-play span");
       if (!url) { // no link yet — quiet "coming soon" pulse
         if (badge) {
@@ -402,13 +432,7 @@
         }
         return;
       }
-      if (lightbox && lbFrame) {
-        lbFrame.innerHTML = '<iframe src="' + embedUrl(url) +
-          '" title="Wedding film" allow="autoplay; fullscreen" allowfullscreen></iframe>';
-        lightbox.classList.add("open");
-      } else {
-        window.open(url, "_blank", "noopener");
-      }
+      if (!openLightbox(url, card)) window.open(url, "_blank", "noopener");
     });
   });
   if (lightbox) {
@@ -418,7 +442,24 @@
     var lbClose = lightbox.querySelector(".lightbox-close");
     if (lbClose) lbClose.addEventListener("click", closeLightbox);
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") closeLightbox();
+      if (!lightboxOpen()) return;
+      if (e.key === "Escape") { closeLightbox(); return; }
+      if (e.key !== "Tab") return;
+      /* Two stops only — the close button and the player — but without this,
+         Tab walks straight out of the overlay and into the page behind it. */
+      var focusable = [].slice.call(lightbox.querySelectorAll(
+        'button, iframe, a[href], [tabindex]:not([tabindex="-1"])'
+      )).filter(function (el) { return el.offsetParent !== null || el.tagName === "IFRAME"; });
+      if (!focusable.length) return;
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     });
   }
 
@@ -470,7 +511,25 @@
         v("message") ? "Details: " + v("message") : ""
       ].filter(Boolean);
       var url = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(lines.join("\n"));
-      window.open(url, "_blank", "noopener");
+
+      /* This is the only enquiry path on the site, and it used to end at a bare
+         window.open: when a popup blocker or an in-app browser swallowed that,
+         nothing moved and the visitor concluded the form was broken. Say what
+         happened either way, and leave a link they can press themselves. */
+      var opened = null;
+      try { opened = window.open(url, "_blank", "noopener"); } catch (err) { opened = null; }
+      var status = document.getElementById("form-status");
+      if (!status) return;
+      status.hidden = false;
+      if (opened) {
+        status.className = "form-status ok";
+        status.innerHTML = "Opening WhatsApp with your details. " +
+          '<a href="' + url + '" target="_blank" rel="noopener">Nothing happened? Tap here.</a>';
+      } else {
+        status.className = "form-status blocked";
+        status.innerHTML = "Your browser blocked the WhatsApp window. " +
+          '<a href="' + url + '" target="_blank" rel="noopener">Open the chat here.</a>';
+      }
     });
   }
 
@@ -487,13 +546,15 @@
     var pbIndex = 0;
     var pbLastFocus = null;
 
-    /* The tiles ask the Unsplash CDN for only as many pixels as they render.
-       Full size wants a bigger one, and both the homepage and the story data
-       carry the size in the same query string. */
+    /* Placeholder tiles ask the Unsplash CDN for only as many pixels as they
+       render. Full size requests a bigger one when those query parameters are
+       present; local gallery files pass through unchanged. */
     function fullSize(url) {
       return url.replace(/([?&]w=)\d+/, "$12000").replace(/([?&]q=)\d+/, "$180");
     }
     function photoUrl(el) {
+      var inlineImg = el.querySelector && el.querySelector("img");
+      if (inlineImg) return fullSize(inlineImg.currentSrc || inlineImg.src || inlineImg.getAttribute("src") || "");
       var found = (el.style.backgroundImage || "").match(/url\((['"]?)(.*?)\1\)/);
       return found ? fullSize(found[2]) : "";
     }
@@ -690,6 +751,47 @@
     };
     document.title = st.couple[0] + " & " + st.couple[1] + " | Blurry Visuals Weddings";
 
+    /* Point the sharing card at this couple rather than the studio's default.
+       A story link pasted into WhatsApp is the commonest way one couple sends
+       another here, and the preview should show the wedding they are talking
+       about. Crawlers that never run scripts keep the static tags in the head;
+       every browser-driven share gets these. */
+    (function storyMeta() {
+      var pair = st.couple[0] + " & " + st.couple[1];
+      var summary = pair + " — " + st.venue + ", " + st.city +
+        ", photographed by Blurry Visuals Weddings.";
+      var setMeta = function (attr, key, value) {
+        if (!value) return;
+        var el = document.head.querySelector("meta[" + attr + '="' + key + '"]');
+        if (!el) {
+          el = document.createElement("meta");
+          el.setAttribute(attr, key);
+          document.head.appendChild(el);
+        }
+        el.setAttribute("content", value);
+      };
+      // Story covers may be absolute placeholder URLs or site-relative local
+      // photographs; new URL() resolves both.
+      var cover = st.cover ? new URL(st.cover, location.href).href : "";
+      setMeta("property", "og:title", pair + " | Blurry Visuals Weddings");
+      setMeta("property", "og:description", summary);
+      setMeta("property", "og:url", location.href);
+      setMeta("name", "description", summary);
+      setMeta("name", "twitter:title", pair + " | Blurry Visuals Weddings");
+      setMeta("name", "twitter:description", summary);
+      if (cover) {
+        setMeta("property", "og:image", cover);
+        setMeta("property", "og:image:alt", pair + " at their wedding.");
+        setMeta("name", "twitter:image", cover);
+        // The static dimensions describe the studio's default card, not this
+        // cover. Stale numbers make a scraper crop to the wrong box, so drop
+        // them rather than guess at the replacement.
+        document.head.querySelectorAll(
+          'meta[property="og:image:width"],meta[property="og:image:height"]'
+        ).forEach(function (el) { el.remove(); });
+      }
+    })();
+
     /* The day, in the order it happened. The five core rituals always appear,
        even with nothing under them yet, so a story reads as a complete plan
        rather than whatever happens to be uploaded. The rest — a nikah instead
@@ -705,6 +807,20 @@
       { key: "reception", name: "Reception", core: true },
       { key: "portraits", name: "Portraits", core: false }
     ];
+
+    /* Two ways to lay a story out, both live code.
+
+       "flat"     — every photograph in one uninterrupted grid. No chapter
+                    headings, notes, quotes, tone bands or jump rail; the
+                    pictures and nothing between them. This is what the studio
+                    asked for: a visitor scrolls photographs, not a document.
+       "chapters" — the ritual-by-ritual layout below, each chapter titled,
+                    toned and timed, with the sticky "Jump to" rail.
+
+       Flip this one value to switch. Everything the chaptered layout needs is
+       still here and still exercised by the same data, so turning it back on
+       is a one-word change rather than an archaeology exercise. */
+    var STORY_LAYOUT = "flat";
 
     /* Chapters alternate ground so the page reads as a sequence rather than
        one long scroll, and the photographs inside each one are laid on a
@@ -749,12 +865,53 @@
       // be reachable by keyboard as well as by pointer.
       return '<button class="chapter-shot" type="button" data-expand data-cursor="Expand"' +
         ' data-caption="' + esc(g.label) + '" aria-label="Expand photograph: ' + esc(g.label) +
-        '" style="--span:' + span + ";--ratio:" + ratio +
-        ";background-image:url('" + esc(g.img) + "')\">" +
+        '" style="--span:' + span + ";--ratio:" + ratio + '">' +
+        '<img src="' + esc(g.img) + '" alt="" loading="lazy" decoding="async">' +
         '<span class="chapter-shot-cap">' + esc(g.label) + "</span></button>";
     }
 
-    var galleryHtml = chapters.map(function (ev, n) {
+    /* Flat layout. A repeating pair-then-band rhythm: two half-width frames
+       side by side, then one full-width frame, over and over. It fills every
+       row of the twelve-column grid exactly, so the wall never leaves a hole,
+       and it gives the scroll a pulse without needing a single word. */
+    var FLAT_PATTERN = [[6, "3/2"], [6, "3/2"], [12, "3/2"]];
+
+    function flatPhotoHtml(g, i, total) {
+      var cell = FLAT_PATTERN[i % FLAT_PATTERN.length];
+      var span = cell[0];
+      var ratio = cell[1];
+      // A half-width frame with nothing to pair with would sit beside a gap.
+      if (i === total - 1 && span === 6 && i % FLAT_PATTERN.length === 0) span = 12;
+      if (!g.img) {
+        return '<figure class="chapter-shot ph ph-' + esc(g.tone || "smoke") +
+          '" style="--span:' + span + ';--ratio:' + ratio + '">' +
+          '<div class="ph-label"><em>' + esc(g.label) + "</em>Photograph placeholder</div></figure>";
+      }
+      /* The caption goes to assistive tech only. On screen this layout is
+         meant to be wordless, but the photobox still needs the label and a
+         screen reader still needs to know which photograph this is. */
+      return '<button class="chapter-shot" type="button" data-expand data-cursor="Expand"' +
+        ' data-caption="' + esc(g.label) + '" aria-label="Expand photograph: ' + esc(g.label) +
+        '" style="--span:' + span + ";--ratio:" + ratio + '">' +
+        '<img src="' + esc(g.img) + '" alt="" loading="lazy" decoding="async">' +
+        '<span class="sr-only">' + esc(g.label) + "</span></button>";
+    }
+
+    /* Chapter order still decides the sequence, so the day reads in the order
+       it happened — the headings are gone, the chronology is not. */
+    function flatGalleryHtml() {
+      var shots = chapters.reduce(function (all, ev) {
+        return all.concat(byEvent[ev.key] || []);
+      }, []);
+      if (!shots.length) return "";
+      return '<section class="story-gallery" aria-label="Photographs"><div class="wrap">' +
+        '<div class="chapter-grid">' +
+          shots.map(function (g, i) { return flatPhotoHtml(g, i, shots.length); }).join("") +
+        "</div></div></section>";
+    }
+
+    function chaptersGalleryHtml() {
+      return chapters.map(function (ev, n) {
       var shots = byEvent[ev.key] || [];
       var copy = (st.chapters && st.chapters[ev.key]) || {};
       var tone = CHAPTER_TONES[n % CHAPTER_TONES.length];
@@ -788,23 +945,33 @@
           "</div>" +
           body + quote +
         "</div></section>";
-    }).join("");
+      }).join("");
+    }
 
     /* Sticky chapter rail. Every chapter on the page is listed, empty ones
-       included, so the rail matches what a visitor actually scrolls past. */
-    var chapterNavHtml = chapters.length > 1
-      ? '<nav class="chapter-rail" aria-label="Chapters"><div class="wrap">' +
+       included, so the rail matches what a visitor actually scrolls past.
+       It names chapters, so it only makes sense when chapters are showing. */
+    function chapterRailHtml() {
+      if (chapters.length < 2) return "";
+      return '<nav class="chapter-rail" aria-label="Chapters"><div class="wrap">' +
           '<span class="chapter-rail-label">Jump to</span>' +
           chapters.map(function (ev) {
             return '<a href="#chapter-' + esc(ev.key) + '" data-cursor="' + esc(ev.name) + '">' +
               esc(ev.name) + "</a>";
           }).join("") +
-        "</div></nav>"
-      : "";
+        "</div></nav>";
+    }
+
+    var useChapters = STORY_LAYOUT === "chapters";
+    var galleryHtml = useChapters ? chaptersGalleryHtml() : flatGalleryHtml();
+    var chapterNavHtml = useChapters ? chapterRailHtml() : "";
+    var showStoryText = !st.textlessStory;
+    var minimalHero = !!st.textlessStory;
+    document.body.classList.toggle("story-minimal", minimalHero);
 
     /* Opening note: the ask in the couple's words, how we answered it, and
        the three facts a visitor weighing us up actually wants. */
-    var briefHtml = st.brief
+    var briefHtml = showStoryText && st.brief
       ? '<section class="story-brief"><div class="wrap">' +
           '<div class="story-brief-label">The brief</div>' +
           "<div>" +
@@ -819,13 +986,20 @@
         "</div></section>"
       : "";
 
-    var statsHtml = st.stats
+    var statsHtml = st.stats && !st.hideHeroStats
       ? '<div class="story-stats">' + st.stats.map(function (row) {
           return "<div><b>" + esc(row[0]) + "</b><small>" + esc(row[1]) + "</small></div>";
         }).join("") + "</div>"
       : "";
 
-    var wordsHtml = st.words
+    var storyCopyHtml = showStoryText
+      ? '<section class="story-body"><div class="wrap">' +
+          '<p class="lede">' + esc(st.lede) + "</p>" +
+          '<p class="txt">' + esc(st.story) + "</p>" +
+        "</div></section>"
+      : "";
+
+    var wordsHtml = showStoryText && st.words
       ? '<section class="story-words">' +
           '<div class="story-words-media" aria-hidden="true"' +
             (st.cover ? ' style="background-image:url(\'' + esc(st.cover) + '\')"' : "") + "></div>" +
@@ -837,7 +1011,7 @@
         "</section>"
       : "";
 
-    var creditsHtml = st.credits && st.credits.length
+    var creditsHtml = showStoryText && st.credits && st.credits.length
       ? '<section class="story-credits"><div class="wrap">' +
           '<div class="story-credits-label">Credits</div>' +
           "<div>" + st.credits.map(function (row) {
@@ -848,41 +1022,57 @@
 
     var prev = list[(idx - 1 + list.length) % list.length];
     var next = list[(idx + 1) % list.length];
+    var crumbsHtml = minimalHero ? "" :
+      '<nav class="story-crumbs" aria-label="Breadcrumb">' +
+        '<a class="story-back" href="index.html" data-cursor="Home"><span aria-hidden="true">←</span> Home</a>' +
+        '<a class="story-back" href="index.html#stories" data-cursor="Weddings">All weddings</a>' +
+      "</nav>";
+    var storyKickerHtml = minimalHero ? "" :
+      '<div class="phera"><b>Real wedding ' + ("0" + (idx + 1)).slice(-2) + "</b> — " + esc(st.city) + "</div>";
+    var storyMetaHtml = minimalHero ? "" :
+      '<div class="story-meta">' +
+        "<div><small>Date</small><b>" + esc(st.date) + "</b></div>" +
+        "<div><small>Venue</small><b>" + esc(st.venue) + "</b></div>" +
+        "<div><small>City</small><b>" + esc(st.city) + "</b></div>" +
+        "<div><small>Coverage</small><b>" + esc(st.type) + "</b></div>" +
+      "</div>";
 
-    /* The couple's cinematic highlight plays silently behind their name.
-       Self-hosted: filmFile when the story names one, otherwise the shared
-       placeholder. The poster shows before the first frame decodes, and when
-       the visitor prefers reduced motion it is all they get. */
-    var heroFilm = st.filmFile || "video/placeholder-highlight.mp4";
+    /* The couple's cover photograph anchors the story hero. A self-hosted
+       film can take over when a story names `filmFile`; a heroSequence can
+       stand in as a video-like still montage until the real film arrives. */
     var heroPoster = st.filmPoster || st.cover || "";
-    var heroMedia =
-      '<div class="story-hero-media" aria-hidden="true">' +
-        "<video " + (REDUCED ? "" : "autoplay ") + 'muted loop playsinline preload="metadata"' +
+    var heroSequence = st.heroSequence && st.heroSequence.length ? st.heroSequence : null;
+    var heroFocalPoints = st.heroFocalPoints || [];
+    var heroMedia = '<div class="story-hero-media" aria-hidden="true">';
+    if (st.filmFile) {
+      heroMedia += "<video " + (REDUCED ? "" : "autoplay ") + 'muted loop playsinline preload="metadata"' +
         (heroPoster ? ' poster="' + esc(heroPoster) + '"' : "") + ">" +
-        '<source src="' + esc(heroFilm) + '" type="video/mp4">' +
-      "</video></div>";
+        '<source src="' + esc(st.filmFile) + '" type="video/mp4">' +
+      "</video>";
+    } else if (heroSequence) {
+      heroMedia += '<div class="story-hero-sequence' + (REDUCED ? "" : " is-animated") + '">';
+      heroMedia += heroSequence.map(function (src, i) {
+        var focus = heroFocalPoints[i] || "center 45%";
+        return '<img class="story-hero-slide' + (i === 0 ? " is-active" : "") +
+          '" style="--hero-focus:' + esc(focus) + ';" src="' + esc(src) +
+          '" alt="" loading="' + (i === 0 ? "eager" : "lazy") +
+          '" decoding="async">';
+      }).join("");
+      heroMedia += "</div>";
+    } else if (heroPoster) {
+      heroMedia += '<img src="' + esc(heroPoster) + '" alt="">';
+    }
+    heroMedia += "</div>";
 
     storyRoot.innerHTML =
-      '<section class="story-hero">' + heroMedia + '<div class="wrap">' +
-        '<nav class="story-crumbs" aria-label="Breadcrumb">' +
-          '<a class="story-back" href="index.html" data-cursor="Home"><span aria-hidden="true">←</span> Home</a>' +
-          '<a class="story-back" href="index.html#stories" data-cursor="Weddings">All weddings</a>' +
-        "</nav>" +
-        '<div class="phera"><b>Real wedding ' + ("0" + (idx + 1)).slice(-2) + "</b> — " + esc(st.city) + "</div>" +
+      '<section class="story-hero' + (minimalHero ? " story-hero-minimal" : "") + '">' +
+        heroMedia + '<div class="wrap">' + crumbsHtml + storyKickerHtml +
         "<h1>" + esc(st.couple[0]) + " <em>&amp;</em> " + esc(st.couple[1]) + "</h1>" +
-        '<div class="story-meta">' +
-          "<div><small>Date</small><b>" + esc(st.date) + "</b></div>" +
-          "<div><small>Venue</small><b>" + esc(st.venue) + "</b></div>" +
-          "<div><small>City</small><b>" + esc(st.city) + "</b></div>" +
-          "<div><small>Coverage</small><b>" + esc(st.type) + "</b></div>" +
-        "</div>" + statsHtml +
+        storyMetaHtml + statsHtml +
       "</div></section>" +
       chapterNavHtml +
       briefHtml +
-      '<section class="story-body"><div class="wrap">' +
-        '<p class="lede">' + esc(st.lede) + "</p>" +
-        '<p class="txt">' + esc(st.story) + "</p>" +
-      "</div></section>" +
+      storyCopyHtml +
       galleryHtml +
       wordsHtml +
       creditsHtml +
@@ -910,6 +1100,16 @@
           "</div>" +
         "</div>" +
       "</section>";
+
+    var heroSlides = storyRoot.querySelectorAll(".story-hero-sequence .story-hero-slide");
+    if (!REDUCED && heroSlides.length > 1) {
+      var heroSlideIndex = 0;
+      window.setInterval(function () {
+        heroSlides[heroSlideIndex].classList.remove("is-active");
+        heroSlideIndex = (heroSlideIndex + 1) % heroSlides.length;
+        heroSlides[heroSlideIndex].classList.add("is-active");
+      }, 3600);
+    }
 
   }
 
@@ -941,12 +1141,20 @@
   /* ---------- index: build story cards from data ---------- */
   var storiesGrid = document.getElementById("stories-grid");
   if (storiesGrid && window.BLURRY_WEDDING_STORIES) {
-    storiesGrid.innerHTML = window.BLURRY_WEDDING_STORIES.map(function (st) {
+    storiesGrid.innerHTML = window.BLURRY_WEDDING_STORIES.filter(function (st) {
+      return st.noPlaceholders || st.homepageTeaser;
+    }).map(function (st) {
       var fig = st.cover
         ? '<figure class="ph ph-img" role="img" aria-label="' + st.couple[0] + " and " + st.couple[1] +
           '" style="background-image:url(\'' + st.cover + "')\"></figure>"
         : '<figure class="ph ph-' + (st.tone || "smoke") + '"><div class="ph-label"><em>' +
           st.couple[0] + " &amp; " + st.couple[1] + "</em>Cover photograph</div></figure>";
+      if (st.homepageTeaser) {
+        return '<article class="story-card rv story-card-soon" data-cursor="Coming soon" aria-disabled="true">' + fig +
+          "<h3>" + st.couple[0] + " <em>&amp;</em> " + st.couple[1] + "</h3>" +
+          "<p>" + st.venue + " · " + st.city + "</p>" +
+          '<span class="more">Coming soon</span></article>';
+      }
       return '<a class="story-card rv" href="story.html?s=' + st.slug + '" data-cursor="View story">' + fig +
         "<h3>" + st.couple[0] + " <em>&amp;</em> " + st.couple[1] + "</h3>" +
         "<p>" + st.venue + " · " + st.city + "</p>" +

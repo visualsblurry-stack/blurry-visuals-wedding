@@ -30,6 +30,8 @@ desktop.ini
 # Dependencies and build output, should this ever gain a toolchain.
 node_modules/
 .cache/
+__pycache__/
+*.pyc
 *.log
 npm-debug.log*
 
@@ -40,6 +42,9 @@ img/*.jpeg
 img/*.png
 !img/blurry-visuals-logo.png
 !img/blurry-visuals-logo-web.png
+# The sharing card is a shipped asset, not a source original — every WhatsApp
+# and social preview fetches it, so it has to be in the repo.
+!img/og-blurry-visuals.jpg
 
 # Wedding films are large binaries; keep them out of git history.
 video/stories/*

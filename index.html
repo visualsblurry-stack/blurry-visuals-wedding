@@ -10,17 +10,41 @@
 <meta property="og:title" content="Blurry Visuals Weddings | Wedding Photography &amp; Films">
 <meta property="og:description" content="Wedding stories photographed with an editorial eye and documentary warmth.">
 <meta property="og:type" content="website">
+<!-- Every enquiry arrives through WhatsApp, so the link couples forward to each
+     other is the shop window. Without og:image that card renders as grey text.
+     JPEG, not the .webp hero: WhatsApp's preview fetcher is unreliable on WebP.
+
+     ON LAUNCH: set og:url and rel=canonical to the live address, and make this
+     og:image absolute (https://yourdomain.com/img/og-blurry-visuals.jpg).
+     A canonical pointing at the wrong host is worse than none, which is why
+     these two are commented rather than guessed:
+     <meta property="og:url" content="https://REPLACE-ME/">
+     <link rel="canonical" href="https://REPLACE-ME/"> -->
+<meta property="og:image" content="/img/og-blurry-visuals.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A couple at their Mumbai wedding, photographed by Blurry Visuals.">
+<meta property="og:locale" content="en_IN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Blurry Visuals Weddings | Wedding Photography &amp; Films">
+<meta name="twitter:description" content="Wedding stories photographed with an editorial eye and documentary warmth.">
+<meta name="twitter:image" content="/img/og-blurry-visuals.jpg">
+<!-- Set before first paint so the reveal-on-scroll styles never hide content
+     from a visitor whose JavaScript failed to run. -->
+<script>document.documentElement.className += " js";</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="img/blurry-visuals-logo-web.png">
 <link rel="preload" as="image" href="img/hero/hero-wedding-portrait-couple.webp">
-<link rel="stylesheet" href="css/style.css?v=20260807c">
+<link rel="stylesheet" href="css/style.css?v=20260906g">
 <script type="application/ld+json">
 { "@context":"https://schema.org","@type":"Organization","name":"Blurry Visuals Weddings","description":"Wedding photography and films studio based in Mumbai.","telephone":["+917032390419","+919892964884"],"email":"visualsblurry@gmail.com","address":{"@type":"PostalAddress","addressLocality":"Mumbai","addressRegion":"Maharashtra","addressCountry":"IN"},"areaServed":["Mumbai","India"],"sameAs":["https://www.instagram.com/theblurryvisuals/"] }
 </script>
 </head>
 <body>
+
+<a class="skip-link" href="#top">Skip to content</a>
 
 <!-- ======================= header ======================= -->
 <header class="hdr">
@@ -53,33 +77,26 @@
   <a href="#contact">Inquire</a>
 </div>
 
-<main id="top">
+<!-- tabindex="-1" so the skip link actually moves focus here, not just scroll. -->
+<main id="top" tabindex="-1">
 
-<!-- ================= PHERA I · hero ================= -->
+<!-- ================= hero ================= -->
 <section class="hero">
   <div class="hero-slides" aria-hidden="true">
     <!-- Blurry Visuals' own photographs only. The first slide loads eagerly
          because it is the largest paint on the page. -->
-    <div class="hero-slide act" data-tagline="The quiet second before everything." style="--hero-position:58% 58%;background-image:url('img/hero/hero-wedding-portrait-couple.webp')"></div>
-    <div class="hero-slide" data-tagline="Held, and never let go." data-bg="img/hero/hero-sachi-vedant-embrace.webp" style="--hero-position:52% 45%"></div>
-    <div class="hero-slide" data-tagline="Joy, exactly as it happened." data-bg="img/hero/hero-abhi-isha.webp" style="--hero-position:50% 66%"></div>
-    <div class="hero-slide" data-tagline="Every ritual, kept whole." data-bg="img/hero/hero-sachi-vedant-ceremony.webp" style="--hero-position:50% 54%"></div>
-    <div class="hero-slide" data-tagline="The walk you will replay forever." data-bg="img/hero/hero-wedding-portrait-walk.webp" style="--hero-position:50% 58%"></div>
-    <div class="hero-slide" data-tagline="The small things you would forget." data-bg="img/hero/hero-wedding-portrait-hands.webp" style="--hero-position:50% 50%"></div>
-    <div class="hero-slide" data-tagline="Sachi and Vedant, in one look." data-bg="img/hero/hero-sachi-vedant-184.webp" style="--hero-position:50% 50%"></div>
-    <div class="hero-slide" data-tagline="Sushmita and Harsh, mid-celebration." data-bg="img/hero/hero-sushmita-harsh-151.webp" style="--hero-position:50% 50%"></div>
+    <div class="hero-slide act" style="--hero-position:58% 58%;background-image:url('img/hero/hero-wedding-portrait-couple.webp')"></div>
+    <div class="hero-slide" data-bg="img/hero/hero-sachi-vedant-embrace.webp" style="--hero-position:52% 45%"></div>
+    <div class="hero-slide" data-bg="img/hero/hero-abhi-isha.webp" style="--hero-position:50% 66%"></div>
+    <div class="hero-slide" data-bg="img/hero/hero-sachi-vedant-ceremony.webp" style="--hero-position:50% 54%"></div>
+    <div class="hero-slide" data-bg="img/hero/hero-wedding-portrait-walk.webp" style="--hero-position:50% 58%"></div>
+    <div class="hero-slide" data-bg="img/hero/hero-wedding-portrait-hands.webp" style="--hero-position:50% 50%"></div>
+    <div class="hero-slide" data-bg="img/hero/hero-sachi-vedant-184.webp" style="--hero-position:50% 50%"></div>
+    <div class="hero-slide" data-bg="img/hero/hero-sushmita-harsh-151.webp" style="--hero-position:50% 50%"></div>
   </div>
 
   <div class="hero-in">
-    <h1>Love,<br><em>beautifully</em> remembered.</h1>
-    <p class="hero-tagline">
-      <span class="hero-typed" aria-hidden="true"></span><span class="hero-caret" aria-hidden="true"></span>
-      <span class="sr-only" data-tagline-label></span>
-    </p>
-    <div class="hero-cta">
-      <a class="btn btn-gold" href="#contact" data-cursor="Enquire">Check availability</a>
-      <a class="btn btn-line" href="#stories" data-cursor="See work">View stories</a>
-    </div>
+    <h1>Honest Stories,<br><em>Timelessly Told</em></h1>
   </div>
 
   <!-- What is coming next. Filled by main.js after load so these previews
@@ -118,7 +135,7 @@
 <!--
 <section class="sec" id="work">
   <div class="wrap">
-    <div class="phera rv"><b>Phera II</b> — The work</div>
+    <div class="phera rv"><b>The work</b></div>
     <div class="sec-head rv">
       <h2>Every ritual,<br><em>every frame</em></h2>
       <p>Pick a chapter of the wedding — from the first turmeric smear to the last dance. Every ritual gets the same obsession.</p>
@@ -188,10 +205,10 @@
 </section>
 -->
 
-<!-- ================= PHERA II · real weddings ================= -->
+<!-- ================= real weddings ================= -->
 <section class="sec" id="stories">
   <div class="wrap">
-    <div class="phera rv"><b>Phera II</b> — Real weddings</div>
+    <div class="phera rv"><b>Real weddings</b></div>
     <div class="sec-head rv">
       <h2>Couples, <em>covered</em></h2>
       <p>Six recent weddings, each with its own story page — the venue, the day, and the frames that made it.</p>
@@ -200,55 +217,66 @@
   </div>
 </section>
 
-<!-- ================= PHERA III · films ================= -->
+<!-- ================= films ================= -->
 <section class="sec" id="films">
   <div class="wrap">
-    <div class="phera rv"><b>Phera III</b> — The films</div>
+    <div class="phera rv"><b>The films</b></div>
     <div class="sec-head rv">
       <h2>Weddings that <em>move</em></h2>
       <p>Cinematic films cut from the full day — vows you can replay, dance floors you can revisit. Press play.</p>
     </div>
 
     <div class="films">
-      <!-- Sample films for demo — replace data-video URLs with Blurry Visuals Weddings' own films later.
-           Posters auto-pull from YouTube; swap with img/films/*.jpg when real films land. -->
-      <a class="film rv" href="#" data-cursor="Watch" data-video="https://www.youtube.com/watch?v=a9uRfuujFY8">
-        <div class="ph ph-img" role="img" aria-label="Wedding film — Taj Lands End" style="background-image:url('https://img.youtube.com/vi/a9uRfuujFY8/hqdefault.jpg')"></div>
-        <div class="film-play"><span>▸</span></div>
-        <div class="film-meta"><h3>The Sea-facing <em>Shaadi</em></h3><small>Taj Lands End · Mumbai</small></div>
+      <a class="film rv" href="https://www.youtube.com/watch?v=dEK0R24OtOY" target="_blank" rel="noopener" data-cursor="Watch" data-video="https://www.youtube.com/watch?v=dEK0R24OtOY">
+        <div class="ph ph-img" role="img" aria-label="Blurry Visuals wedding film 01" style="background-image:url('https://img.youtube.com/vi/dEK0R24OtOY/hqdefault.jpg')"></div>
+        <div class="film-play"><span aria-hidden="true">▶</span><span class="film-watch">Watch film</span></div>
+        <div class="film-meta"><h3>Wedding Film <em>01</em></h3><small>Blurry Visuals</small></div>
       </a>
-      <a class="film rv" href="#" data-cursor="Watch" data-video="https://www.youtube.com/watch?v=UpZI5dOFGM0">
-        <div class="ph ph-img" role="img" aria-label="Wedding teaser — Taj Lake Palace Udaipur" style="background-image:url('https://img.youtube.com/vi/UpZI5dOFGM0/hqdefault.jpg')"></div>
-        <div class="film-play"><span>▸</span></div>
-        <div class="film-meta"><h3>Eleven Minutes of <em>Blue</em></h3><small>Taj Lake Palace · Udaipur</small></div>
+      <a class="film rv" href="https://www.youtube.com/watch?v=HifM4Hz1Dkk&amp;t=26s" target="_blank" rel="noopener" data-cursor="Watch" data-video="https://www.youtube.com/watch?v=HifM4Hz1Dkk&amp;t=26s">
+        <div class="ph ph-img" role="img" aria-label="Blurry Visuals wedding film 02" style="background-image:url('https://img.youtube.com/vi/HifM4Hz1Dkk/hqdefault.jpg')"></div>
+        <div class="film-play"><span aria-hidden="true">▶</span><span class="film-watch">Watch film</span></div>
+        <div class="film-meta"><h3>Wedding Film <em>02</em></h3><small>Blurry Visuals</small></div>
       </a>
-      <a class="film rv" href="#" data-cursor="Watch" data-video="https://www.youtube.com/watch?v=64VrMb17-zc">
-        <div class="ph ph-img" role="img" aria-label="Wedding film — Taj Mahal Palace Mumbai" style="background-image:url('https://img.youtube.com/vi/64VrMb17-zc/hqdefault.jpg')"></div>
-        <div class="film-play"><span>▸</span></div>
-        <div class="film-meta"><h3>A Palace by the <em>Gateway</em></h3><small>Taj Mahal Palace · Colaba</small></div>
+      <a class="film rv" href="https://www.youtube.com/watch?v=oHgVZTg8r-w" target="_blank" rel="noopener" data-cursor="Watch" data-video="https://www.youtube.com/watch?v=oHgVZTg8r-w">
+        <div class="ph ph-img" role="img" aria-label="Blurry Visuals wedding film 03" style="background-image:url('https://img.youtube.com/vi/oHgVZTg8r-w/hqdefault.jpg')"></div>
+        <div class="film-play"><span aria-hidden="true">▶</span><span class="film-watch">Watch film</span></div>
+        <div class="film-meta"><h3>Wedding Film <em>03</em></h3><small>Blurry Visuals</small></div>
       </a>
-      <a class="film rv" href="#" data-cursor="Watch" data-video="https://www.youtube.com/watch?v=Pm3NfZDC48k">
-        <div class="ph ph-img" role="img" aria-label="Destination wedding highlight film" style="background-image:url('https://img.youtube.com/vi/Pm3NfZDC48k/hqdefault.jpg')"></div>
-        <div class="film-play"><span>▸</span></div>
-        <div class="film-meta"><h3>Vows by the <em>Ocean</em></h3><small>Destination · Beachside</small></div>
+      <a class="film rv" href="https://www.youtube.com/watch?v=JmFURAqSwHg" target="_blank" rel="noopener" data-cursor="Watch" data-video="https://www.youtube.com/watch?v=JmFURAqSwHg">
+        <div class="ph ph-img" role="img" aria-label="Blurry Visuals wedding film 04" style="background-image:url('https://img.youtube.com/vi/JmFURAqSwHg/hqdefault.jpg')"></div>
+        <div class="film-play"><span aria-hidden="true">▶</span><span class="film-watch">Watch film</span></div>
+        <div class="film-meta"><h3>Wedding Film <em>04</em></h3><small>Blurry Visuals</small></div>
       </a>
     </div>
   </div>
 </section>
 
-<!-- ================= PHERA IV · about ================= -->
+<!-- ================= about ================= -->
 <section class="sec" id="about">
   <div class="wrap">
-    <div class="phera rv"><b>Phera IV</b> — About us</div>
+    <div class="phera rv"><b>About us</b></div>
     <div class="about-grid">
-      <figure class="ph ph-img rv" role="img" aria-label="A Blurry Visuals wedding photograph" style="background-image:url('img/hero/hero-sushmita-harsh-151.webp')"></figure>
+      <div class="founder-portraits rv">
+        <figure class="founder-portrait founder-portrait-akash">
+          <div class="founder-frame">
+            <img src="img/founders/akash.webp" alt="Akash, co-founder of Blurry Visuals" width="1023" height="1537" loading="lazy" decoding="async">
+          </div>
+          <figcaption>Akash</figcaption>
+        </figure>
+        <figure class="founder-portrait founder-portrait-gautam">
+          <div class="founder-frame">
+            <img src="img/founders/gautam.webp" alt="Gautam, co-founder of Blurry Visuals" width="651" height="1112" loading="lazy" decoding="async">
+          </div>
+          <figcaption>Gautam</figcaption>
+        </figure>
+      </div>
       <div class="about-copy rv">
         <h2>Honest stories,<br><em>timelessly told</em></h2>
         <p style="margin-top:26px;">At Blurry Visuals we believe your wedding is more than a timeline of events — it is an emotional journey. We are here to help you remember how it felt, not just how it looked.</p>
-        <p>The studio was born in 2024 out of Aakash and Gautam's years behind the lens, capturing love stories in their many forms. What began as a passion gradually became something deeper: a commitment to telling stories that feel real, honest and deeply personal.</p>
+        <p>The studio was born in 2024 out of Akash and Gautam's years behind the lens, capturing love stories in their many forms. What began as a passion gradually became something deeper: a commitment to telling stories that feel real, honest and deeply personal.</p>
         <div class="about-people">
           <div>
-            <b>Aakash</b>
+            <b>Akash</b>
             <p>Approaches every celebration with fresh eyes and an open heart, allowing each narrative to unfold naturally while artfully weaving together the emotions, details and fleeting moments that make every wedding unique.</p>
           </div>
           <div>
@@ -266,18 +294,18 @@
   </div>
 </section>
 
-<!-- ================= PHERA V · kind words ================= -->
+<!-- ================= kind words ================= -->
 <section class="sec" id="words">
   <div class="wrap">
-    <div class="phera rv" style="justify-content:center;"><b>Phera V</b> — Kind words</div>
+    <div class="phera rv" style="justify-content:center;"><b>Kind words</b></div>
     <div class="quote-stage rv">
       <figure class="quote act">
-        <blockquote>"We forgot the photographers were there — and somehow they were everywhere. The vidaai film wrecked the whole family, in the best way."</blockquote>
-        <figcaption>Anaya &amp; Rohan<span>Taj Lands End, Mumbai</span></figcaption>
+        <blockquote>"The photographs feel alive without ever interrupting the day. Every frame brings us back to the celebration."</blockquote>
+        <figcaption>Sachi &amp; Vedant<span>Real wedding</span></figcaption>
       </figure>
       <figure class="quote">
-        <blockquote>"Forty guests, no shot list, no posing. The album still feels like the weekend — salt, string lights and all."</blockquote>
-        <figcaption>Meher &amp; Zain<span>Alibaug</span></figcaption>
+        <blockquote>"The gallery keeps the colour, ritual and chaos of the celebration intact. It feels exactly like the wedding felt."</blockquote>
+        <figcaption>Vedin &amp; Megha<span>Real wedding</span></figcaption>
       </figure>
       <figure class="quote">
         <blockquote>"They planned our wedding schedule around light and we thought it was excessive. Then we saw the sunrise portraits."</blockquote>
@@ -297,10 +325,10 @@
   </div>
 </section>
 
-<!-- ================= PHERA VI · contact ================= -->
+<!-- ================= contact ================= -->
 <section class="sec contact-section" id="contact">
   <div class="contact-lede">
-    <div class="phera rv"><b>Phera VI</b> — Begin yours</div>
+    <div class="phera rv"><b>Begin yours</b></div>
   </div>
   <div class="contact-grid">
       <div class="contact-panel contact-info rv">
@@ -308,7 +336,7 @@
         <h2>Your date,<br><em>our calendar</em></h2>
         <p class="contact-intro">Tell us the city, the dates, and how your wedding is shaped. We reply within two working days with availability and a coverage plan.</p>
         <div class="contact-rows">
-          <a href="https://wa.me/917032390419" rel="noopener" target="_blank" data-cursor="WhatsApp"><span class="contact-icon"><svg class="lucide-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><span><small>Aakash · WhatsApp</small><b>+91 70323 90419</b></span></a>
+          <a href="https://wa.me/917032390419" rel="noopener" target="_blank" data-cursor="WhatsApp"><span class="contact-icon"><svg class="lucide-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><span><small>Akash · WhatsApp</small><b>+91 70323 90419</b></span></a>
           <a href="https://wa.me/919892964884" rel="noopener" target="_blank" data-cursor="WhatsApp"><span class="contact-icon"><svg class="lucide-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><span><small>Gautam · WhatsApp</small><b>+91 98929 64884</b></span></a>
           <a href="mailto:visualsblurry@gmail.com"><span class="contact-icon"><svg class="lucide-icon" aria-hidden="true" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></span><span><small>Email</small><b>visualsblurry@gmail.com</b></span></a>
           <a href="https://www.instagram.com/theblurryvisuals/" rel="noopener" target="_blank" data-cursor="Follow"><span class="contact-icon"><svg class="lucide-icon" aria-hidden="true" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="4"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg></span><span><small>Instagram</small><b>@theblurryvisuals</b></span></a>
@@ -338,6 +366,9 @@
           <button class="btn contact-submit" type="submit" data-cursor="Send"><svg class="lucide-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg><span>Send</span></button>
           <span class="form-hint">Opens WhatsApp with your details pre-filled. Nothing is stored.</span>
         </div>
+        <!-- Filled by main.js after submit. role=status announces the result to
+             a screen reader without stealing focus from the form. -->
+        <p class="form-status full" id="form-status" role="status" aria-live="polite" hidden></p>
       </form>
   </div>
 </section>
@@ -358,8 +389,8 @@
 </footer>
 
 <!-- film lightbox -->
-<div class="lightbox" id="lightbox" aria-hidden="true">
-  <button class="lightbox-close">Close ✕</button>
+<div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Wedding film">
+  <button class="lightbox-close" type="button" data-cursor="Close" aria-label="Close film">Close ✕</button>
   <div class="lightbox-frame"></div>
 </div>
 
@@ -389,7 +420,10 @@
     </header>
     <div class="investment-content">
       <div class="investment-intro">
-        <div><p class="investment-kicker">Investment &amp; FAQs</p><h1 id="investment-title">Stories worth<br><em>keeping.</em></h1></div>
+        <!-- h2, not h1: the panel is always in the DOM, so a second h1 gave the
+             document two competing top-level headings. It still labels the
+             dialog through aria-labelledby. -->
+        <div><p class="investment-kicker">Investment &amp; FAQs</p><h2 id="investment-title">Stories worth<br><em>keeping.</em></h2></div>
         <p>Thoughtful photography and cinematic films, shaped around the scale and rhythm of your celebration. Begin with one of our signature collections, then tailor the coverage to your wedding.</p>
       </div>
 
@@ -477,7 +511,7 @@
   </section>
 </div>
 
-<script src="js/stories-data.js?v=20260807c"></script>
-<script src="js/main.js?v=20260807c"></script>
+<script src="js/stories-data.js?v=20260906g"></script>
+<script src="js/main.js?v=20260906g"></script>
 </body>
 </html>

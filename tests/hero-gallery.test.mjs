@@ -22,28 +22,34 @@ test("hero is an eight-image gallery of the studio's own photographs", async () 
   assert.equal((html.match(/class="hero-slide(?: act)?"/g) ?? []).length, 8);
   assert.equal((html.match(/class="hero-dot(?: act)?"/g) ?? []).length, 8);
 
-  // Every slide needs its own tagline for the typewriter line.
-  assert.equal((html.match(/data-tagline="[^"]+"/g) ?? []).length, 8);
-
   // No stock imagery in the hero: every slide must be a local studio asset.
   const heroBlock = html.match(/<div class="hero-slides"[\s\S]*?<\/div>\s*<\/div>/)[0];
+  const heroSection = html.match(/<section class="hero">[\s\S]*?<\/section>/)[0];
   assert.doesNotMatch(heroBlock, /unsplash\.com/);
   assert.equal((heroBlock.match(/img\/hero\/[a-z0-9-]+\.webp/g) ?? []).length, 8);
   for (const path of heroAssets) assert.ok(heroBlock.includes(path), `${path} missing from hero`);
   assert.match(
     html,
-    /<h1>Love,<br><em>beautifully<\/em> remembered\.<\/h1>/,
+    /<h1>Honest Stories,<br><em>Timelessly Told<\/em><\/h1>/,
   );
-  // The hero carries a headline, the typed per-slide tagline, and two
-  // actions. Nothing else competes with the photograph.
+  // Only the requested headline and proof figures may sit over the gallery.
+  const proof = heroSection.match(/<dl class="hero-proof">([\s\S]*?)<\/dl>/);
+  assert.ok(proof, "the hero proof figures are missing");
+  assert.deepEqual(
+    [...proof[1].matchAll(/<dt[^>]*>([^<]+)<\/dt>\s*<dd>([^<]+)<\/dd>/g)].map(
+      ([, value, label]) => [value.trim(), label.trim()],
+    ),
+    [["180+", "Weddings"], ["24", "Cities"], ["2016", "Shooting since"]],
+  );
   assert.doesNotMatch(html, /class="hero-sub"/);
   assert.doesNotMatch(html, /class="hero-eyebrow"/);
-  assert.match(html, /class="hero-typed"/);
-  assert.match(html, />Check availability<\/a>/);
-  assert.match(html, />View stories<\/a>/);
-  assert.doesNotMatch(html, /class="ring"|class="hero-marker"/);
-  assert.match(html, /aria-label="Choose a hero photograph"/);
-  assert.match(html, /aria-current="true"/);
+  assert.doesNotMatch(heroSection, /data-tagline|class="hero-tagline|class="hero-typed|class="hero-caret/);
+  assert.doesNotMatch(heroSection, /class="hero-actions"/);
+  assert.doesNotMatch(heroSection, /href="#contact"[^>]*>Check availability<\/a>/);
+  assert.doesNotMatch(heroSection, /href="#stories"[^>]*>View stories<\/a>/);
+  assert.doesNotMatch(heroSection, /class="ring"|class="hero-marker"/);
+  assert.match(heroSection, /aria-label="Choose a hero photograph"/);
+  assert.match(heroSection, /aria-current="true"/);
 });
 
 test("new hero photographs are optimized WebP assets", async () => {
@@ -76,4 +82,9 @@ test("hero script supports dots, lazy loading, and mobile swipe", async () => {
   assert.match(script, /pointerup/);
   assert.match(script, /Math\.abs\(deltaX\)\s*>=\s*48/);
   assert.match(script, /REDUCED/);
+  assert.doesNotMatch(
+    script,
+    /typeHeroTagline|taglineTyped|taglineLabel|taglineTimer|dataset\.tagline/,
+    "the slideshow must not rotate hero copy with its photographs",
+  );
 });

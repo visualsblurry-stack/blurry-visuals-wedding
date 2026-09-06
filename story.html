@@ -6,13 +6,30 @@
 <title>Real Wedding | Blurry Visuals Weddings</title>
 <meta name="description" content="A real wedding photographed and filmed by Blurry Visuals Weddings, Mumbai.">
 <meta name="theme-color" content="#789c9f">
+<meta property="og:site_name" content="Blurry Visuals Weddings">
+<meta property="og:title" content="A real wedding | Blurry Visuals Weddings">
+<meta property="og:description" content="A real wedding photographed and filmed by Blurry Visuals Weddings, Mumbai.">
+<meta property="og:type" content="article">
+<!-- See the note in index.html: make this absolute and add og:url on launch.
+     main.js rewrites the title, description and og:image per story once the
+     slug resolves, which covers a link pasted from a browser; this static pair
+     is what a crawler that does not run scripts falls back to. -->
+<meta property="og:image" content="/img/og-blurry-visuals.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A couple at their Mumbai wedding, photographed by Blurry Visuals.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="/img/og-blurry-visuals.jpg">
+<script>document.documentElement.className += " js";</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="img/blurry-visuals-logo-web.png">
-<link rel="stylesheet" href="css/style.css?v=20260807c">
+<link rel="stylesheet" href="css/style.css?v=20260906g">
 </head>
 <body>
+
+<a class="skip-link" href="#story-root">Skip to content</a>
 
 <header class="hdr solid">
   <div class="wrap hdr-in">
@@ -46,8 +63,17 @@
   <a href="index.html#contact">Inquire</a>
 </div>
 
-<main id="story-root">
+<main id="story-root" tabindex="-1">
   <!-- rendered by js/main.js from js/stories-data.js via ?s=<slug> -->
+  <noscript>
+    <div class="wrap" style="padding:140px 0 90px">
+      <h1>This wedding story needs JavaScript</h1>
+      <p style="margin-top:14px">Each story is put together in your browser, so this
+        page stays empty without scripts. Turn JavaScript on and reload, or
+        <a href="index.html#stories">see all weddings</a> — or write to us at
+        <a href="mailto:visualsblurry@gmail.com">visualsblurry@gmail.com</a>.</p>
+    </div>
+  </noscript>
 </main>
 
 <nav class="story-return" id="story-return" aria-label="Leave this wedding">
@@ -77,7 +103,7 @@
   </div>
 </footer>
 
-<script src="js/stories-data.js?v=20260807c"></script>
-<script src="js/main.js?v=20260807c"></script>
+<script src="js/stories-data.js?v=20260906g"></script>
+<script src="js/main.js?v=20260906g"></script>
 </body>
 </html>

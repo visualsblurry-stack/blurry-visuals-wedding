@@ -155,23 +155,23 @@ body.menu-open{overflow:hidden;}
 }
 .hero h1{font-size:clamp(36px,4.6vw,62px);max-width:11ch;}
 .hero h1,.hero h1 em{color:var(--white);}
-/* Per-slide tagline, typed out one character at a time. min-height holds
-   the line so the buttons below it never shift as the text grows. */
-.hero-tagline{
-  margin:18px 0 0;min-height:1.7em;max-width:26ch;
-  font-family:var(--ff-display);font-style:italic;
-  font-size:clamp(16px,1.5vw,21px);line-height:1.5;color:var(--white);
-}
-.hero-caret{
-  display:inline-block;width:1px;height:1.05em;margin-left:3px;
-  background:var(--white);vertical-align:-0.14em;
-  animation:heroCaret 1s steps(1,end) infinite;
-}
-@keyframes heroCaret{0%,49%{opacity:1;}50%,100%{opacity:0;}}
 .sr-only{
   position:absolute;width:1px;height:1px;padding:0;margin:-1px;
   overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
 }
+/* Keyboard visitors landed on the logo and then had to tab the whole header and
+   drawer before reaching any content. Hidden until focused. */
+.skip-link{
+  position:absolute;left:16px;top:-64px;z-index:400;
+  padding:12px 20px;border-radius:0 0 3px 3px;
+  background:var(--teal-deep);color:var(--white);
+  font-family:var(--ff-body);font-size:12px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;
+  transition:top .18s ease;
+}
+.skip-link:focus{top:0;}
+/* Unused while the hero carries no buttons — kept so restoring the pair is a
+   markup change only. */
 .hero-cta{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap;}
 .btn{
   display:inline-flex;align-items:center;gap:10px;
@@ -283,23 +283,42 @@ body.menu-open{overflow:hidden;}
 .r-169{aspect-ratio:16/9;} .r-1610{aspect-ratio:16/10;} .r-23{aspect-ratio:2/3;}
 
 /* ========================= films ========================= */
-.films{display:grid;grid-template-columns:1fr 1fr;gap:26px;}
-.film{position:relative;display:block;}
-.film .ph{aspect-ratio:16/9;}
+.films{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,3vw,40px);}
+.film{
+  position:relative;display:block;isolation:isolate;
+  border:2px solid var(--teal);background:var(--teal);
+  box-shadow:6px 6px 0 var(--teal-deep);
+  transition:translate .28s cubic-bezier(.16,.84,.3,1),box-shadow .28s ease;
+}
+.film .ph{aspect-ratio:16/9;border-radius:0;border-bottom:1px solid rgba(255,255,255,.2);}
+.film .ph::after{
+  background:linear-gradient(180deg,rgba(23,55,57,.02) 48%,rgba(23,55,57,.68) 100%),var(--grain);
+}
 .film-play{
-  position:absolute;inset:0;z-index:4;display:grid;place-items:center;
+  position:absolute;left:0;right:0;top:0;bottom:auto;z-index:4;
+  display:grid;place-items:center;aspect-ratio:16/9;pointer-events:none;
 }
-.film-play span{
-  width:72px;height:72px;border-radius:50%;border:1px solid var(--champagne);
-  display:grid;place-items:center;color:var(--champagne);
-  background:rgba(255,255,255,0.82);backdrop-filter:blur(4px);
-  transition:transform .3s,background .3s;
+.film-play > span:first-child{
+  width:74px;height:74px;border-radius:50%;border:2px solid var(--white);
+  display:grid;place-items:center;padding-left:4px;color:var(--white);font-size:20px;
+  background:var(--teal-deep);box-shadow:0 0 0 7px rgba(255,255,255,.15);
+  transition:transform .28s ease,background .28s ease,color .28s ease;
 }
-.film:hover .film-play span{transform:scale(1.1);background:var(--white);}
-.film-meta{display:flex;justify-content:space-between;gap:12px;padding:14px 2px 0;}
-.film-meta h3{font-size:22px;}
-.film-meta h3 em{font-style:italic;color:var(--champagne);}
-.film-meta small{font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ash);white-space:nowrap;padding-top:8px;}
+.film-watch{
+  position:absolute;left:16px;bottom:14px;
+  color:var(--white);font-size:9px;font-weight:700;line-height:1;letter-spacing:.18em;text-transform:uppercase;
+}
+.film:hover,.film:focus-visible{translate:-3px -3px;box-shadow:10px 10px 0 var(--teal-deep);}
+.film:hover .film-play span:first-child,.film:focus-visible .film-play span:first-child{
+  transform:scale(1.08);background:var(--white);color:var(--teal-deep);
+}
+.film-meta{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  min-height:66px;padding:14px 16px;background:var(--teal);color:var(--white);
+}
+.film-meta h3{min-width:0;font-size:22px;color:var(--white);}
+.film-meta h3 em{font-style:italic;color:rgba(255,255,255,.78);}
+.film-meta small{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,.68);white-space:nowrap;}
 .film-note{margin-top:26px;font-size:12px;color:var(--ash);letter-spacing:0.06em;}
 
 /* film lightbox */
@@ -309,10 +328,13 @@ body.menu-open{overflow:hidden;}
 }
 .lightbox.open{display:grid;}
 .lightbox-frame{width:min(1080px,100%);aspect-ratio:16/9;background:#000;}
-.lightbox-frame iframe{width:100%;height:100%;border:0;}
+.lightbox-frame iframe,.lightbox-frame video{width:100%;height:100%;border:0;}
+.lightbox-frame video{display:block;background:#000;object-fit:contain;}
+/* --teal-deep, not --teal: this is 13px uppercase, which WCAG counts as normal
+   text, and white on brand teal measures 2.98:1. */
 .lightbox-close{
   position:absolute;top:22px;right:26px;padding:10px 16px;border-radius:2px;
-  background:var(--teal);color:var(--white);font-size:13px;font-weight:700;
+  background:var(--teal-deep);color:var(--white);font-size:13px;font-weight:700;
   letter-spacing:0.2em;text-transform:uppercase;transition:background .2s,transform .2s;
 }
 .lightbox-close:hover{background:var(--soot-2);color:var(--white);transform:translateY(-1px);}
@@ -330,10 +352,28 @@ body.menu-open{overflow:hidden;}
   display:inline-block;margin-top:12px;font-size:11px;font-weight:700;letter-spacing:0.2em;
   text-transform:uppercase;color:var(--champagne);
 }
+.story-card-soon{cursor:default;}
+.story-card-soon .ph{filter:saturate(.72);}
+.story-card-soon .more{color:var(--ash);}
 
 /* ========================= about ========================= */
 .about-grid{display:grid;grid-template-columns:0.85fr 1fr;gap:64px;align-items:center;}
-.about-grid .ph{aspect-ratio:4/5;}
+.founder-portraits{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;
+  width:100%;max-width:620px;align-items:start;
+}
+.founder-portrait{min-width:0;margin:0;}
+.founder-frame{
+  overflow:hidden;aspect-ratio:2/3;border:2px solid var(--teal);
+  background:rgba(120,156,159,.12);box-shadow:6px 6px 0 var(--teal-deep);
+}
+.founder-frame img{width:100%;height:100%;object-fit:cover;}
+.founder-portrait-akash img{object-position:center 42%;}
+.founder-portrait-gautam img{object-position:center 25%;}
+.founder-portrait figcaption{
+  margin-top:13px;font-size:10px;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ivory);
+}
 .about-copy>p{color:var(--ash);margin:0 0 18px;}
 .about-copy>p:first-of-type{color:var(--ivory);font-size:18px;}
 /* The two founders, side by side under the studio's story. */
@@ -423,6 +463,16 @@ body.menu-open{overflow:hidden;}
 .contact-submit:hover{filter:brightness(.96);transform:translateY(-1px);}
 .contact-submit .lucide-icon{width:17px;height:17px;}
 .form-hint{font-size:12px;line-height:1.5;color:var(--white);}
+/* Submit result. Sits inside the deep-teal contact panel, so the tinted
+   backgrounds stay near-transparent and the text stays white. */
+.form-status[hidden]{display:none;}
+.form-status{
+  grid-column:1/-1;margin-top:14px;padding:12px 14px;border-radius:3px;
+  font-size:13px;line-height:1.55;color:var(--white);
+  border-left:3px solid rgba(255,255,255,.55);background:rgba(255,255,255,.10);
+}
+.form-status a{color:var(--white);text-decoration:underline;text-underline-offset:3px;}
+.form-status.blocked{border-left-color:#f0c069;background:rgba(240,192,105,.16);}
 
 /* ================== investment modal ================== */
 body.investment-open{overflow:hidden;}
@@ -436,8 +486,8 @@ body.investment-open{overflow:hidden;}
 .investment-content{width:min(1080px,calc(100% - 64px));margin:0 auto;padding:58px 0 72px;}
 .investment-intro,.faq-heading{display:grid;grid-template-columns:.85fr 1.15fr;gap:58px;align-items:end;margin-bottom:38px;}
 .investment-kicker{margin:0 0 12px;font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--teal);}
-.investment-intro h1{font-size:clamp(42px,6vw,72px);letter-spacing:0;}
-.investment-intro h1 em,.faq-heading h2 em{color:var(--teal);font-style:italic;}
+.investment-intro h2{font-size:clamp(42px,6vw,72px);letter-spacing:0;}
+.investment-intro h2 em,.faq-heading h2 em{color:var(--teal);font-style:italic;}
 .investment-intro>p,.faq-heading>p{margin:0;color:var(--ash);max-width:58ch;}
 .investment-packages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;align-items:stretch;}
 .investment-package{display:flex;min-width:0;min-height:520px;flex-direction:column;padding:34px;border:1px solid var(--line);background:var(--white);}
@@ -523,7 +573,23 @@ body.investment-open{overflow:hidden;}
   padding:180px 0 76px;color:var(--white);
 }
 .story-hero-media{position:absolute;inset:0;z-index:-2;background:var(--ivory);}
-.story-hero-media video{width:100%;height:100%;object-fit:cover;display:block;}
+.story-hero-media video,.story-hero-media img{width:100%;height:100%;object-fit:cover;display:block;}
+.story-hero-sequence{position:absolute;inset:0;overflow:hidden;background:var(--teal-deep);}
+.story-hero-slide{
+  position:absolute;inset:0;opacity:0;object-position:var(--hero-focus,center 45%);
+  transform:scale(1.015) translate3d(0,0,0);
+  transition:opacity 1.15s ease;will-change:opacity,transform;
+}
+.story-hero-slide.is-active{opacity:1;z-index:1;animation:storyHeroKenburns 4.8s linear both;}
+.story-hero-slide:nth-child(2n).is-active{animation-name:storyHeroKenburnsReverse;}
+@keyframes storyHeroKenburns{
+  from{transform:scale(1.015) translate3d(-.55%,0,0);}
+  to{transform:scale(1.055) translate3d(.55%,0,0);}
+}
+@keyframes storyHeroKenburnsReverse{
+  from{transform:scale(1.015) translate3d(.55%,0,0);}
+  to{transform:scale(1.055) translate3d(-.55%,0,0);}
+}
 .story-hero::after{
   content:"";position:absolute;inset:0;z-index:-1;
   background:
@@ -556,6 +622,7 @@ body.investment-open{overflow:hidden;}
   transition:opacity .28s ease,transform .28s ease,visibility .28s;
 }
 .story-return.in{opacity:1;visibility:visible;transform:none;}
+body.story-minimal .story-return{display:none;}
 body.menu-open .story-return{opacity:0;visibility:hidden;transform:translateY(10px);}
 .story-return-link{
   display:inline-flex;align-items:center;gap:9px;
@@ -573,6 +640,25 @@ body.menu-open .story-return{opacity:0;visibility:hidden;transform:translateY(10
 .story-meta{display:flex;gap:34px;flex-wrap:wrap;margin-top:30px;}
 .story-meta div small{display:block;font-size:10px;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:var(--white);margin-bottom:3px;}
 .story-meta div b{font-weight:600;}
+.story-hero-minimal .wrap{display:grid;gap:clamp(20px,3vh,34px);align-content:end;}
+.story-hero-minimal .story-stats{width:max-content;max-width:100%;margin-top:0;padding-top:18px;}
+.story-hero-minimal .story-stats small{color:rgba(255,255,255,.76);}
+@media (min-width:961px){
+  .story-hero-minimal{padding-bottom:42px;}
+  .story-hero-minimal .wrap{left:clamp(-44px,-2.8vw,-18px);}
+}
+/* ---- flat gallery (STORY_LAYOUT = "flat") ----
+   One uninterrupted wall of photographs. No tone bands, no headings: the only
+   job here is to hold the grid and get out of the way. The chaptered layout
+   below still owns .chapter-*; this reuses .chapter-grid and .chapter-shot so
+   both layouts stay pixel-identical in how a single frame renders. */
+.story-gallery{padding:clamp(30px,5vh,58px) 0 clamp(46px,8vh,96px);background:var(--white);}
+.story-gallery .chapter-grid{margin-top:0;}
+/* A full story runs to about thirty frames and they are all in one section
+   now, so each tile skips layout and paint until it is near the viewport.
+   On the chaptered layout the section itself did this. */
+.story-gallery .chapter-shot{content-visibility:auto;contain-intrinsic-size:auto 420px;}
+
 .story-body{padding:70px 0 30px;}
 .story-body .lede{font-family:var(--ff-display);font-style:italic;font-weight:340;font-size:clamp(20px,2.4vw,27px);line-height:1.5;max-width:30ch;color:var(--ivory);margin:0 0 26px;}
 .story-body .txt{max-width:64ch;color:var(--ash);}
@@ -689,6 +775,10 @@ body.menu-open .story-return{opacity:0;visibility:hidden;transform:translateY(10
   background-color:var(--soot);
   background-position:center;background-size:cover;background-repeat:no-repeat;
 }
+.chapter-shot > img{
+  display:block;width:100%;height:100%;
+  object-fit:cover;object-position:center;
+}
 .chapter-shot .ph-label{position:absolute;inset:0;display:grid;place-items:center;}
 .chapter-shot-cap{
   position:absolute;left:0;right:0;bottom:0;padding:13px 14px;text-align:left;
@@ -775,7 +865,7 @@ button.ph{width:100%;padding:0;border:0;font:inherit;}
 .photobox[hidden]{display:none;}
 .photobox{
   position:fixed;inset:0;z-index:210;
-  display:grid;grid-template-columns:auto 1fr auto;align-items:center;
+  display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:minmax(0,1fr);align-items:center;
   gap:clamp(8px,2vw,26px);padding:clamp(56px,7vh,84px) clamp(10px,3vw,40px);
   background:rgba(12,35,38,.94);backdrop-filter:blur(8px);
 }
@@ -824,10 +914,9 @@ body.photobox-open{overflow:hidden;}
    pointer and a dot that tracks it exactly, the ring swelling into a filled,
    labelled disc over anything carrying data-cursor.
 
-   The native cursor is hidden by a class the script adds only once it has
-   actually built the replacement. The source design hid it in plain CSS, which
-   left reduced-motion visitors — who never get the ring — with no pointer at
-   all. */
+   The native cursor is hidden only on labelled hover targets, after the script
+   has built the replacement. Off those targets, the regular OS pointer stays
+   visible. */
 .cursor-ring,.cursor-dot{
   position:fixed;left:0;top:0;border-radius:50%;
   pointer-events:none;opacity:0;
@@ -841,51 +930,64 @@ body.photobox-open{overflow:hidden;}
     width .45s cubic-bezier(.16,1,.3,1),
     height .45s cubic-bezier(.16,1,.3,1),
     margin .45s cubic-bezier(.16,1,.3,1),
-    background .45s ease;
+    background .45s ease,
+    border-color .45s ease;
 }
 .cursor-dot{
   z-index:301;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;
   background:var(--teal);transition:opacity .35s ease;
 }
 .cursor-ring.on,.cursor-dot.on{opacity:1;}
-/* --teal-deep, not brand teal: the label is 9px, and white on --teal is
-   2.98:1. The design filled the disc with brand teal at 0.92 alpha, which
-   fails the same way. */
+/* 66px, not 92px: a disc that doubles the resting ring reads as an object that
+   popped up rather than as the pointer, and at 92px it covered the very title
+   it was pointing at.
+
+   The fill is ink-teal at 0.70 rather than solid --teal-deep so the photograph
+   still reads through it. 0.70 is the floor, not a taste call: composited over
+   the brightest possible backdrop (pure white) it lands at 5.06:1 against the
+   white label, so the label clears AA everywhere on the site. Lighter fills
+   fail over pale frames — solid --teal-deep at 0.80 measures 3.18:1. */
 .cursor-ring.grown{
-  width:92px;height:92px;margin:-46px 0 0 -46px;background:var(--teal-deep);
-  border-color:var(--teal-deep);
+  width:66px;height:66px;margin:-33px 0 0 -33px;
+  background:rgba(31,53,54,0.70);
+  border-color:rgba(255,255,255,0.55);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
 }
+/* Wraps rather than runs on: at 66px a nowrap label like "View story" hung out
+   over both edges of the disc. Two short lines sit inside it instead. */
 .cursor-label{
-  font-family:var(--ff-body);font-size:9px;font-weight:600;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--white);white-space:nowrap;
+  font-family:var(--ff-body);font-size:10px;font-weight:600;letter-spacing:.1em;
+  line-height:1.25;text-transform:uppercase;color:var(--white);text-align:center;
+  max-width:56px;text-wrap:balance;
   opacity:0;transition:opacity .3s ease;
 }
 .cursor-ring.grown .cursor-label{opacity:1;}
-body.cursor-custom,
-body.cursor-custom a,
-body.cursor-custom button,
-body.cursor-custom select,
-body.cursor-custom summary,
-body.cursor-custom label{cursor:none;}
-/* Text fields keep their caret — losing the insertion point costs a visitor
-   more than the effect gains, and the enquiry form is the conversion path. */
-body.cursor-custom input,
-body.cursor-custom textarea{cursor:auto;}
+body.cursor-custom [data-cursor],
+body.cursor-custom [data-cursor] *{cursor:none;}
 
-/* ==================== reveal on scroll ==================== */
-.rv{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s cubic-bezier(.16,.84,.3,1);}
-.rv.in{opacity:1;transform:none;}
+/* ==================== reveal on scroll ====================
+   Gated on html.js, which the inline script in each document's head sets
+   before first paint. Hiding these in plain CSS meant that any visitor whose
+   JavaScript failed — a dropped bundle on hotel wifi, an in-app browser, a
+   blocking extension — got the hero and then an empty page all the way to the
+   footer, with the enquiry form among the things they could not see. */
+.js .rv{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s cubic-bezier(.16,.84,.3,1);}
+.js .rv.in{opacity:1;transform:none;}
 
 /* ===================== reduced motion ===================== */
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto;}
   *,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;}
-  .rv{opacity:1;transform:none;}
-  .hero-caret{display:none;}
+  .js .rv{opacity:1;transform:none;}
   /* Hold the photograph still rather than snapping it to the zoomed end
      frame, which is what the blanket duration override above would do. */
   .hero-slide.act{animation:none;transform:none;}
+  .story-hero-slide{animation:none;transition:none;}
+  .story-hero-slide:first-child{opacity:1;}
+  .story-hero-slide:not(:first-child){display:none;}
   .hero-thumb{opacity:1;transform:none;}
+  .film:hover,.film:focus-visible{translate:none;}
 }
 
 /* ====================== responsive ====================== */
@@ -934,7 +1036,6 @@ body.cursor-custom textarea{cursor:auto;}
   .story-gallery{grid-template-columns:1fr;}
   .hero-in{padding-bottom:calc(var(--hero-foot-h,116px) + 26px);}
   .hero h1{font-size:clamp(34px,9vw,46px);}
-  .hero-tagline{min-height:3.4em;max-width:30ch;} /* taglines wrap to two lines here */
   /* No room for previews beside the copy on a phone; the dots still reach
      every photograph. */
   .hero-thumbs{display:none;}
@@ -943,5 +1044,6 @@ body.cursor-custom textarea{cursor:auto;}
   .hero-proof dt{font-size:19px;}
   .hero-dots{margin-left:-10px;}
   .hero-dot{width:38px;height:44px;}
+  .founder-portraits{grid-template-columns:1fr;max-width:320px;gap:28px;}
   .about-facts{gap:24px;}
 }

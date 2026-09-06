@@ -162,6 +162,7 @@ test("the return control appears past the breadcrumb and yields to the footer", 
 });
 
 test("story pages ship the current cache-busting stamp", async () => {
+  const currentStamp = "20260906g";
   const [indexHtml, storyHtml] = await Promise.all([
     readProjectFile("index.html"),
     readProjectFile("story.html"),
@@ -179,5 +180,10 @@ test("story pages ship the current cache-busting stamp", async () => {
     stamps.size,
     1,
     `index.html and story.html must share one ?v= stamp, found: ${[...stamps].join(", ")}`,
+  );
+  assert.equal(
+    [...stamps][0],
+    currentStamp,
+    `asset cache-busting stamp must be ${currentStamp}`,
   );
 });
