@@ -49,3 +49,12 @@ img/*.png
 # Wedding films are large binaries; keep them out of git history.
 video/stories/*
 !video/stories/.gitkeep
+
+# Engineering-only: agent planning docs, session handoff notes, the test
+# suite, and the gallery/photo build scripts. None of this is served to a
+# visitor, so none of it belongs in the deployed site's repo. Keep it in
+# whatever working checkout needs it locally instead.
+docs/superpowers/
+CLAUDE_HANDOFF.md
+tests/
+tools/
