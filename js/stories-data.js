@@ -131,7 +131,7 @@
         "center 50%",
         "center 40%",
         "center 35%",
-        "center 30%",
+        "center 12%",
         "center 45%",
         "center 50%",
         "center 35%",
