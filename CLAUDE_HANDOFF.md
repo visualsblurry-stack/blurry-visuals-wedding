@@ -103,8 +103,8 @@ and leak live markup onto the page.
 - Header carries the full logo lockup.
 - Collections: **Intimate ₹1,25,000**, **Signature ₹2,25,000**, built from the 26-27
   brochure's crew and deliverables, laid out as spec rows.
-- Add-ons price list and nine FAQs covering booking split, delivery, revisions,
-  working hours, travel, and the food policy.
+- Nine FAQs covering booking split, delivery, revisions, working hours, travel,
+  and the food policy. The add-ons price list was removed at the owner's request.
 - Close button, backdrop click, Escape, scroll lock, focus trap, focus restoration.
 
 ## Important Files

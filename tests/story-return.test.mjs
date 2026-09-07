@@ -162,7 +162,7 @@ test("the return control appears past the breadcrumb and yields to the footer", 
 });
 
 test("story pages ship the current cache-busting stamp", async () => {
-  const currentStamp = "20260907e";
+  const currentStamp = "20260907g";
   const [indexHtml, storyHtml] = await Promise.all([
     readProjectFile("index.html"),
     readProjectFile("story.html"),
