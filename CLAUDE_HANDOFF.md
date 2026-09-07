@@ -143,8 +143,10 @@ Two traps when measuring in a headless tab:
    the owner's stated 1,25,000 and 2,25,000. If the brochure is current, the site
    underquotes by about 1.5 lakh per booking.
 2. **Aakash or Akash.** The brochure spells it *Akash*; the site uses *Aakash*.
-3. **Coming-soon stories.** Only Shachi + Vedant and Vedin + Megha currently have complete
-   local galleries. The remaining story records still need final studio photography.
+3. **Coming-soon stories.** Shachi + Vedant, Vedin + Megha, and now Niki + Swapnesh have
+   complete local galleries. The remaining story records still need final studio photography.
+   Niki + Swapnesh's venue/city are still the "Real wedding · India" placeholder — supply the
+   real location the same way Shachi's and Vedin's were corrected.
 
 ## Safety And Editing Rules
 

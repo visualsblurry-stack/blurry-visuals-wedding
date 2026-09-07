@@ -9,16 +9,26 @@ MAX_EDGE = 1800
 QUALITY = 76
 EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
 
+COVER_PHOTOS = Path(r"D:\BlurryVisuals-Wedding-publish\img\Cover photos")
+
 GALLERIES = [
     {
         "slug": "shachi-vedant",
         "source": Path(r"D:\BlurryVisuals-Wedding-publish\img\for Wedding website\Shachi & Vedant\for web"),
         "cover": "snv web-251.jpg",
+        "cover_override": COVER_PHOTOS / "shachi & Vedant Web-307.jpg",
     },
     {
         "slug": "vedin-megha",
         "source": Path(r"D:\BlurryVisuals-Wedding-publish\img\for Wedding website\Vedin & Megha\for web"),
         "cover": "Vnm Web-195.jpg",
+        "cover_override": COVER_PHOTOS / "Vedin & Megha-551.jpg",
+    },
+    {
+        "slug": "niki-swapnesh",
+        "source": Path(r"D:\BlurryVisuals-Wedding-publish\img\for Wedding website\Niki Swapnesh"),
+        "cover": "NnS Web-1.jpg",
+        "cover_override": COVER_PHOTOS / "Haldi-60.jpg",
     },
 ]
 
@@ -56,7 +66,9 @@ def build_gallery(config):
     for index, source in enumerate(files, start=1):
         save_webp(source, output_dir / f"{index:03d}.webp")
 
-    cover_source = source_dir / config["cover"]
+    cover_source = config.get("cover_override")
+    if not cover_source or not cover_source.exists():
+        cover_source = source_dir / config["cover"]
     if not cover_source.exists():
         cover_source = files[0]
     save_webp(cover_source, output_dir / "cover.webp")

@@ -29,7 +29,7 @@
       venue: "Mumbai",
       city: "India",
       type: "Photography coverage",
-      cover: "img/stories/shachi-vedant/cover.webp?v=20260905i",
+      cover: "img/stories/shachi-vedant/cover.webp?v=20260907d",
       heroSequence: [
         "img/stories/shachi-vedant/257.webp",
         "img/stories/shachi-vedant/264.webp",
@@ -70,7 +70,7 @@
       venue: "Hyderabad",
       city: "India",
       type: "Photography coverage",
-      cover: "img/stories/vedin-megha/cover.webp?v=20260905i",
+      cover: "img/stories/vedin-megha/cover.webp?v=20260907d",
       heroSequence: [
         "img/stories/vedin-megha/081.webp",
         "img/stories/vedin-megha/084.webp",
@@ -105,28 +105,47 @@
       film: ""
     },
     {
-      slug: "ishita-arjun",
-      couple: ["Ishita", "Arjun"],
-      date: "February 2026",
-      venue: "Heritage palace",
-      city: "Jaipur",
-      type: "Destination wedding",
-      cover: U("1604017011826-d3b4c23f8914", 900),
-      oneLiner: "A palace wedding photographed like period cinema.",
-      lede: "Jaipur gave us sandstone, brass bands, and light that behaves like it studied art direction.",
-      story: "Ishita and Arjun flew ninety guests to a heritage palace and let the city set the palette. We shot the pheras against carved jharokhas, the sangeet under a courtyard moon, and stole the couple away at sunrise for portraits before the palace woke. Every frame leans warm, formal, and a little grand — like the wedding itself.",
-      gallery: [
-        { label: "Palace facade, first light", event: "portraits", img: U("1727430256509-0f897d6f4765", 1600), wide: true },
-        { label: "Bridal portrait, jharokha", event: "portraits", img: U("1610173827043-9db50e0d8ef9"), wide: false },
-        { label: "Sangeet courtyard", event: "sangeet", img: U("1502635385003-ee1e6a1a742d"), wide: false },
-        { label: "Couple portrait, sunrise", event: "portraits", img: U("1519671482749-fd09be7ccebf"), wide: false },
-        { label: "Pheras under the canopy", event: "pheras", img: U("1665960213508-48f07086d49c"), wide: false },
-        { label: "Farewell arch, marigold", event: "vidaai", img: U("1587271636175-90d58cdad458", 1600), wide: true }
+      slug: "niki-swapnesh",
+      couple: ["Niki", "Swapnesh"],
+      date: "Wedding story",
+      // TODO: real venue/city from the owner - placeholder until supplied,
+      // same as Shachi/Vedin carried before their locations were confirmed.
+      venue: "Real wedding",
+      city: "India",
+      type: "Photography coverage",
+      cover: "img/stories/niki-swapnesh/cover.webp?v=20260907d",
+      heroSequence: [
+        "img/stories/niki-swapnesh/001.webp",
+        "img/stories/niki-swapnesh/004.webp",
+        "img/stories/niki-swapnesh/030.webp",
+        "img/stories/niki-swapnesh/056.webp",
+        "img/stories/niki-swapnesh/081.webp",
+        "img/stories/niki-swapnesh/157.webp",
+        "img/stories/niki-swapnesh/169.webp",
+        "img/stories/niki-swapnesh/207.webp",
+        "img/stories/niki-swapnesh/235.webp",
+        "img/stories/niki-swapnesh/243.webp"
       ],
+      heroFocalPoints: [
+        "center 40%",
+        "center 50%",
+        "center 40%",
+        "center 35%",
+        "center 30%",
+        "center 45%",
+        "center 50%",
+        "center 35%",
+        "center 30%",
+        "center 42%"
+      ],
+      oneLiner: "A real wedding gallery, from haldi to the last dance.",
+      lede: "Niki and Swapnesh's page is now built from real photographs, arranged as one uninterrupted visual story.",
+      story: "The gallery below uses a tighter edit from their web-ready image selection: ten frames, no chapter breaks, and no interruptions between photographs.",
+      gallery: localGallery("niki-swapnesh", 243, "Niki & Swapnesh"),
+      noPlaceholders: true,
       textlessStory: true,
       hideHeroStats: true,
-      homepageTeaser: true,
-      film: "https://www.youtube.com/watch?v=UpZI5dOFGM0"
+      film: ""
     },
     {
       slug: "sana-dev",
@@ -216,28 +235,11 @@
         note: "A real gallery from the studio's web selection, kept as one continuous visual story."
       }
     },
-    "ishita-arjun": {
-      sangeet: {
-        time: "Day two · 9:00 pm",
-        title: "A sangeet under a courtyard moon.",
-        note: "Sandstone walls, a brass band, and choreography that survived roughly one verse before the aunts took over."
-      },
-      pheras: {
-        time: "Day three · 5:15 am",
-        title: "Pheras beneath carved jharokhas.",
-        note: "The palace at its emptiest. Firelight on stone, a pandit's voice, and ninety guests trying very hard to stay awake.",
-        quote: "We flew everyone across the country for four minutes that felt like this. Worth it.",
-        quoteWho: "Ishita, on the pheras"
-      },
-      vidaai: {
-        time: "Day three · 10:20 am",
-        title: "Out through the marigold arch.",
-        note: "The last frames of the wedding, made under eight feet of flowers while the family formed a corridor neither of them could see the end of."
-      },
+    "niki-swapnesh": {
       portraits: {
-        time: "Day three · first light",
-        title: "The palace, before it woke.",
-        note: "We stole them at sunrise. Empty courtyards, warm stone, and the only hour all week when nobody needed either of them."
+        time: "Across the celebration",
+        title: "Niki and Swapnesh, frame by frame.",
+        note: "A real gallery from the studio's web selection, kept as one continuous visual story."
       }
     },
     "sana-dev": {
@@ -314,14 +316,8 @@
     "vedin-megha": {
       stats: [["278", "Photographs"]]
     },
-    "ishita-arjun": {
-      brief: {
-        ask: "Ishita wanted it to look like period cinema.",
-        text: "Jaipur gave us sandstone, brass bands, and light that behaves like it studied art direction. We let the city set the palette and shot it a little formal, a little grand.",
-        meta: [["Coverage", "Photo & film"], ["Venue", "Heritage palace"], ["Delivered in", "24 days"]]
-      },
-      stats: [["710", "Frames delivered"], ["6", "Events"], ["5", "Crew on ground"]],
-      words: { quote: "Our families still argue about which frame goes above the stairs. That is the highest compliment we have.", who: "Ishita & Arjun" }
+    "niki-swapnesh": {
+      stats: [["243", "Photographs"]]
     },
     "sana-dev": {
       brief: {
