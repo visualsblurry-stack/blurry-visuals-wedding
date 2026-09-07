@@ -537,7 +537,7 @@ test("the first three story cards use real local wedding galleries", async () =>
     assert.equal(story.gallery.length, count);
     assert.equal(story.noPlaceholders, true);
     assert.equal(story.textlessStory, true);
-    assert.match(story.cover, new RegExp(`^img/stories/${slug}/cover\\.webp\\?v=20260907d$`));
+    assert.match(story.cover, new RegExp(`^img/stories/${slug}/cover\\.webp\\?v=20260907h$`));
 
     story.gallery.forEach((shot, shotIndex) => {
       const frame = String(shotIndex + 1).padStart(3, "0");
