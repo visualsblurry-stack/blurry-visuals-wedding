@@ -23,24 +23,24 @@
 
   window.BLURRY_WEDDING_STORIES = [
     {
-      slug: "sachi-vedant",
-      couple: ["Sachi", "Vedant"],
+      slug: "shachi-vedant",
+      couple: ["Shachi", "Vedant"],
       date: "Wedding story",
-      venue: "Real wedding",
+      venue: "Mumbai",
       city: "India",
       type: "Photography coverage",
-      cover: "img/stories/sachi-vedant/cover.webp?v=20260905i",
+      cover: "img/stories/shachi-vedant/cover.webp?v=20260905i",
       heroSequence: [
-        "img/stories/sachi-vedant/257.webp",
-        "img/stories/sachi-vedant/264.webp",
-        "img/stories/sachi-vedant/268.webp",
-        "img/stories/sachi-vedant/303.webp",
-        "img/stories/sachi-vedant/304.webp",
-        "img/stories/sachi-vedant/306.webp",
-        "img/stories/sachi-vedant/307.webp",
-        "img/stories/sachi-vedant/356.webp",
-        "img/stories/sachi-vedant/369.webp",
-        "img/stories/sachi-vedant/418.webp"
+        "img/stories/shachi-vedant/257.webp",
+        "img/stories/shachi-vedant/264.webp",
+        "img/stories/shachi-vedant/268.webp",
+        "img/stories/shachi-vedant/303.webp",
+        "img/stories/shachi-vedant/304.webp",
+        "img/stories/shachi-vedant/306.webp",
+        "img/stories/shachi-vedant/307.webp",
+        "img/stories/shachi-vedant/356.webp",
+        "img/stories/shachi-vedant/369.webp",
+        "img/stories/shachi-vedant/418.webp"
       ],
       heroFocalPoints: [
         "center 42%",
@@ -55,9 +55,9 @@
         "center 44%"
       ],
       oneLiner: "A real wedding gallery told through the studio's full web selection.",
-      lede: "Sachi and Vedant's page is now built from real photographs, arranged as one uninterrupted visual story.",
+      lede: "Shachi and Vedant's page is now built from real photographs, arranged as one uninterrupted visual story.",
       story: "The gallery below uses a tighter edit from their web-ready image selection: ten frames, no chapter breaks, and no interruptions between photographs.",
-      gallery: localGallery("sachi-vedant", 484, "Sachi & Vedant"),
+      gallery: localGallery("shachi-vedant", 484, "Shachi & Vedant"),
       noPlaceholders: true,
       textlessStory: true,
       hideHeroStats: true,
@@ -67,7 +67,7 @@
       slug: "vedin-megha",
       couple: ["Vedin", "Megha"],
       date: "Wedding story",
-      venue: "Real wedding",
+      venue: "Hyderabad",
       city: "India",
       type: "Photography coverage",
       cover: "img/stories/vedin-megha/cover.webp?v=20260905i",
@@ -202,10 +202,10 @@
      up gradually instead of all at once.
      ------------------------------------------------------------------ */
   var CHAPTERS = {
-    "sachi-vedant": {
+    "shachi-vedant": {
       portraits: {
         time: "Across the celebration",
-        title: "Sachi and Vedant, frame by frame.",
+        title: "Shachi and Vedant, frame by frame.",
         note: "A real gallery from the studio's web selection, kept as one continuous visual story."
       }
     },
@@ -308,7 +308,7 @@
      coverage. Everything here is optional; a story drops the section it
      lacks rather than rendering an empty one. */
   var EXTRAS = {
-    "sachi-vedant": {
+    "shachi-vedant": {
       stats: [["484", "Photographs"]]
     },
     "vedin-megha": {

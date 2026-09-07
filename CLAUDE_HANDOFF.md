@@ -19,7 +19,7 @@ That second folder is a different corporate website that is already hosted.
 - Architecture: static HTML, CSS, and vanilla JavaScript; there is no build step.
 - Local URL: `http://127.0.0.1:8011/`
 - Investment modal URL: `http://127.0.0.1:8011/#investment`
-- Story page URL: `http://127.0.0.1:8011/story.html?s=sachi-vedant`
+- Story page URL: `http://127.0.0.1:8011/story.html?s=shachi-vedant`
 - Contact email: `visualsblurry@gmail.com`
 - WhatsApp: Aakash `+91 70323 90419`, Gautam `+91 98929 64884`
 - Brand colour: `#789c9f` (`--teal`); `#547c7f` (`--teal-deep`) wherever white text sits on it
@@ -73,7 +73,7 @@ and leak live markup onto the page.
 
 ### Hero
 
-- Eight slides, all studio-owned WebP in `img/hero/`. No stock.
+- Thirteen slides, all studio-owned WebP in `img/hero/`. No stock.
 - First slide loads eagerly and is preloaded; the rest lazy-load via `data-bg`.
 - Hero copy is intentionally limited to the static headline and the three proof figures.
   Photographs continue rotating without changing the text.
@@ -143,7 +143,7 @@ Two traps when measuring in a headless tab:
    the owner's stated 1,25,000 and 2,25,000. If the brochure is current, the site
    underquotes by about 1.5 lakh per booking.
 2. **Aakash or Akash.** The brochure spells it *Akash*; the site uses *Aakash*.
-3. **Coming-soon stories.** Only Sachi + Vedant and Vedin + Megha currently have complete
+3. **Coming-soon stories.** Only Shachi + Vedant and Vedin + Megha currently have complete
    local galleries. The remaining story records still need final studio photography.
 
 ## Safety And Editing Rules

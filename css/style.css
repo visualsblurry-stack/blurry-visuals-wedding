@@ -283,42 +283,19 @@ body.menu-open{overflow:hidden;}
 .r-169{aspect-ratio:16/9;} .r-1610{aspect-ratio:16/10;} .r-23{aspect-ratio:2/3;}
 
 /* ========================= films ========================= */
-.films{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,3vw,40px);}
-.film{
-  position:relative;display:block;isolation:isolate;
-  border:2px solid var(--teal);background:var(--teal);
-  box-shadow:6px 6px 0 var(--teal-deep);
-  transition:translate .28s cubic-bezier(.16,.84,.3,1),box-shadow .28s ease;
-}
-.film .ph{aspect-ratio:16/9;border-radius:0;border-bottom:1px solid rgba(255,255,255,.2);}
-.film .ph::after{
-  background:linear-gradient(180deg,rgba(23,55,57,.02) 48%,rgba(23,55,57,.68) 100%),var(--grain);
-}
+.films{display:grid;grid-template-columns:1fr 1fr;gap:26px;}
+.film{position:relative;display:block;border:2px solid var(--teal);}
+.film .ph{aspect-ratio:16/9;}
 .film-play{
-  position:absolute;left:0;right:0;top:0;bottom:auto;z-index:4;
-  display:grid;place-items:center;aspect-ratio:16/9;pointer-events:none;
+  position:absolute;inset:0;z-index:4;display:grid;place-items:center;
 }
-.film-play > span:first-child{
-  width:74px;height:74px;border-radius:50%;border:2px solid var(--white);
-  display:grid;place-items:center;padding-left:4px;color:var(--white);font-size:20px;
-  background:var(--teal-deep);box-shadow:0 0 0 7px rgba(255,255,255,.15);
-  transition:transform .28s ease,background .28s ease,color .28s ease;
+.film-play span{
+  width:78px;height:78px;border-radius:50%;border:2px solid var(--champagne);
+  display:grid;place-items:center;color:var(--champagne);font-size:18px;
+  background:rgba(255,255,255,0.92);backdrop-filter:blur(4px);
+  transition:transform .3s,background .3s;
 }
-.film-watch{
-  position:absolute;left:16px;bottom:14px;
-  color:var(--white);font-size:9px;font-weight:700;line-height:1;letter-spacing:.18em;text-transform:uppercase;
-}
-.film:hover,.film:focus-visible{translate:-3px -3px;box-shadow:10px 10px 0 var(--teal-deep);}
-.film:hover .film-play span:first-child,.film:focus-visible .film-play span:first-child{
-  transform:scale(1.08);background:var(--white);color:var(--teal-deep);
-}
-.film-meta{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  min-height:66px;padding:14px 16px;background:var(--teal);color:var(--white);
-}
-.film-meta h3{min-width:0;font-size:22px;color:var(--white);}
-.film-meta h3 em{font-style:italic;color:rgba(255,255,255,.78);}
-.film-meta small{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,.68);white-space:nowrap;}
+.film:hover .film-play span{transform:scale(1.1);background:var(--white);}
 .film-note{margin-top:26px;font-size:12px;color:var(--ash);letter-spacing:0.06em;}
 
 /* film lightbox */
@@ -364,11 +341,11 @@ body.menu-open{overflow:hidden;}
 }
 .founder-portrait{min-width:0;margin:0;}
 .founder-frame{
-  overflow:hidden;aspect-ratio:2/3;border:2px solid var(--teal);
-  background:rgba(120,156,159,.12);box-shadow:6px 6px 0 var(--teal-deep);
+  overflow:hidden;aspect-ratio:2/3;border:3px solid #000;
+  background:#f0f0f0;
 }
 .founder-frame img{width:100%;height:100%;object-fit:cover;}
-.founder-portrait-akash img{object-position:center 42%;}
+.founder-portrait-akash img{object-position:center 30%;}
 .founder-portrait-gautam img{object-position:center 25%;}
 .founder-portrait figcaption{
   margin-top:13px;font-size:10px;font-weight:700;letter-spacing:.18em;
@@ -650,10 +627,24 @@ body.menu-open .story-return{opacity:0;visibility:hidden;transform:translateY(10
 /* ---- flat gallery (STORY_LAYOUT = "flat") ----
    One uninterrupted wall of photographs. No tone bands, no headings: the only
    job here is to hold the grid and get out of the way. The chaptered layout
-   below still owns .chapter-*; this reuses .chapter-grid and .chapter-shot so
-   both layouts stay pixel-identical in how a single frame renders. */
+   below still owns .chapter-*, and the flat wall reuses .chapter-grid and
+   .chapter-shot for their positioning/interaction plumbing - but overrides
+   the sizing below to a column masonry, so a frame here renders at its own
+   photograph's shape rather than the chaptered layout's fixed crop. */
 .story-gallery{padding:clamp(30px,5vh,58px) 0 clamp(46px,8vh,96px);background:var(--white);}
-.story-gallery .chapter-grid{margin-top:0;}
+/* Columns, not a 12-up grid: every frame keeps its true portrait or
+   landscape shape instead of being cropped to one ratio, and the varying
+   tile heights pack a lot more of the day into one screen. */
+.story-gallery .chapter-grid{
+  display:block;margin-top:0;columns:3;column-gap:clamp(10px,1.4vw,20px);
+}
+.story-gallery .chapter-shot{
+  aspect-ratio:auto;break-inside:avoid;margin:0 0 clamp(10px,1.4vw,20px);
+}
+/* Placeholders carry no photograph to take a shape from, so they keep a
+   fixed frame rather than collapsing to nothing. */
+.story-gallery .chapter-shot.ph{aspect-ratio:4/5;}
+.story-gallery .chapter-shot > img{height:auto;}
 /* A full story runs to about thirty frames and they are all in one section
    now, so each tile skips layout and paint until it is near the viewport.
    On the chaptered layout the section itself did this. */
@@ -987,13 +978,13 @@ body.cursor-custom [data-cursor] *{cursor:none;}
   .story-hero-slide:first-child{opacity:1;}
   .story-hero-slide:not(:first-child){display:none;}
   .hero-thumb{opacity:1;transform:none;}
-  .film:hover,.film:focus-visible{translate:none;}
 }
 
 /* ====================== responsive ====================== */
 @media (max-width:960px){
   .sec{padding:84px 0;}
   .masonry{columns:2;}
+  .story-gallery .chapter-grid{columns:2;}
   .stories{grid-template-columns:repeat(2,1fr);}
   .films{grid-template-columns:1fr;}
   .about-grid{grid-template-columns:1fr;gap:42px;}
@@ -1012,6 +1003,7 @@ body.cursor-custom [data-cursor] *{cursor:none;}
      on a phone and every photograph gets the same portrait crop. */
   .chapter-grid{grid-template-columns:1fr;}
   .chapter-shot{grid-column:1/-1;aspect-ratio:4/5;}
+  .story-gallery .chapter-grid{columns:1;}
   .masonry{columns:1;}
   .stories{grid-template-columns:1fr;}
   .form{grid-template-columns:1fr;}

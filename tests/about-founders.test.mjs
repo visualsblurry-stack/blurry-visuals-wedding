@@ -42,8 +42,8 @@ test("the About section presents Akash and Gautam in accessible portrait frames"
     {
       src: "img/founders/akash.webp",
       alt: "Akash, co-founder of Blurry Visuals",
-      width: "1023",
-      height: "1537",
+      width: "1060",
+      height: "1499",
       label: "Akash",
     },
     {
@@ -98,17 +98,22 @@ test("founder portraits use the approved responsive twin-frame treatment", async
 
   const frame = declarationsFor(".founder-frame");
   assert.match(frame, /aspect-ratio\s*:\s*2\/3/i);
-  assert.match(frame, /border\s*:\s*2px\s+solid\s+var\(--teal\)/i);
   assert.match(
     frame,
-    /box-shadow\s*:\s*6px\s+6px\s+0\s+var\(--teal-deep\)/i,
+    /border\s*:\s*3px\s+solid\s+#000/i,
+    "founder tiles must use a plain, sober black border, not the branded teal one",
+  );
+  assert.doesNotMatch(
+    frame,
+    /box-shadow/i,
+    "founder tiles must not keep the offset shadow effect",
   );
 
   const image = declarationsFor(".founder-frame img");
   assert.match(image, /object-fit\s*:\s*cover/i);
   assert.match(
     declarationsFor(".founder-portrait-akash img"),
-    /object-position\s*:\s*center\s+42%/i,
+    /object-position\s*:\s*center\s+30%/i,
   );
   assert.match(
     declarationsFor(".founder-portrait-gautam img"),

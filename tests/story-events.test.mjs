@@ -261,31 +261,31 @@ test("minimal real story heroes keep only the couple name and photo count", asyn
   );
 });
 
-test("Sachi hero plays ten selected stills while the full gallery remains intact", async () => {
+test("Shachi hero plays ten selected stills while the full gallery remains intact", async () => {
   const [stories, mainScript, styles] = await Promise.all([
     loadStories(),
     readProjectFile("js/main.js"),
     readProjectFile("css/style.css"),
   ]);
 
-  const sachi = stories.find((story) => story.slug === "sachi-vedant");
-  assert.ok(sachi, "Sachi & Vedant story is missing");
-  assert.equal(sachi.gallery.length, 484, "the full Sachi gallery must remain on the page");
+  const sachi = stories.find((story) => story.slug === "shachi-vedant");
+  assert.ok(sachi, "Shachi & Vedant story is missing");
+  assert.equal(sachi.gallery.length, 484, "the full Shachi gallery must remain on the page");
   assert.deepEqual(
     sachi.heroSequence,
     [
-      "img/stories/sachi-vedant/257.webp",
-      "img/stories/sachi-vedant/264.webp",
-      "img/stories/sachi-vedant/268.webp",
-      "img/stories/sachi-vedant/303.webp",
-      "img/stories/sachi-vedant/304.webp",
-      "img/stories/sachi-vedant/306.webp",
-      "img/stories/sachi-vedant/307.webp",
-      "img/stories/sachi-vedant/356.webp",
-      "img/stories/sachi-vedant/369.webp",
-      "img/stories/sachi-vedant/418.webp",
+      "img/stories/shachi-vedant/257.webp",
+      "img/stories/shachi-vedant/264.webp",
+      "img/stories/shachi-vedant/268.webp",
+      "img/stories/shachi-vedant/303.webp",
+      "img/stories/shachi-vedant/304.webp",
+      "img/stories/shachi-vedant/306.webp",
+      "img/stories/shachi-vedant/307.webp",
+      "img/stories/shachi-vedant/356.webp",
+      "img/stories/shachi-vedant/369.webp",
+      "img/stories/shachi-vedant/418.webp",
     ],
-    "Sachi hero must use the selected close/couple frames",
+    "Shachi hero must use the selected close/couple frames",
   );
 
   assert.match(
@@ -350,15 +350,15 @@ test("Vedin and Megha hero plays ten selected stills while the full gallery rema
   );
 });
 
-test("Sachi hero stills carry desktop-safe focal points", async () => {
+test("Shachi hero stills carry desktop-safe focal points", async () => {
   const [stories, mainScript, styles] = await Promise.all([
     loadStories(),
     readProjectFile("js/main.js"),
     readProjectFile("css/style.css"),
   ]);
 
-  const sachi = stories.find((story) => story.slug === "sachi-vedant");
-  assert.ok(sachi, "Sachi & Vedant story is missing");
+  const sachi = stories.find((story) => story.slug === "shachi-vedant");
+  assert.ok(sachi, "Shachi & Vedant story is missing");
   assert.deepEqual(
     sachi.heroFocalPoints,
     [
@@ -413,16 +413,16 @@ test("minimal hero copy sits lower and farther left on desktop", async () => {
   );
 });
 
-test("Sachi's minimal hero can show only the couple name", async () => {
+test("Shachi's minimal hero can show only the couple name", async () => {
   const [stories, mainScript, styles] = await Promise.all([
     loadStories(),
     readProjectFile("js/main.js"),
     readProjectFile("css/style.css"),
   ]);
 
-  const sachi = stories.find((story) => story.slug === "sachi-vedant");
-  assert.ok(sachi, "Sachi & Vedant story is missing");
-  assert.equal(sachi.hideHeroStats, true, "Sachi's hero count should be opt-out");
+  const sachi = stories.find((story) => story.slug === "shachi-vedant");
+  assert.ok(sachi, "Shachi & Vedant story is missing");
+  assert.equal(sachi.hideHeroStats, true, "Shachi's hero count should be opt-out");
   assert.match(
     mainScript,
     /var statsHtml = st\.stats && !st\.hideHeroStats\s*\?/,
@@ -525,7 +525,7 @@ test("real stories produce sections that add up", async () => {
 test("the first two story cards use real local wedding galleries", async () => {
   const stories = await loadStories();
   const expected = [
-    ["sachi-vedant", "Sachi", "Vedant", 484],
+    ["shachi-vedant", "Shachi", "Vedant", 484],
     ["vedin-megha", "Vedin", "Megha", 278],
   ];
 
@@ -566,7 +566,7 @@ test("the homepage story grid shows real covers plus one coming-soon teaser", as
   const homepageStories = stories.filter((story) => story.noPlaceholders || story.homepageTeaser);
   assert.deepEqual(
     homepageStories.map((story) => story.slug),
-    ["sachi-vedant", "vedin-megha", "ishita-arjun"],
+    ["shachi-vedant", "vedin-megha", "ishita-arjun"],
     "the homepage should show two live stories and Ishita & Arjun as the only teaser",
   );
 
