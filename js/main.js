@@ -1111,6 +1111,64 @@
       }, 3600);
     }
 
+    /* ---- flat gallery: keep the shooting order while packing the wall ----
+       The tiles render in order in the DOM; a CSS multi-column layout reflows
+       them into top-to-bottom columns and loses that, so the day looks
+       shuffled. Lay them on a fine 8px grid instead and give each tile a row
+       span from its own height — the gallery still reads 1, 2, 3 across and
+       down, with no ragged gaps between mixed portrait and landscape frames. */
+    var flatGrid = storyRoot.querySelector(".story-gallery .chapter-grid");
+    if (flatGrid) {
+      var FLAT_GAP = 18;
+      var flatTiles = [].slice.call(flatGrid.querySelectorAll(".chapter-shot"));
+      var spanFor = function (h, rowPx) {
+        return "span " + Math.max(1, Math.round((h + FLAT_GAP) / rowPx));
+      };
+      var ratioOf = function (el) {
+        var m = /^\s*([\d.]+)\s*\/\s*([\d.]+)/.exec(window.getComputedStyle(el).aspectRatio);
+        return m ? parseFloat(m[1]) / parseFloat(m[2]) : 0.75;
+      };
+      var flatMetrics = function () {
+        var gs = window.getComputedStyle(flatGrid);
+        var cols = (gs.gridTemplateColumns.match(/px/g) || [0]).length || 1;
+        var colW = (flatGrid.clientWidth - (parseFloat(gs.columnGap) || 0) * (cols - 1)) / cols;
+        return { rowPx: parseFloat(gs.gridAutoRows) || 8, colW: colW };
+      };
+      /* One read pass, then one write pass, so a 240-frame wall never thrashes
+         layout. A tile that has not been laid out yet reports height 0, so fall
+         back to its column width times its aspect ratio — the placeholder 3/4
+         until the photo loads, its true shape after. */
+      var relayoutFlat = function () {
+        var m = flatMetrics();
+        var heights = flatTiles.map(function (t) {
+          return t.getBoundingClientRect().height || (m.colW / ratioOf(t));
+        });
+        flatTiles.forEach(function (t, i) {
+          t.style.gridRowEnd = spanFor(heights[i], m.rowPx);
+        });
+      };
+      flatTiles.forEach(function (tile) {
+        var img = tile.querySelector("img");
+        if (!img) return;
+        var onReady = function () {
+          if (!img.naturalWidth) return;
+          tile.style.aspectRatio = img.naturalWidth + " / " + img.naturalHeight;
+          var m = flatMetrics();
+          var h = tile.getBoundingClientRect().height || (m.colW * img.naturalHeight / img.naturalWidth);
+          tile.style.gridRowEnd = spanFor(h, m.rowPx);
+        };
+        if (img.complete && img.naturalWidth) onReady();
+        else img.addEventListener("load", onReady, { once: true });
+      });
+      window.requestAnimationFrame(function () { window.requestAnimationFrame(relayoutFlat); });
+      window.addEventListener("load", relayoutFlat);
+      var flatRAF;
+      window.addEventListener("resize", function () {
+        window.cancelAnimationFrame(flatRAF);
+        flatRAF = window.requestAnimationFrame(relayoutFlat);
+      }, { passive: true });
+    }
+
   }
 
   /* ---------- story page: floating way out ---------- */

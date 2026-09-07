@@ -108,10 +108,8 @@
       slug: "niki-swapnesh",
       couple: ["Niki", "Swapnesh"],
       date: "Wedding story",
-      // TODO: real venue/city from the owner - placeholder until supplied,
-      // same as Shachi/Vedin carried before their locations were confirmed.
-      venue: "Real wedding",
-      city: "India",
+      venue: "Kino Cottage",
+      city: "Mumbai",
       type: "Photography coverage",
       cover: "img/stories/niki-swapnesh/cover.webp?v=20260907h",
       heroSequence: [

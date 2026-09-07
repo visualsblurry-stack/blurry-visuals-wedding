@@ -232,6 +232,7 @@ body.menu-open{overflow:hidden;}
 .ph{
   position:relative;overflow:hidden;border-radius:2px;background:var(--soot);
   display:grid;place-items:center;isolation:isolate;
+  margin:0; /* <figure class="ph"> would otherwise carry the UA 1em/40px margin */
 }
 .ph::before{ /* inner hairline frame */
   content:"";position:absolute;inset:14px;border:1px solid rgba(255,255,255,0.34);
@@ -615,26 +616,33 @@ body.menu-open .story-return{opacity:0;visibility:hidden;transform:translateY(10
    job here is to hold the grid and get out of the way. The chaptered layout
    below still owns .chapter-*, and the flat wall reuses .chapter-grid and
    .chapter-shot for their positioning/interaction plumbing - but overrides
-   the sizing below to a column masonry, so a frame here renders at its own
-   photograph's shape rather than the chaptered layout's fixed crop. */
+   the sizing below to a JS-driven row-span masonry, so a frame here renders
+   at its own photograph's shape, in shooting order, rather than the
+   chaptered layout's fixed crop. */
 .story-gallery{padding:clamp(30px,5vh,58px) 0 clamp(46px,8vh,96px);background:var(--white);}
-/* Columns, not a 12-up grid: every frame keeps its true portrait or
-   landscape shape instead of being cropped to one ratio, and the varying
-   tile heights pack a lot more of the day into one screen. */
+/* A row-order masonry, not CSS multi-column: multi-column flows frame 1..N
+   down column one, then column two, so reading left-to-right jumps ~120
+   frames a step and the day looks shuffled. This packs the same varied tile
+   heights onto a fine grid while keeping the DOM's shooting order. main.js
+   gives each tile its photo's true aspect ratio and a matching row span. */
 .story-gallery .chapter-grid{
-  display:block;margin-top:0;columns:3;column-gap:clamp(10px,1.4vw,20px);
+  display:grid;grid-template-columns:repeat(2,1fr);
+  grid-auto-rows:8px;align-items:start; /* start, not stretch: a tile keeps its
+  aspect-ratio height so JS can read it and set a matching row span */
+  column-gap:clamp(10px,1.4vw,20px);row-gap:0;margin-top:0;
+}
+/* Three across once there is room, matching the old wall's density. Grid still
+   fills row by row, so it reads 1-2-3 then 4-5-6 down the page. */
+@media (min-width:1000px){
+  .story-gallery .chapter-grid{grid-template-columns:repeat(3,1fr);}
 }
 .story-gallery .chapter-shot{
-  aspect-ratio:auto;break-inside:avoid;margin:0 0 clamp(10px,1.4vw,20px);
+  grid-column:auto; /* drop the chaptered layout's 12-col span; one tile, one column */
+  aspect-ratio:3/4;margin:0; /* JS replaces the ratio once the photo loads */
 }
 /* Placeholders carry no photograph to take a shape from, so they keep a
    fixed frame rather than collapsing to nothing. */
 .story-gallery .chapter-shot.ph{aspect-ratio:4/5;}
-.story-gallery .chapter-shot > img{height:auto;}
-/* A full story runs to about thirty frames and they are all in one section
-   now, so each tile skips layout and paint until it is near the viewport.
-   On the chaptered layout the section itself did this. */
-.story-gallery .chapter-shot{content-visibility:auto;contain-intrinsic-size:auto 420px;}
 
 .story-body{padding:70px 0 30px;}
 .story-body .lede{font-family:var(--ff-display);font-style:italic;font-weight:340;font-size:clamp(20px,2.4vw,27px);line-height:1.5;max-width:30ch;color:var(--ivory);margin:0 0 26px;}
@@ -970,7 +978,6 @@ body.cursor-custom [data-cursor] *{cursor:none;}
 @media (max-width:960px){
   .sec{padding:84px 0;}
   .masonry{columns:2;}
-  .story-gallery .chapter-grid{columns:2;}
   .stories{grid-template-columns:repeat(2,1fr);}
   .films{grid-template-columns:1fr;}
   .about-grid{grid-template-columns:1fr;gap:42px;}
@@ -989,7 +996,7 @@ body.cursor-custom [data-cursor] *{cursor:none;}
      on a phone and every photograph gets the same portrait crop. */
   .chapter-grid{grid-template-columns:1fr;}
   .chapter-shot{grid-column:1/-1;aspect-ratio:4/5;}
-  .story-gallery .chapter-grid{columns:1;}
+  .story-gallery .chapter-grid{grid-template-columns:1fr;}
   .masonry{columns:1;}
   .stories{grid-template-columns:1fr;}
   .form{grid-template-columns:1fr;}
@@ -1017,11 +1024,22 @@ body.cursor-custom [data-cursor] *{cursor:none;}
   /* No room for previews beside the copy on a phone; the dots still reach
      every photograph. */
   .hero-thumbs{display:none;}
-  .hero-foot{flex-direction:column;align-items:flex-start;gap:10px;padding:12px 18px 14px;}
-  .hero-proof{gap:6px 22px;}
+  /* stretch, not flex-start: a shrink-wrapped .hero-proof never wraps, so its
+     third stat ran off the right edge. Full width lets it wrap instead. */
+  .hero-foot{flex-direction:column;align-items:stretch;gap:10px;padding:12px 18px 14px;}
+  .hero-proof{gap:6px 18px;}
   .hero-proof dt{font-size:19px;}
-  .hero-dots{margin-left:-10px;}
-  .hero-dot{width:38px;height:44px;}
-  .founder-portraits{grid-template-columns:1fr;max-width:320px;gap:28px;}
+  /* 13 dots at 38px are 494px wide — half of them fell off a 375px screen.
+     Tighten the hit area to fit one row, and wrap the remainder if it doesn't. */
+  .hero-dots{margin-left:0;flex-wrap:wrap;justify-content:flex-start;gap:2px;}
+  .hero-dot{width:24px;height:44px;}
+  /* mobile About: lead with the studio's story, then the two founders as a
+     pair. In source order .founder-portraits comes first, so the section
+     otherwise opens on two big bordered faces with no heading above them. */
+  .about-copy{order:-1;}
+  .founder-portraits{grid-template-columns:1fr 1fr;max-width:none;margin-inline:0;gap:14px;margin-top:6px;}
+  /* a 2/3 frame at phone width was a ~480px slab per founder; 4/5 at half
+     width makes the duo a single tidy row instead of a screen-and-a-half. */
+  .founder-frame{aspect-ratio:4/5;border-width:2px;}
   .about-facts{gap:24px;}
 }
