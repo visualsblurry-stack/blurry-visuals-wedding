@@ -522,11 +522,12 @@ test("real stories produce sections that add up", async () => {
   assert.ok(EVENT_ORDER.includes("nikah"), "the renderer must keep nikah as a supported event");
 });
 
-test("the first two story cards use real local wedding galleries", async () => {
+test("the first three story cards use real local wedding galleries", async () => {
   const stories = await loadStories();
   const expected = [
     ["shachi-vedant", "Shachi", "Vedant", 484],
     ["vedin-megha", "Vedin", "Megha", 278],
+    ["niki-swapnesh", "Niki", "Swapnesh", 243],
   ];
 
   for (const [index, slug, first, second, count] of expected.map((row, i) => [i, ...row])) {
@@ -536,7 +537,7 @@ test("the first two story cards use real local wedding galleries", async () => {
     assert.equal(story.gallery.length, count);
     assert.equal(story.noPlaceholders, true);
     assert.equal(story.textlessStory, true);
-    assert.match(story.cover, new RegExp(`^img/stories/${slug}/cover\\.webp\\?v=20260905i$`));
+    assert.match(story.cover, new RegExp(`^img/stories/${slug}/cover\\.webp\\?v=20260907h$`));
 
     story.gallery.forEach((shot, shotIndex) => {
       const frame = String(shotIndex + 1).padStart(3, "0");
@@ -557,7 +558,7 @@ test("the first two story cards use real local wedding galleries", async () => {
   }
 });
 
-test("the homepage story grid shows real covers plus one coming-soon teaser", async () => {
+test("the homepage story grid shows three real covers and no coming-soon teaser", async () => {
   const [stories, mainScript] = await Promise.all([
     loadStories(),
     readProjectFile("js/main.js"),
@@ -566,16 +567,16 @@ test("the homepage story grid shows real covers plus one coming-soon teaser", as
   const homepageStories = stories.filter((story) => story.noPlaceholders || story.homepageTeaser);
   assert.deepEqual(
     homepageStories.map((story) => story.slug),
-    ["shachi-vedant", "vedin-megha", "ishita-arjun"],
-    "the homepage should show two live stories and Ishita & Arjun as the only teaser",
+    ["shachi-vedant", "vedin-megha", "niki-swapnesh"],
+    "the homepage should show all three real galleries, none of them a teaser",
+  );
+  assert.ok(
+    homepageStories.every((story) => !story.homepageTeaser),
+    "no current story should render as a coming-soon teaser",
   );
 
-  const teaser = stories.find((story) => story.slug === "ishita-arjun");
-  assert.equal(
-    teaser.homepageTeaser,
-    true,
-    "Ishita & Arjun should remain visible as a coming-soon teaser",
-  );
+  // The coming-soon rendering path stays in main.js even though nothing
+  // uses it today - a future placeholder story can still opt in.
   assert.match(
     mainScript,
     /BLURRY_WEDDING_STORIES\.filter\(function \(st\) \{\s*return st\.noPlaceholders \|\| st\.homepageTeaser;\s*\}\)\.map/,
@@ -584,7 +585,7 @@ test("the homepage story grid shows real covers plus one coming-soon teaser", as
   assert.match(
     mainScript,
     /st\.homepageTeaser[\s\S]{0,240}?data-cursor="Coming soon"/,
-    "teaser cards must advertise Coming soon on hover",
+    "the coming-soon rendering path must still exist for a future teaser story",
   );
   assert.match(
     mainScript,

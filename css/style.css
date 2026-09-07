@@ -502,20 +502,6 @@ body.investment-open{overflow:hidden;}
 .featured .package-link{color:var(--white);}
 .package-link:hover span{transform:translateX(3px);}
 .package-link span{transition:transform .2s;}
-/* ---- add-ons ---- */
-.addons{margin:26px 0 0;padding:34px;border:1px solid var(--line);background:rgba(120,156,159,.07);}
-.addons-head{margin-bottom:20px;}
-.addons-head h2{font-size:clamp(26px,3vw,36px);}
-.addons-head h2 em{font-style:italic;color:var(--teal-deep);}
-.addons-list{
-  list-style:none;margin:0;padding:0;
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 40px;
-}
-.addons-list li{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px dotted var(--line);}
-.addons-list span{color:var(--ash);}
-.addons-list b{font-weight:600;color:var(--ivory);white-space:nowrap;}
-.addons-list b small{font-size:11px;font-weight:400;color:var(--ash);}
-.addons-note{margin:20px 0 0;font-size:14px;color:var(--ash);}
 
 .investment-travel{margin:26px 0 60px;padding:20px 24px;border-left:4px solid var(--teal-deep);background:rgba(120,156,159,.1);color:var(--ash);}
 .faq-heading h2{font-size:clamp(34px,4vw,52px);}
