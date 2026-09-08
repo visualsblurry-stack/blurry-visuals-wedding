@@ -386,7 +386,7 @@ body.menu-open{overflow:hidden;}
 .quote-dots button.act{background:var(--champagne);}
 
 /* ======================== contact ======================== */
-.contact-section{isolation:isolate;overflow:hidden;background:linear-gradient(rgba(255,255,255,.84),rgba(255,255,255,.9)),url('../img/hero/hero-wedding-portrait-couple.webp') center 44%/cover;}
+.contact-section{isolation:isolate;overflow:hidden;background:linear-gradient(rgba(255,255,255,.84),rgba(255,255,255,.9)),url('../img/hero/hero-wedding-arch-walk.webp') center 44%/cover;}
 .contact-section .phera{color:var(--ivory);}
 .contact-lede{width:100%;padding:0 clamp(22px,4.6vw,76px);}
 .contact-grid{display:grid;grid-template-columns:minmax(0,0.86fr) minmax(0,1.14fr);align-items:stretch;width:100%;}
