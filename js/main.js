@@ -740,7 +740,9 @@
   var storyRoot = document.getElementById("story-root");
   if (storyRoot && window.BLURRY_WEDDING_STORIES) {
     var slug = new URLSearchParams(location.search).get("s");
-    var list = window.BLURRY_WEDDING_STORIES;
+    // Only the real weddings are navigable — prev/next never lands on a
+    // stock-placeholder story.
+    var list = window.BLURRY_WEDDING_STORIES.filter(function (s) { return s.noPlaceholders; });
     var idx = list.findIndex(function (s) { return s.slug === slug; });
     if (idx === -1) { location.replace("index.html#stories"); return; }
     var st = list[idx];
