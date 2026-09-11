@@ -1020,6 +1020,12 @@ body.cursor-custom [data-cursor] *{cursor:none;}
   .investment-cta{width:100%;margin-top:22px;white-space:normal;text-align:center;}
   .ftr nav{width:100%;flex-wrap:wrap;gap:10px 18px;}
   .story-gallery{grid-template-columns:1fr;}
+  /* A tall, narrow viewport crops a very different slice of a hero photograph
+     than the wide desktop box does — the same --hero-position that centres a
+     couple on desktop can push them off one edge on a phone. A slide with a
+     --hero-position-mobile carries a phone-specific focal point instead; the
+     rest fall back to the desktop value. */
+  .hero-slide{background-position:var(--hero-position-mobile,var(--hero-position,center));}
   .hero-in{padding-bottom:calc(var(--hero-foot-h,116px) + 26px);}
   .hero h1{font-size:clamp(34px,9vw,46px);}
   /* No room for previews beside the copy on a phone; the dots still reach
