@@ -97,7 +97,7 @@
   </div>
 
   <div class="hero-in">
-    <h1>Honest Stories,<br><em>Timelessly Told</em></h1>
+    <h1 data-split>Honest Stories,<br><em>Timelessly Told</em></h1>
   </div>
 
   <!-- What is coming next. Filled by main.js after load so these previews
@@ -212,7 +212,7 @@
   <div class="wrap">
     <div class="phera rv"><b>Real weddings</b></div>
     <div class="sec-head rv">
-      <h2>Couples, <em>Remembered</em></h2>
+      <h2 data-split>Couples, <em>Remembered</em></h2>
       <p>Step inside each celebration — the venue, the people, the moments, and the frames that brought it all to life.</p>
     </div>
     <div class="stories" id="stories-grid"><!-- built from stories-data.js --></div>
@@ -224,7 +224,7 @@
   <div class="wrap">
     <div class="phera rv"><b>The films</b></div>
     <div class="sec-head rv">
-      <h2>Weddings, <em>as they happened</em></h2>
+      <h2 data-split>Weddings, <em>as they happened</em></h2>
       <p>Not a highlight reel — a film. The people, the sounds, the pauses, the chaos, all of it. Made from your day, not about it.</p>
     </div>
 
@@ -269,7 +269,7 @@
         </figure>
       </div>
       <div class="about-copy rv">
-        <h2>Honest stories,<br><em>timelessly told</em></h2>
+        <h2 data-split>Honest stories,<br><em>timelessly told</em></h2>
         <p style="margin-top:26px;">At Blurry Visuals we believe your wedding is more than a timeline of events — it is an emotional journey. We are here to help you remember how it felt, not just how it looked.</p>
         <p>The studio was born in 2024 out of Akash and Gautam's years behind the lens, capturing love stories in their many forms. What began as a passion gradually became something deeper: a commitment to telling stories that feel real, honest and deeply personal.</p>
         <div class="about-people">
@@ -501,5 +501,11 @@
 
 <script src="js/stories-data.js?v=20260916a"></script>
 <script src="js/main.js?v=20260916a"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
+<script>gsap.registerPlugin(ScrollTrigger, SplitText);</script>
+<script src="js/organo-motion.js"></script>
 </body>
 </html>
