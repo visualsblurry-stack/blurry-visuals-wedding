@@ -29,7 +29,7 @@
       venue: "Mumbai",
       city: "India",
       type: "Photography coverage",
-      cover: "img/stories/shachi-vedant/cover.webp?v=20260908c",
+      cover: "img/stories/shachi-vedant/cover.webp?v=20260916a",
       heroSequence: [
         "img/stories/shachi-vedant/021.webp",
         "img/stories/shachi-vedant/031.webp",
@@ -70,7 +70,7 @@
       venue: "Hyderabad",
       city: "India",
       type: "Photography coverage",
-      cover: "img/stories/vedin-megha/cover.webp?v=20260908c",
+      cover: "img/stories/vedin-megha/cover.webp?v=20260916a",
       heroSequence: [
         "img/stories/vedin-megha/013.webp",
         "img/stories/vedin-megha/049.webp",
@@ -111,7 +111,7 @@
       venue: "Kino Cottage",
       city: "Mumbai",
       type: "Photography coverage",
-      cover: "img/stories/niki-swapnesh/cover.webp?v=20260908c",
+      cover: "img/stories/niki-swapnesh/cover.webp?v=20260916a",
       heroSequence: [
         "img/stories/niki-swapnesh/021.webp",
         "img/stories/niki-swapnesh/045.webp",
