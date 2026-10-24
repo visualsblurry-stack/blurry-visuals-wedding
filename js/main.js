@@ -2,13 +2,13 @@
    Blurry Visuals Weddings — site behaviour
    Header, drawer, hero slideshow, portfolio filters, films
    lightbox, story cards + story page renderer, testimonials,
-   inquiry form → WhatsApp. No dependencies.
+   inquiry form and package inquiry → WhatsApp. No dependencies.
    ============================================================ */
 (function () {
   "use strict";
 
   var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var WHATSAPP = "917032390419"; // studio WhatsApp, digits only
+  var WHATSAPP = "917032390419"; // Akash's WhatsApp (the contact section's first row), digits only
 
   /* ---------- header solid-on-scroll ---------- */
   var hdr = document.querySelector(".hdr");
@@ -625,12 +625,31 @@
   var investmentDialog = investmentModal ? investmentModal.querySelector(".investment-dialog") : null;
   var investmentClose = investmentModal ? investmentModal.querySelector("[data-close-investment]") : null;
   var investmentLastFocus = null;
+  var FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
-  function investmentFocusable() {
-    if (!investmentDialog) return [];
-    return Array.prototype.slice.call(investmentDialog.querySelectorAll(
-      'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
-    )).filter(function (el) { return !el.hidden && el.offsetParent !== null; });
+  function focusableIn(container) {
+    if (!container) return [];
+    return Array.prototype.slice.call(container.querySelectorAll(FOCUSABLE))
+      .filter(function (el) { return !el.hidden && el.offsetParent !== null; });
+  }
+
+  // Keeps Tab inside an open dialog instead of walking into the page behind.
+  function trapTab(e, container) {
+    var focusable = focusableIn(container);
+    if (!focusable.length) {
+      e.preventDefault();
+      container.focus();
+      return;
+    }
+    var first = focusable[0];
+    var last = focusable[focusable.length - 1];
+    if (e.shiftKey && (document.activeElement === first || document.activeElement === container)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
   }
 
   function openInvestmentModal(updateHash) {
@@ -651,6 +670,7 @@
 
   function closeInvestmentModal(updateHash) {
     if (!investmentModal || investmentModal.hidden) return;
+    closeInquiry({ fromHistory: true, keepFocus: true });
     investmentModal.hidden = true;
     investmentModal.setAttribute("aria-hidden", "true");
     document.body.classList.remove("investment-open");
@@ -658,6 +678,429 @@
       history.replaceState(null, "", location.pathname + location.search);
     }
     if (investmentLastFocus && document.contains(investmentLastFocus)) investmentLastFocus.focus();
+  }
+
+  /* ---------- collections: both side by side, or one at a time on a phone ---------- */
+  var packagesWrap = investmentModal ? investmentModal.querySelector(".investment-packages") : null;
+  var packageTabs = investmentModal ? Array.prototype.slice.call(investmentModal.querySelectorAll(".package-tab")) : [];
+  var packageCards = packagesWrap ? Array.prototype.slice.call(packagesWrap.querySelectorAll("[data-package]")) : [];
+  var packageOrder = packageCards.map(function (card) { return card.getAttribute("data-package"); });
+  var switcherQuery = window.matchMedia("(max-width:720px)");
+  var activePackage = packageOrder[0] || "intimate";
+  var swapTimer = null;
+
+  // Tab roles only while the tabs are on screen; on wider screens the two
+  // cards are plain articles labelled by their own headings.
+  function renderPackages() {
+    if (!packagesWrap) return;
+    var tabbed = switcherQuery.matches;
+    packagesWrap.setAttribute("data-active", activePackage);
+    packageCards.forEach(function (card) {
+      var key = card.getAttribute("data-package");
+      if (tabbed) {
+        card.setAttribute("role", "tabpanel");
+        card.setAttribute("aria-labelledby", "package-tab-" + key);
+        card.hidden = key !== activePackage;
+      } else {
+        card.removeAttribute("role");
+        card.setAttribute("aria-labelledby", "package-" + key + "-name");
+        card.hidden = false;
+      }
+    });
+    packageTabs.forEach(function (tab) {
+      var on = tab.getAttribute("aria-controls") === "package-" + activePackage;
+      tab.setAttribute("aria-selected", on ? "true" : "false");
+      tab.tabIndex = on ? 0 : -1;
+    });
+  }
+
+  function selectPackage(key, focusTab) {
+    if (packageOrder.indexOf(key) === -1) return;
+    if (focusTab) {
+      var tab = document.getElementById("package-tab-" + key);
+      if (tab) tab.focus();
+    }
+    if (key === activePackage) return;
+    window.clearTimeout(swapTimer);
+    if (REDUCED || !switcherQuery.matches) {
+      activePackage = key;
+      renderPackages();
+      return;
+    }
+    // A short fade so the swap reads as a change of card, not a jump.
+    packagesWrap.classList.add("is-swapping");
+    swapTimer = window.setTimeout(function () {
+      activePackage = key;
+      renderPackages();
+      packagesWrap.classList.remove("is-swapping");
+    }, 140);
+  }
+
+  if (packagesWrap) {
+    renderPackages();
+    if (switcherQuery.addEventListener) switcherQuery.addEventListener("change", renderPackages);
+    else if (switcherQuery.addListener) switcherQuery.addListener(renderPackages);
+
+    packageTabs.forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        selectPackage(tab.getAttribute("aria-controls").replace("package-", ""));
+      });
+      tab.addEventListener("keydown", function (e) {
+        var at = packageOrder.indexOf(activePackage);
+        var next = null;
+        if (e.key === "ArrowRight") next = packageOrder[Math.min(at + 1, packageOrder.length - 1)];
+        else if (e.key === "ArrowLeft") next = packageOrder[Math.max(at - 1, 0)];
+        else if (e.key === "Home") next = packageOrder[0];
+        else if (e.key === "End") next = packageOrder[packageOrder.length - 1];
+        if (!next) return;
+        e.preventDefault();
+        selectPackage(next, true);
+      });
+    });
+
+    /* A swipe only counts past 48px and mostly sideways, so a vertical scroll
+       through the card never flips it by accident. */
+    var swipeStart = null;
+    packagesWrap.addEventListener("pointerdown", function (e) {
+      if (!switcherQuery.matches || e.button > 0) return;
+      swipeStart = { x: e.clientX, y: e.clientY };
+    });
+    packagesWrap.addEventListener("pointerup", function (e) {
+      if (!swipeStart) return;
+      var dx = e.clientX - swipeStart.x;
+      var dy = e.clientY - swipeStart.y;
+      swipeStart = null;
+      if (Math.abs(dx) <= 48 || Math.abs(dx) <= 1.4 * Math.abs(dy)) return;
+      var at = packageOrder.indexOf(activePackage);
+      var next = packageOrder[dx < 0 ? at + 1 : at - 1];
+      if (next) selectPackage(next);
+    });
+    packagesWrap.addEventListener("pointercancel", function () { swipeStart = null; });
+  }
+
+  /* ---------- package inquiry → WhatsApp (to Akash) ---------- */
+  var inquiry = document.getElementById("package-inquiry");
+  var inquiryPanel = inquiry ? inquiry.querySelector(".inquiry-panel") : null;
+  var inquiryPackage = activePackage;
+  var inquiryStep = "form";
+  var inquiryTried = false;
+  var inquiryLastFocus = null;
+  var inquiryHideTimer = null;
+  var inquiryHistory = false;
+  var MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+  // "91XXXXXXXXXX" → "+91 XXXXX XXXXX", so the page shows the number the
+  // link actually opens, from the one WHATSAPP constant.
+  function displayPhone(digits) {
+    if (/^91\d{10}$/.test(digits)) return "+91 " + digits.slice(2, 7) + " " + digits.slice(7);
+    return "+" + digits;
+  }
+
+  function localToday() {
+    var d = new Date();
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().slice(0, 10);
+  }
+
+  function packageDetails(key) {
+    var card = document.getElementById("package-" + key);
+    var text = function (sel) {
+      var el = card && card.querySelector(sel);
+      return el ? el.textContent.trim() : "";
+    };
+    return { key: key, name: text("[data-package-name]"), price: text("[data-package-price]"), scope: text("[data-package-scope]") };
+  }
+
+  function inquiryField(name) {
+    return inquiryPanel ? inquiryPanel.elements[name] : null;
+  }
+
+  function inquiryValues() {
+    var type = inquiryPanel.querySelector('input[name="type"]:checked');
+    return {
+      name: inquiryField("name").value.trim(),
+      cc: inquiryField("cc").value,
+      phone: inquiryField("phone").value.replace(/[\s\-().]/g, "").replace(/^0+/, ""),
+      city: inquiryField("city").value.trim(),
+      date: inquiryField("date").value,
+      undecided: inquiryField("undecided").checked,
+      type: type ? type.value : "",
+      msg: inquiryField("msg").value.trim()
+    };
+  }
+
+  function inquiryErrors(v) {
+    var errors = {};
+    if (v.name.length < 2) errors.name = "Please add your name so we know who to reply to.";
+    if (!v.phone) errors.phone = "Add a mobile number so we can reply to you.";
+    else if (v.cc === "+91" ? !/^[6-9]\d{9}$/.test(v.phone) : !/^\d{6,14}$/.test(v.phone)) {
+      errors.phone = v.cc === "+91" ? "Enter a 10-digit mobile number." : "Enter a valid mobile number.";
+    }
+    if (v.city.length < 2) errors.city = "Tell us the city or venue for your event.";
+    if (v.date && !v.undecided && v.date < localToday()) {
+      errors.date = "Choose an upcoming date, or tick “Date not finalized yet”.";
+    }
+    return errors;
+  }
+
+  function readableLongDate(iso) {
+    var parts = String(iso).split("-");
+    var month = MONTH_NAMES[parseInt(parts[1], 10) - 1];
+    if (parts.length !== 3 || !month) return iso;
+    return parseInt(parts[2], 10) + " " + month + " " + parts[0];
+  }
+
+  // Blank optional fields are left out rather than sent as empty labels.
+  function inquiryMessage(v, pkg) {
+    var lines = [
+      "Hello Akash / Blurry Visuals Team! 👋",
+      "I am interested in your wedding photography services.",
+      "",
+      "Selected Package: " + pkg.name,
+      "Package Price: " + pkg.price,
+      "Coverage: " + (pkg.scope || "Single Day"),
+      "",
+      "Customer Details:",
+      "Name: " + v.name,
+      "Mobile: " + v.cc + " " + v.phone
+    ];
+    if (v.type) lines.push("Event Type: " + v.type);
+    if (v.undecided) lines.push("Event Date: Not finalized yet");
+    else if (v.date) lines.push("Event Date: " + readableLongDate(v.date));
+    lines.push("Location: " + v.city);
+    if (v.msg) lines.push("", "Additional Message:", v.msg);
+    lines.push("", "I would like to know more about availability, package details, and the booking process.", "Thank you!");
+    return lines.join("\n");
+  }
+
+  function whatsappUrl(message) {
+    return "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(message);
+  }
+
+  function showInquiryErrors(errors) {
+    ["name", "phone", "city", "date"].forEach(function (key) {
+      var input = inquiryField(key);
+      var note = document.getElementById("inq-" + key + "-err");
+      var shown = inquiryTried && !!errors[key];
+      if (input) input.setAttribute("aria-invalid", shown ? "true" : "false");
+      if (note) {
+        note.hidden = !shown;
+        note.textContent = shown ? errors[key] : "";
+      }
+    });
+  }
+
+  function renderInquiry() {
+    if (!inquiryPanel) return;
+    var pkg = packageDetails(inquiryPackage);
+    var preview = inquiryStep === "preview";
+    var banner = inquiryPanel.querySelector("[data-inquiry-package]");
+    banner.setAttribute("data-inquiry-package", pkg.key);
+    inquiryPanel.querySelector("[data-inquiry-name]").textContent = pkg.name;
+    inquiryPanel.querySelector("[data-inquiry-price]").textContent = pkg.price;
+    inquiryPanel.querySelector("[data-inquiry-scope]").textContent = pkg.scope;
+    inquiryPanel.querySelector("[data-inquiry-step]").textContent = preview ? "Step 2 of 2 · Preview" : "Step 1 of 2 · Your details";
+    inquiryPanel.querySelector("[data-inquiry-sub]").textContent = preview
+      ? "Check your message, then continue to WhatsApp to send it."
+      : "Your name, mobile number and city are needed. Share anything else you know so far.";
+    inquiryPanel.querySelector("[data-inquiry-form]").hidden = preview;
+    inquiryPanel.querySelector("[data-inquiry-preview]").hidden = !preview;
+    inquiryPanel.querySelector('[data-inquiry-actions="form"]').hidden = preview;
+    inquiryPanel.querySelector('[data-inquiry-actions="preview"]').hidden = !preview;
+    if (preview) {
+      var message = inquiryMessage(inquiryValues(), pkg);
+      var url = whatsappUrl(message);
+      inquiryPanel.querySelector("[data-inquiry-message]").textContent = message;
+      inquiryPanel.querySelector("[data-inquiry-continue]").href = url;
+      inquiryPanel.querySelector("[data-inquiry-wa-link]").href = url;
+    } else {
+      inquiryPanel.querySelector("[data-inquiry-fallback]").hidden = true;
+    }
+    showInquiryErrors(inquiryErrors(inquiryValues()));
+  }
+
+  // While the sheet is up, keep it above an on-screen keyboard: the layout
+  // viewport does not shrink for the keyboard, the visual viewport does.
+  function fitInquiryToViewport() {
+    var vv = window.visualViewport;
+    if (!inquiry || !vv) return;
+    var covered = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+    inquiry.style.setProperty("--kb", covered + "px");
+    inquiry.style.setProperty("--vvh", vv.height + "px");
+  }
+
+  function openInquiry(key, opener) {
+    if (!inquiry || !inquiryPanel) return;
+    window.clearTimeout(inquiryHideTimer);
+    var wasOpen = !inquiry.hidden && inquiry.classList.contains("is-open");
+    if (!wasOpen) inquiryLastFocus = opener || document.activeElement;
+    if (key !== inquiryPackage) inquiryStep = "form";
+    inquiryPackage = key;
+    renderInquiry();
+    inquiry.hidden = false;
+    if (investmentDialog) investmentDialog.inert = true;
+    fitInquiryToViewport();
+    // One history entry, so the browser back button (or an Android back
+    // swipe) closes the inquiry before it closes the investment panel.
+    if (!wasOpen && !inquiryHistory) {
+      history.pushState({ bvInquiry: true }, "", location.href);
+      inquiryHistory = true;
+    }
+    void inquiryPanel.offsetWidth; // start the open transition from the hidden pose
+    inquiry.classList.add("is-open");
+    window.setTimeout(function () {
+      var target = inquiryStep === "form" && !window.matchMedia("(max-width:640px)").matches
+        ? inquiryField("name") : inquiryPanel;
+      if (target && target.focus) target.focus({ preventScroll: true });
+    }, 80);
+  }
+
+  function closeInquiry(opts) {
+    opts = opts || {};
+    if (!inquiry || inquiry.hidden) return;
+    inquiry.classList.remove("is-open");
+    if (investmentDialog) investmentDialog.inert = false;
+    window.clearTimeout(inquiryHideTimer);
+    inquiryHideTimer = window.setTimeout(function () { inquiry.hidden = true; }, REDUCED ? 0 : 340);
+    if (inquiryHistory) {
+      inquiryHistory = false;
+      if (!opts.fromHistory && history.state && history.state.bvInquiry) history.back();
+    }
+    if (!opts.keepFocus && inquiryLastFocus && document.contains(inquiryLastFocus)) {
+      inquiryLastFocus.focus({ preventScroll: true });
+    }
+  }
+
+  function inquiryIsOpen() {
+    return !!inquiry && !inquiry.hidden && inquiry.classList.contains("is-open");
+  }
+
+  if (inquiry && inquiryPanel) {
+    var dateInput = inquiryField("date");
+    var undecidedInput = inquiryField("undecided");
+    var waDisplay = displayPhone(WHATSAPP);
+    inquiry.querySelectorAll("[data-wa-display]").forEach(function (el) { el.textContent = waDisplay; });
+    dateInput.min = localToday();
+
+    document.querySelectorAll("[data-inquire]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        openInquiry(button.getAttribute("data-inquire"), button);
+      });
+    });
+    inquiry.querySelectorAll("[data-inquiry-close]").forEach(function (el) {
+      el.addEventListener("click", function () { closeInquiry(); });
+    });
+
+    undecidedInput.addEventListener("change", function () {
+      if (undecidedInput.checked) dateInput.value = "";
+      dateInput.disabled = undecidedInput.checked;
+      renderInquiry();
+    });
+    // Errors appear only after a first attempt, then track each keystroke.
+    inquiryPanel.addEventListener("input", function () {
+      if (inquiryTried) showInquiryErrors(inquiryErrors(inquiryValues()));
+    });
+
+    inquiryPanel.addEventListener("submit", function (e) {
+      e.preventDefault();
+      inquiryTried = true;
+      var errors = inquiryErrors(inquiryValues());
+      var firstBad = ["name", "phone", "city", "date"].filter(function (k) { return errors[k]; })[0];
+      if (firstBad) {
+        showInquiryErrors(errors);
+        inquiryField(firstBad).focus();
+        return;
+      }
+      inquiryStep = "preview";
+      renderInquiry();
+      inquiryPanel.querySelector(".inquiry-body").scrollTop = 0;
+      inquiryPanel.querySelector("[data-inquiry-continue]").focus({ preventScroll: true });
+    });
+
+    inquiryPanel.querySelector("[data-inquiry-back]").addEventListener("click", function () {
+      inquiryStep = "form";
+      renderInquiry();
+      inquiryField("name").focus();
+    });
+
+    /* The continue control is a real link with target="_blank": a tap on a
+       link is never caught by a popup blocker, iOS and Android hand wa.me to
+       the WhatsApp app, and this page stays where it was. Opening WhatsApp
+       is not the same as sending, so this only offers a fallback. */
+    inquiryPanel.querySelector("[data-inquiry-continue]").addEventListener("click", function (e) {
+      var values = inquiryValues();
+      if (Object.keys(inquiryErrors(values)).length) {
+        e.preventDefault();
+        inquiryStep = "form";
+        inquiryTried = true;
+        renderInquiry();
+        return;
+      }
+      this.href = whatsappUrl(inquiryMessage(values, packageDetails(inquiryPackage)));
+      var fallback = inquiryPanel.querySelector("[data-inquiry-fallback]");
+      window.setTimeout(function () { fallback.hidden = false; }, 600);
+    });
+
+    var copyButton = inquiryPanel.querySelector("[data-inquiry-copy]");
+    copyButton.addEventListener("click", function () {
+      var text = inquiryPanel.querySelector("[data-inquiry-message]").textContent;
+      var done = function () {
+        copyButton.textContent = "Copied";
+        window.setTimeout(function () { copyButton.textContent = "Copy message"; }, 2000);
+      };
+      var legacyCopy = function () {
+        var area = document.createElement("textarea");
+        area.value = text;
+        area.setAttribute("readonly", "");
+        area.style.position = "fixed";
+        area.style.opacity = "0";
+        inquiryPanel.appendChild(area);
+        area.select();
+        try { if (document.execCommand("copy")) done(); } catch (err) { /* nothing more to try */ }
+        area.remove();
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, legacyCopy);
+      else legacyCopy();
+    });
+
+    // Drag the sheet's grip down to dismiss it, as on a native sheet.
+    var grip = inquiryPanel.querySelector(".inquiry-grip");
+    var dragFrom = null;
+    grip.addEventListener("pointerdown", function (e) {
+      dragFrom = e.clientY;
+      inquiryPanel.classList.add("is-dragging");
+      if (grip.setPointerCapture) grip.setPointerCapture(e.pointerId);
+    });
+    grip.addEventListener("pointermove", function (e) {
+      if (dragFrom === null) return;
+      inquiryPanel.style.transform = "translateY(" + Math.max(0, e.clientY - dragFrom) + "px)";
+    });
+    var endDrag = function (e) {
+      if (dragFrom === null) return;
+      var pulled = e.clientY - dragFrom;
+      dragFrom = null;
+      inquiryPanel.classList.remove("is-dragging");
+      inquiryPanel.style.transform = "";
+      if (e.type === "pointerup" && pulled > 70) closeInquiry();
+    };
+    grip.addEventListener("pointerup", endDrag);
+    grip.addEventListener("pointercancel", endDrag);
+
+    // Bring a focused field into view above the keyboard once it settles.
+    inquiryPanel.addEventListener("focusin", function (e) {
+      if (!/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+      window.setTimeout(function () {
+        if (inquiryIsOpen() && e.target.scrollIntoView) e.target.scrollIntoView({ block: "nearest" });
+      }, 300);
+    });
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", function () { if (inquiryIsOpen()) fitInquiryToViewport(); });
+      window.visualViewport.addEventListener("scroll", function () { if (inquiryIsOpen()) fitInquiryToViewport(); });
+    }
+
+    window.addEventListener("popstate", function (e) {
+      if (inquiryIsOpen() && !(e.state && e.state.bvInquiry)) closeInquiry({ fromHistory: true });
+    });
   }
 
   if (investmentModal) {
@@ -692,6 +1135,8 @@
       });
     });
 
+    // Only the closing "Check availability" call still leads to the contact
+    // section; the collection buttons open the inquiry instead.
     investmentModal.querySelectorAll("[data-investment-contact]").forEach(function (link) {
       link.addEventListener("click", function (e) {
         e.preventDefault();
@@ -704,28 +1149,21 @@
 
     document.addEventListener("keydown", function (e) {
       if (investmentModal.hidden) return;
+      if (inquiryIsOpen()) {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          closeInquiry();
+        } else if (e.key === "Tab") {
+          trapTab(e, inquiryPanel);
+        }
+        return;
+      }
       if (e.key === "Escape") {
         e.preventDefault();
         closeInvestmentModal(true);
         return;
       }
-      if (e.key === "Tab") {
-        var focusable = investmentFocusable();
-        if (!focusable.length) {
-          e.preventDefault();
-          investmentDialog.focus();
-          return;
-        }
-        var first = focusable[0];
-        var last = focusable[focusable.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
+      if (e.key === "Tab") trapTab(e, investmentDialog);
     });
 
     window.addEventListener("hashchange", function () {
