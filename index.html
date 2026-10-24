@@ -37,7 +37,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="img/blurry-visuals-logo-web.png">
 <link rel="preload" as="image" href="img/hero/hero-sachi-vedant-mandap-kiss.webp">
-<link rel="stylesheet" href="css/style.css?v=20260916a">
+<link rel="stylesheet" href="css/style.css?v=20261024a">
 <script type="application/ld+json">
 { "@context":"https://schema.org","@type":"Organization","name":"Blurry Visuals Weddings","description":"Wedding photography and films studio based in Mumbai.","telephone":["+917032390419","+919892964884"],"email":"visualsblurry@gmail.com","address":{"@type":"PostalAddress","streetAddress":"Ambaji Apartment, Devi Dayal Rd, P&T Staff Colony","addressLocality":"Mulund West, Mumbai","addressRegion":"Maharashtra","postalCode":"400080","addressCountry":"IN"},"areaServed":["Mumbai","India"],"sameAs":["https://www.instagram.com/theblurryvisuals/"] }
 </script>
@@ -407,88 +407,124 @@
   <p class="photobox-caption"><b data-photobox-count></b><span data-photobox-label></span></p>
 </div>
 
-<!-- Investment & FAQs modal -->
-<div class="investment-modal" id="investment-modal" aria-hidden="true" hidden>
+<!-- Investment & FAQs modal.
+     data-lenis-prevent: the overlay scrolls natively. Without it, Lenis took
+     wheel and touch input for the page underneath, so the panel would not
+     scroll. -->
+<div class="investment-modal" id="investment-modal" aria-hidden="true" hidden data-lenis-prevent>
   <section class="investment-dialog" role="dialog" aria-modal="true" aria-labelledby="investment-title" tabindex="-1">
     <header class="investment-bar">
-      <span class="investment-brand">
-        <img class="brand-logo" src="img/blurry-visuals-logo.png" srcset="img/blurry-visuals-logo-web.png 126w" sizes="42px" alt="" width="42" height="42">
-        <span class="brand-copy">
-          <b class="brand-name">Blurry Visuals</b>
-          <small>Weddings · Mumbai</small>
-        </span>
-      </span>
-      <button class="investment-close" type="button" data-close-investment aria-label="Close Investment and FAQs">
-        <svg class="lucide-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
-      </button>
+      <span class="investment-bar-label">Investment &amp; FAQs</span>
+      <button class="investment-close" type="button" data-close-investment aria-label="Close Investment and FAQs">Close <span aria-hidden="true">✕</span></button>
     </header>
     <div class="investment-content">
       <div class="investment-intro">
         <!-- h2, not h1: the panel is always in the DOM, so a second h1 gave the
              document two competing top-level headings. It still labels the
              dialog through aria-labelledby. -->
-        <div><p class="investment-kicker">Investment &amp; FAQs</p><h2 id="investment-title">Stories worth<br><em>keeping.</em></h2></div>
+        <div><p class="investment-kicker">Investment</p><h2 id="investment-title">Stories worth <em>keeping.</em></h2></div>
         <p>Thoughtful photography and cinematic films, shaped around the scale and rhythm of your celebration. Begin with one of our signature collections, then tailor the coverage to your wedding.</p>
       </div>
 
-      <div class="investment-packages">
-        <article class="investment-package">
-          <div class="package-top"><h2>Intimate</h2><p class="package-price"><strong>₹1,50,000</strong><span>Smaller celebrations</span></p></div>
-          <p class="package-note">A creative team of four, shaped around a close, unhurried wedding.</p>
-          <h3>The crew</h3>
-          <ul class="package-specs">
-            <li><span>Photographers</span><b>2</b></li>
-            <li><span>Cinematographers</span><b>2</b></li>
-            <li><span>Creative team</span><b>Team of 4</b></li>
-          </ul>
-          <h3>Deliverables</h3>
-          <ul class="package-specs">
-            <li><span>Edited images</span><b>800–1,000</b></li>
-            <li><span>Wedding trailer</span><b>2–3 min film</b></li>
-            <li><span>Wedding movie</span><b>8–10 min film</b></li>
-            <li><span>Delivery</span><b>Standard timeline</b></li>
-          </ul>
-          <a class="package-link" href="#contact" data-cursor="Enquire" data-investment-contact>Ask about Intimate <span aria-hidden="true">→</span></a>
-        </article>
-        <article class="investment-package featured">
-          <p class="package-flag">Most chosen</p>
-          <div class="package-top"><h2>Signature</h2><p class="package-price"><strong>₹2,50,000</strong><span>Grand celebrations</span></p></div>
-          <p class="package-note">A team of six, an added lead on each craft, and an express edit.</p>
-          <h3>The crew</h3>
-          <ul class="package-specs">
-            <li><span>Photographers</span><b>2 + 1</b></li>
-            <li><span>Cinematographers</span><b>2 + 1</b></li>
-            <li><span>Creative team</span><b>Team of 6</b></li>
-          </ul>
-          <h3>Deliverables</h3>
-          <ul class="package-specs">
-            <li><span>Edited images</span><b>1,500–2,000</b></li>
-            <li><span>Wedding trailer</span><b>3–5 min film</b></li>
-            <li><span>Wedding movie</span><b>15–20 min film</b></li>
-            <li><span>Sangeet film</span><b>Included</b></li>
-            <li><span>Social edits</span><b>2 reels</b></li>
-            <li><span>Delivery</span><b>Express · 45 days</b></li>
-          </ul>
-          <a class="package-link" href="#contact" data-cursor="Enquire" data-investment-contact>Ask about Signature <span aria-hidden="true">→</span></a>
-        </article>
+      <!-- Phone only: one collection at a time, switched by tab, arrow key or
+           swipe. On wider screens both cards sit side by side and this row is
+           not rendered. -->
+      <div class="package-tabs" role="tablist" aria-label="Choose a collection">
+        <button class="package-tab" type="button" role="tab" id="package-tab-intimate" aria-controls="package-intimate" aria-selected="true">
+          <span class="package-tab-name">Intimate</span>
+          <span class="package-tab-sub">₹1,50,000</span>
+        </button>
+        <button class="package-tab" type="button" role="tab" id="package-tab-signature" aria-controls="package-signature" aria-selected="false" tabindex="-1">
+          <span class="package-tab-name">Signature <i aria-hidden="true"></i></span>
+          <span class="package-tab-sub">Most chosen</span>
+        </button>
       </div>
 
-      <p class="investment-travel"><strong>Planning an outstation celebration?</strong> Travel and accommodation are covered by the client. Final coverage, timing, and deliverables are confirmed in your proposal.</p>
-
-      <div class="faq-heading">
-        <div><p class="investment-kicker">Frequently asked</p><h2>A little clarity,<br><em>before we begin.</em></h2></div>
-        <p>Bookings, payment, delivery timelines, revisions, working hours, travel, and everything else worth knowing before you decide.</p>
+      <div class="investment-packages" data-active="intimate">
+        <article class="investment-package" id="package-intimate" data-package="intimate" aria-labelledby="package-intimate-name">
+          <header class="package-head">
+            <h3 id="package-intimate-name" data-package-name>Intimate</h3>
+            <p class="package-price" data-package-price>₹1,50,000</p>
+            <p class="package-scope" data-package-scope>Single Day</p>
+            <p class="package-note">A creative team of four, shaped around a close, unhurried wedding.</p>
+          </header>
+          <div class="package-group">
+            <h4>The crew</h4>
+            <ul class="package-specs">
+              <li><span>Photographers</span><b>2</b></li>
+              <li><span>Cinematographers</span><b>2</b></li>
+              <li><span>Creative team</span><b>Team of 4</b></li>
+            </ul>
+          </div>
+          <div class="package-group">
+            <h4>Deliverables</h4>
+            <ul class="package-specs">
+              <li><span>Edited images</span><b>800–1,000</b></li>
+              <li><span>Wedding trailer</span><b>2–3 min film</b></li>
+              <li><span>Wedding movie</span><b>8–10 min film</b></li>
+            </ul>
+          </div>
+          <div class="package-group package-delivery">
+            <h4>Delivery</h4>
+            <p>Standard timeline</p>
+          </div>
+          <button class="package-ask" type="button" data-inquire="intimate" data-cursor="Enquire">Ask about Intimate <span aria-hidden="true">→</span></button>
+        </article>
+        <article class="investment-package featured" id="package-signature" data-package="signature" aria-labelledby="package-signature-name">
+          <header class="package-head">
+            <div class="package-title"><h3 id="package-signature-name" data-package-name>Signature</h3><p class="package-flag">Most chosen</p></div>
+            <p class="package-price" data-package-price>₹2,50,000</p>
+            <p class="package-scope" data-package-scope>Single Day</p>
+            <p class="package-note">A team of six, an added lead on each craft, and an express edit.</p>
+          </header>
+          <div class="package-group">
+            <h4>The crew</h4>
+            <ul class="package-specs">
+              <li><span>Photographers</span><b>2 + 1</b></li>
+              <li><span>Cinematographers</span><b>2 + 1</b></li>
+              <li><span>Creative team</span><b>Team of 6</b></li>
+            </ul>
+          </div>
+          <div class="package-group">
+            <h4>Deliverables</h4>
+            <ul class="package-specs">
+              <li><span>Edited images</span><b>1,500–2,000</b></li>
+              <li><span>Wedding trailer</span><b>3–5 min film</b></li>
+              <li><span>Wedding movie</span><b>15–20 min film</b></li>
+              <li><span>Sangeet film</span><b>Included</b></li>
+              <li><span>Social edits</span><b>2 reels</b></li>
+            </ul>
+          </div>
+          <div class="package-group package-delivery">
+            <h4>Delivery</h4>
+            <p>Express · 45 days</p>
+          </div>
+          <button class="package-ask" type="button" data-inquire="signature" data-cursor="Enquire">Ask about Signature <span aria-hidden="true">→</span></button>
+        </article>
       </div>
-      <div class="faq-list">
-        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-1"><span>What services do you offer?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-1" hidden>We photograph weddings in candid, documentary, traditional, portrait, and detail-led styles. Film coverage includes traditional event documentation and story-led cinematic wedding films. Pre-weddings, engagements, haldi, mehndi, sangeet, and receptions can be included in a tailored proposal.</div></div>
-        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-2"><span>What are your collections?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-2" hidden>Intimate is ₹1,50,000 and is built for smaller celebrations, with a creative team of four, 800–1,000 edited images, a 2–3 minute trailer, and an 8–10 minute wedding movie. Signature is ₹2,50,000 for grand celebrations, with a team of six, 1,500–2,000 edited images, a 15–20 minute movie, a sangeet film, two social reels, and express delivery.</div></div>
-        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-3"><span>How does booking and payment work?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-3" hidden>Bookings are confirmed with 50% in advance. A further 40% is due on the first day of the wedding events, and the remaining 10% on delivery of the edited photographs and films.</div></div>
-        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-4"><span>When will we receive everything?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-4" hidden>Editing and delivery begin once 90% of the payment is received. Photographs take approximately eight weeks, as do the cinematic trailer and movie, with some variation during peak season. Traditional video is delivered within three months. Edited content is shared over Google Drive and stays accessible for a year; raw data is delivered on a hard drive you provide and is never uploaded to Drive.</div></div>
-        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-5"><span>Can we ask for edits or revisions?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-5" hidden>Yes. For photographs, post-production covers colour correction and enhancement to our studio standard; we do not offer extensive manipulation or liquifying. For the wedding movie, two rounds of edits are included in your collection, and further changes are charged at ₹15,000 per revision.</div></div>
-        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-6"><span>How long does the team work on the day?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-6" hidden>Our team works an acceptable shift of roughly ten hours. Where there is an early event the next morning, we can cover after-parties for up to two hours. Our cut-off on any day is 1:00 AM, beyond which additional coverage is charged at ₹25,000 per hour. The crew and equipment need six to eight hours to recharge and back up between days.</div></div>
-        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-7"><span>What about travel and meals for the crew?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-7" hidden>Travel and accommodation for outstation shoots are covered by the client. As the team is on duty throughout, they are treated as guests with access to banqueting and non-alcoholic refreshments. If you would prefer us to arrange meals, let us know before the event; a per-person plate is charged at ₹1,500, ordered a la carte at the hotel or resort.</div></div>
-        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-8"><span>What can we add to a collection?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-8" hidden>Pre-wedding shoots, drone coverage, a coffee table book, raw data, a full event video, and social reels can all be added to a collection. Live streaming and behind-the-scenes social coverage are available on request — ask us and we'll quote it in your proposal.</div></div>
-        <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-9"><span>What is the difference between cinematography and traditional videography?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-9" hidden>Traditional videography records the event in a complete, chronological way. Cinematography shapes selected moments, sound, movement, and emotion into a concise story-led film. A collection may include both documentary coverage and a cinematic edit.</div></div>
+      <p class="package-dots" aria-hidden="true"><span></span><span></span>Swipe or tap to compare</p>
+
+      <div class="investment-terms">
+        <p><strong>Both collections are priced for one wedding day,</strong> typically around 10 hours of coverage.</p>
+        <p><strong>Planning an outstation celebration?</strong> Travel and accommodation are covered by the client. Final coverage, timing, and deliverables are confirmed in your proposal.</p>
+      </div>
+
+      <div class="faq-block">
+        <div class="faq-heading">
+          <p class="investment-kicker">Frequently asked</p><h2>A little clarity, <em>before we begin.</em></h2>
+          <p>Bookings, payment, delivery timelines, revisions, working hours, travel, and everything else worth knowing before you decide.</p>
+        </div>
+        <div class="faq-list">
+          <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-1"><span>What services do you offer?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-1" hidden>We photograph weddings in candid, documentary, traditional, portrait, and detail-led styles. Film coverage includes traditional event documentation and story-led cinematic wedding films. Pre-weddings, engagements, haldi, mehndi, sangeet, and receptions can be included in a tailored proposal.</div></div>
+          <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-2"><span>What are your collections?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-2" hidden>Both collections are priced for a single day of wedding coverage. Intimate is ₹1,50,000, with a creative team of four, 800–1,000 edited images, a 2–3 minute trailer, and an 8–10 minute wedding movie. Signature is ₹2,50,000, with a team of six, 1,500–2,000 edited images, a 15–20 minute movie, a sangeet film, two social reels, and express delivery.</div></div>
+          <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-3"><span>How does booking and payment work?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-3" hidden>Bookings are confirmed with 50% in advance. A further 40% is due on the first day of the wedding events, and the remaining 10% on delivery of the edited photographs and films.</div></div>
+          <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-4"><span>When will we receive everything?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-4" hidden>Editing and delivery begin once 90% of the payment is received. Photographs take approximately eight weeks, as do the cinematic trailer and movie, with some variation during peak season. Traditional video is delivered within three months. Edited content is shared over Google Drive and stays accessible for a year; raw data is delivered on a hard drive you provide and is never uploaded to Drive.</div></div>
+          <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-5"><span>Can we ask for edits or revisions?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-5" hidden>Yes. For photographs, post-production covers colour correction and enhancement to our studio standard; we do not offer extensive manipulation or liquifying. For the wedding movie, two rounds of edits are included in your collection, and further changes are charged at ₹15,000 per revision.</div></div>
+          <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-6"><span>How long does the team work on the day?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-6" hidden>Our team works an acceptable shift of roughly ten hours. Where there is an early event the next morning, we can cover after-parties for up to two hours. Our cut-off on any day is 1:00 AM, beyond which additional coverage is charged at ₹25,000 per hour. The crew and equipment need six to eight hours to recharge and back up between days.</div></div>
+          <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-7"><span>What about travel and meals for the crew?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-7" hidden>Travel and accommodation for outstation shoots are covered by the client. As the team is on duty throughout, they are treated as guests with access to banqueting and non-alcoholic refreshments. If you would prefer us to arrange meals, let us know before the event; a per-person plate is charged at ₹1,500, ordered a la carte at the hotel or resort.</div></div>
+          <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-8"><span>What can we add to a collection?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-8" hidden>Pre-wedding shoots, drone coverage, a coffee table book, raw data, a full event video, and social reels can all be added to a collection. Live streaming and behind-the-scenes social coverage are available on request — ask us and we'll quote it in your proposal.</div></div>
+          <div class="faq-item"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-9"><span>What is the difference between cinematography and traditional videography?</span><span class="faq-plus" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-9" hidden>Traditional videography records the event in a complete, chronological way. Cinematography shapes selected moments, sound, movement, and emotion into a concise story-led film. A collection may include both documentary coverage and a cinematic edit.</div></div>
+        </div>
       </div>
 
       <div class="investment-final">
@@ -497,10 +533,110 @@
       </div>
     </div>
   </section>
+
+  <!-- Package inquiry: a centred modal on wider screens, a bottom sheet on a
+       phone. It only prepares a WhatsApp message for Akash. Nothing is stored
+       or sent from the page. -->
+  <div class="inquiry" id="package-inquiry" hidden>
+    <div class="inquiry-scrim" data-inquiry-close></div>
+    <form class="inquiry-panel" role="dialog" aria-modal="true" aria-labelledby="inquiry-title" aria-describedby="inquiry-sub" tabindex="-1" novalidate>
+      <div class="inquiry-grip" aria-hidden="true"><span></span></div>
+      <header class="inquiry-head">
+        <div>
+          <p class="inquiry-step" data-inquiry-step>Step 1 of 2 · Your details</p>
+          <h2 id="inquiry-title">Let’s capture <em>your story.</em></h2>
+          <p class="inquiry-sub" id="inquiry-sub" data-inquiry-sub>Your name, mobile number and city are needed. Share anything else you know so far.</p>
+        </div>
+        <button class="inquiry-x" type="button" data-inquiry-close aria-label="Close inquiry"><span aria-hidden="true">✕</span></button>
+      </header>
+      <div class="inquiry-package" data-inquiry-package="intimate">
+        <p><small>Selected collection</small><b data-inquiry-name>Intimate</b></p>
+        <p><b data-inquiry-price>₹1,50,000</b><small data-inquiry-scope>Single Day</small></p>
+      </div>
+      <div class="inquiry-body">
+        <div class="inquiry-fields" data-inquiry-form>
+          <div class="inq-field">
+            <label for="inq-name">Full name <small>Required</small></label>
+            <input id="inq-name" name="name" type="text" autocomplete="name" placeholder="Your name" required aria-describedby="inq-name-err" maxlength="80">
+            <p class="inq-error" id="inq-name-err" hidden></p>
+          </div>
+          <div class="inq-field">
+            <label for="inq-phone">Mobile number <small>Required</small></label>
+            <div class="inq-phone">
+              <select id="inq-cc" name="cc" aria-label="Country code">
+                <option value="+91">IN +91</option>
+                <option value="+1">US/CA +1</option>
+                <option value="+44">UK +44</option>
+                <option value="+61">AU +61</option>
+                <option value="+65">SG +65</option>
+                <option value="+971">AE +971</option>
+                <option value="+974">QA +974</option>
+                <option value="+966">SA +966</option>
+                <option value="+49">DE +49</option>
+                <option value="+33">FR +33</option>
+              </select>
+              <input id="inq-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="98765 43210" required aria-describedby="inq-phone-err" maxlength="20">
+            </div>
+            <p class="inq-error" id="inq-phone-err" hidden></p>
+          </div>
+          <div class="inq-field">
+            <label for="inq-city">Event location / city <small>Required</small></label>
+            <input id="inq-city" name="city" type="text" autocomplete="address-level2" placeholder="e.g. Mumbai, Udaipur" required aria-describedby="inq-city-err" maxlength="80">
+            <p class="inq-error" id="inq-city-err" hidden></p>
+          </div>
+          <div class="inq-field">
+            <label for="inq-date">Event date <small>Optional</small></label>
+            <input id="inq-date" name="date" type="date" aria-describedby="inq-date-err">
+            <label class="inq-check"><input id="inq-undecided" name="undecided" type="checkbox"><span aria-hidden="true"></span>Date not finalized yet</label>
+            <p class="inq-error" id="inq-date-err" hidden></p>
+          </div>
+          <fieldset class="inq-field inq-wide inq-types">
+            <legend>Event type</legend>
+            <div class="inq-chips">
+              <label><input type="radio" name="type" value="Wedding" checked><span>Wedding</span></label>
+              <label><input type="radio" name="type" value="Engagement"><span>Engagement</span></label>
+              <label><input type="radio" name="type" value="Reception"><span>Reception</span></label>
+              <label><input type="radio" name="type" value="Pre-Wedding"><span>Pre-Wedding</span></label>
+              <label><input type="radio" name="type" value="Other"><span>Other</span></label>
+            </div>
+          </fieldset>
+          <div class="inq-field inq-wide">
+            <label for="inq-msg">Anything else you’d like to share? <small>Optional</small></label>
+            <textarea id="inq-msg" name="msg" rows="3" maxlength="500" placeholder="Events planned, guest count, venue, or anything on your mind"></textarea>
+          </div>
+        </div>
+        <div class="inquiry-preview" data-inquiry-preview hidden>
+          <p class="inquiry-preview-head"><span>Your WhatsApp message</span><span>To Akash · Blurry Visuals · <span data-wa-display></span></span></p>
+          <div class="inquiry-message" data-inquiry-message></div>
+          <p class="inquiry-note">WhatsApp opens with this message ready. Nothing is sent until you tap Send in WhatsApp.</p>
+          <div class="inquiry-fallback" role="status" data-inquiry-fallback hidden>
+            <p>WhatsApp didn’t open? Copy the message and send it to Akash on <span data-wa-display></span>.</p>
+            <div>
+              <button type="button" data-inquiry-copy>Copy message</button>
+              <a href="#" target="_blank" rel="noopener" data-inquiry-wa-link>Open WhatsApp link</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <footer class="inquiry-foot">
+        <p class="inquiry-privacy">Your details are used only to prepare your WhatsApp inquiry.</p>
+        <div class="inquiry-actions" data-inquiry-actions="form">
+          <button class="inquiry-btn inquiry-btn-dark" type="submit">Preview message <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="inquiry-actions" data-inquiry-actions="preview" hidden>
+          <button class="inquiry-btn inquiry-btn-ghost" type="button" data-inquiry-back><span aria-hidden="true">←</span> Edit details</button>
+          <a class="inquiry-btn inquiry-btn-wa" href="#" target="_blank" rel="noopener" data-inquiry-continue>
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18"><path d="M4.5 19.5l1.2-3.6A8 8 0 1 1 8.4 18.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 9.5c.3 1.9 1.6 3.4 3.6 4.2l1-1 1.6.8-.4 1.3c-2.9.2-6-2.9-5.8-5.8l1.3-.4.8 1.6z" fill="currentColor"/></svg>
+            Continue to WhatsApp <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </footer>
+    </form>
+  </div>
 </div>
 
-<script src="js/stories-data.js?v=20260916a"></script>
-<script src="js/main.js?v=20260916a"></script>
+<script src="js/stories-data.js?v=20261024a"></script>
+<script src="js/main.js?v=20261024a"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/SplitText.min.js"></script>
